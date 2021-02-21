@@ -41,10 +41,10 @@ def poisson(f, M, alpha, sigma):
     return x, U
 
 
-def central_difference_operator(context, m, n, order=2):
-    if order == 1:
+def central_difference_operator(context, m, n, power=2):
+    if power == 1:
         return context[m + 1, n] - context[m - 1, n]
-    elif order == 2:
+    elif power == 2:
         return context[m + 1, n] - 2 * context[m, n] + context[m - 1, n]
 
     raise ValueError
@@ -110,7 +110,7 @@ class Scheme:
 def euler_scheme(context, m, n, r):
     # Return the rhs in the system of eqn to solve for x_m^n
     # For euler, the matrix is the identity
-    return context[m, n] + r * central_difference_operator(context, m, n, order=2)
+    return context[m, n] + r * central_difference_operator(context, m, n, power=2)
 
 
 class Euler(Scheme):
@@ -125,8 +125,9 @@ class Euler(Scheme):
         rhs[self.restricted_x_indicies] = context[
             self.restricted_x_indicies, n - 1
         ] + self.r * central_difference_operator(
-            context, self.restricted_x_indicies, n - 1, order=2
+            context, self.restricted_x_indicies, n - 1, power=2
         )
+
 
         return rhs
 
@@ -134,7 +135,7 @@ class Euler(Scheme):
         if m == 0 or m == self.M + 1:
             return 0
         return context[m, n - 1] + self.r * central_difference_operator(
-            context, m, n - 1, order=2
+            context, m, n - 1, power=2
         )
 
     def matrix(self):
