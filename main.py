@@ -35,23 +35,30 @@ def test_heat_euler():
     from conditions import Dirichlet, Neumann
     from schemes import Euler, solve_time_evolution
 
-    M = 80
-    N = 1000
-    k = 0.001
+    M = 100
+    N = 20
+    k = 1/(M+2)**2 / 2.5
 
     def f(x):
         return 2 * np.pi * x + np.sin(2 * np.pi * x)
 
-    # scheme = Euler(M=M, N=N, k=k, conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)))
+    #def f(x):
+        #return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
+
     scheme = Euler(
         M=M,
         N=N,
         k=k,
         conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
+        #conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        #conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
+        #conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
+
+    assert scheme.r <= 1/2, f"r <= 1/2 <= {scheme.r} needed for convergence"
     x_axis, sol = solve_time_evolution(scheme, f)
 
-    for n in range(0, N + 1, 50):
+    for n in range(0, N + 1, max(N // 10, 1)):
         plt.plot(x_axis, sol[:, n], label=f"U({n})")
     plt.legend()
     plt.show()
