@@ -1,11 +1,11 @@
 # https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_1.pdf
 
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass
-from enum import Enum, auto, unique
-from typing import Any, List, Optional, Union
 
 import numpy as np
+
+from conditions import Condition
 
 
 def central_difference(N, order=2):
@@ -39,12 +39,6 @@ def poisson(f, M, alpha, sigma):
     return x, U
 
 
-def euler_scheme(context, m, n, r):
-    # Return the rhs in the system of eqn to solve for x_m^n
-    # For euler, the matrix is the identity
-    return context[m][n] + r * central_difference_operator(context, m, n, order=2)
-
-
 def central_difference_operator(context, m, n, order=2):
     if order == 1:
         return context[m + 1][n] - context[m - 1][n]
@@ -55,75 +49,11 @@ def central_difference_operator(context, m, n, order=2):
 
 
 @dataclass
-class Condition:
-    condition: Any  # Union[float, Callable[[int], float]]
-    m: int
-
-    def get_condition_value(self, n):
-        return self.condition(n) if callable(self.condition) else self.condition
-
-    def get_equation(self, n, M, h):
-        raise NotImplementedError
-
-
-class Dirichlet(Condition):
-    def get_equation(self, n, M, h):
-        cond_value = self.get_condition_value(n)
-        lhs = np.zeros(M + 2)
-        lhs[self.m] = 1
-        rhs = cond_value
-        return lhs, rhs
-
-
-@dataclass
-class Neumann(Condition):
-    order: Optional[int] = None  # Order of the neumann condition
-
-    def get_equation(self, n, M, h):
-        cond_value = self.get_condition_value(n)
-        lhs = np.zeros(M + 2)
-        if self.m == 0:
-            if self.order == 1:
-                lhs[0:2] = np.array((-1, 1)) / h ** 2
-                rhs = h * cond_value
-            elif self.order == 2:
-                lhs[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h ** 2
-                rhs = h * cond_value
-            else:
-                raise ValueError
-        elif self.m == M + 1:
-            if self.order == 1:
-                lhs[-2:] = np.array((-1, 1)) / h ** 2
-                rhs = h * cond_value
-            elif self.order == 2:
-                lhs[-3:] = np.array((1 / 2, -2, 3 / 2)) / h ** 2
-                rhs = h * cond_value
-            else:
-                raise ValueError
-        else:
-            # Order 2
-            lhs[self.m + 1] = 1
-            lhs[self.m - 1] = -1
-            rhs = cond_value
-        return lhs, rhs
-
-
-def apply_conditions(self, A, b, conditions, indicies):
-    if left_boundary.dirichlet:
-        matrix[0][0] = 1
-        rhs[0] = left_boundary.get_dirichlet(n)
-
-    if left_boundary.neumann:
-        matrix[0][0] = 1
-        rhs[0] = left_boundary.get_neumann(n)
-
-
-@dataclass
 class Scheme:
     M: int
     N: int
 
-    conditions = Iterable[Condition]
+    conditions: Iterable[Condition]
 
     @property
     def h(self):
@@ -178,6 +108,12 @@ class Scheme:
         return matrix, rhs
 
 
+def euler_scheme(context, m, n, r):
+    # Return the rhs in the system of eqn to solve for x_m^n
+    # For euler, the matrix is the identity
+    return context[m][n] + r * central_difference_operator(context, m, n, order=2)
+
+
 class Euler(Scheme):
     @property
     def free_indicies(self):
@@ -186,7 +122,7 @@ class Euler(Scheme):
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,))
         rhs[self.free_indicies] = 0
-        rhs[1 : self.M + 1] = context[self.restricted_x_indicies][
+        rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies][
             n - 1
         ] + self.r * central_difference_operator(
             context, self.restricted_x_indicies, n - 1, order=2
@@ -206,46 +142,20 @@ class Euler(Scheme):
         return np.eye(self.M + 2)
 
 
-def solve_time_evolution(scheme):
-    sol = np.empty((M + 2, N))
+def solve_time_evolution(scheme, f):
+    sol = np.empty((scheme.M + 2, scheme.N))
     x_axis = np.linspace(0, 1, scheme.M + 2)
     sol[:, 0] = f(x_axis)
 
-    for n in range(1, N):
+    for n in range(1, scheme.N):
         # M+2-2 bc two dirichlet boundary cond. g0 and g1
         A = scheme.matrix()
 
-        ms = np.arange(1, M + 1)
-        rhs = scheme.rhs(sol, ms, n, r)
+        ms = np.arange(1, scheme.M + 1)
+        rhs = scheme.rhs(sol, ms, n, scheme.r)
 
         U = np.linalg.solve(A, rhs)
 
         sol[:][n] = U
 
-    return x_axis * h, sol
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-
-    def f(x):
-        return np.cos(2 * np.pi * x) + x
-
-    M = 9
-    alpha = 0
-    sigma = 1
-
-    def u(x):
-        return (
-            (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
-            + x ** 3 / 6
-            + (sigma - 1 / 2) * x
-            + alpha
-        )
-
-    x, U = poisson(f, M, alpha, sigma)
-
-    plt.plot(x, U, label="U")
-    plt.plot(x, u(x), label="u")
-    plt.legend()
-    plt.show()
+    return x_axis * scheme.h, sol
