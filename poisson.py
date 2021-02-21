@@ -42,34 +42,63 @@ def poisson(f, M, alpha, sigma):
 
     U = np.linalg.solve(A, f)
 
-    return x, np.linalg.solve(A, f)
+    return x, U
 
 
-def heat_eqn(f, M, N, g0, g1):
+def euler_scheme(context, m, n, r):
+    # Return the rhs in the system of eqn to solve for x_m^n
+    # For euler, the matrix is the identity
+    return context[m][n] + r * central_difference_operator(context, m, n, order=2)
+
+def central_difference_operator(context, m, n, order=2):
+    if order == 1:
+        return context[m+1][n] - context[m-1][n]
+    elif order == 2:
+        return context[m+1][n] - 2 * context[m][n] + context[m-1][n]
+
+    raise ValueError
+
+
+class Scheme(dataclass):
+    M: int
+    N: int
+
+    left_boundary?
+
+    def rhs(context, m, n, r):
+        raise NotImplementedError
+
+    def matrix(context, m, n):
+        raise NotImplementedError
+
+class Euler(Scheme):
+    def rhs(self, context, m, n, r):
+        return context[m][n-1] + r * central_difference_operator(context, m, n-1, order=2)
+
+    def matrix(self):
+        # M+2-2 bc two dirichlet boundary cond. g0 and g1
+        return np.eye(M)
+
+
+def solve_time_evolution(scheme):
     sol = np.empty((M+2, N))
-    x_axis = np.linspace(0, 1, M+2)
+    x_axis = np.linspace(0, 1, scheme.M+2)
     sol[:, 0] = f(x_axis)
-    h = 1/(M+1)
+    h = 1/(scheme.M+1)
+    k = 1/scheme.N
+
     for n in range(1, N):
-        A = central_difference(M+1, order=2) / h**2
+        # M+2-2 bc two dirichlet boundary cond. g0 and g1
+        A = scheme.matrix()
 
-        # x1=h, x2=2h, ..., xm+1 = 1
-        x = np.arange(1, M + 2) * h
-        f = f(x)
+        ms = np.arange(1, M + 1)
+        rhs = scheme.rhs(sol, ms, n, r)
 
+        U = np.linalg.solve(A, rhs)
 
-        # Dirichlet
-        f[0] -= alpha / h**2
+        sol[:][n] = U
 
-        # Adjust for neumann in right endpoint
-        #A[-1, -3:] = (-1/(2*h), 2/h, - 3/(2*h))
-        # Provided schema has wrong signs
-        A[-1, -3:] = (1/(2*h), -2/h, 3/(2*h))
-        f[-1] = sigma
-
-        U = np.linalg.solve(A, f)
-
-        return x, np.linalg.solve(A, f)
+    return x_axis * h, sol
 
 
 
