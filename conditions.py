@@ -52,7 +52,7 @@ class Neumann(Condition):
                 raise ValueError
         else:
             # Order 2
-            lhs[self.m + 1] = 1
-            lhs[self.m - 1] = -1
-            rhs = cond_value
+            lhs[self.m + 1] = 1 / h**2
+            lhs[self.m - 1] = -1 / h**2
+            rhs = h * cond_value
         return lhs, rhs
