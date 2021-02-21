@@ -36,34 +36,71 @@ def test_heat_euler():
     from schemes import Euler, solve_time_evolution
 
     M = 100
-    N = 20
-    k = 1/(M+2)**2 / 2.5
+    N = 2000
+    k = 1 / (M + 2) ** 2 / 2.5
 
     def f(x):
         return 2 * np.pi * x + np.sin(2 * np.pi * x)
 
-    #def f(x):
-        #return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
+    # def f(x):
+    # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
     scheme = Euler(
         M=M,
         N=N,
         k=k,
         conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
-        #conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
-        #conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
-        #conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
 
-    assert scheme.r <= 1/2, f"r <= 1/2 <= {scheme.r} needed for convergence"
     x_axis, sol = solve_time_evolution(scheme, f)
 
     for n in range(0, N + 1, max(N // 10, 1)):
-        plt.plot(x_axis, sol[:, n], label=f"U({n})")
+        plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")
+    plt.legend()
+    plt.show()
+
+
+def test_heat_theta():
+    import matplotlib.pyplot as plt
+
+    from conditions import Dirichlet, Neumann
+    from schemes import ThetaMethod, solve_time_evolution
+
+    M = 1000
+    N = 200
+    # k = 1 / (M + 2) ** 2 / 2.5
+    k = 0.001
+    theta = 1 / 2
+
+    def f(x):
+        return 2 * np.pi * x + np.sin(2 * np.pi * x)
+
+    # def f(x):
+    # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
+
+    scheme = ThetaMethod(
+        M=M,
+        N=N,
+        k=k,
+        theta=theta,
+        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
+    )
+
+    x_axis, sol = solve_time_evolution(scheme, f)
+
+    for n in range(0, N + 1, max(N // 10, 1)):
+        plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")
     plt.legend()
     plt.show()
 
 
 if __name__ == "__main__":
     # test_poisson()
-    test_heat_euler()
+    # test_heat_euler()
+    test_heat_theta()

@@ -49,6 +49,6 @@ class Neumann(Condition):
                 raise ValueError
         else:
             # Order 2
-            lhs[self.m + 1] = 1 / h**2
-            lhs[self.m - 1] = -1 / h**2
+            lhs[self.m + 1] = 1 / h ** 2
+            lhs[self.m - 1] = -1 / h ** 2
         return lhs, rhs
