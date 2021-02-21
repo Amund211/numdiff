@@ -5,10 +5,10 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from conditions import Condition
+from conditions import Condition, Neumann
 
 
-def central_difference(N, order=2):
+def central_difference(N, power=2):
     diag = -2 * np.ones(N)
     offdiag = np.ones(N - 1)
 
@@ -21,7 +21,7 @@ def poisson(f, M, alpha, sigma):
     assert M >= 4
 
     h = 1 / (M + 1)
-    A = central_difference(M + 1, order=2) / h ** 2
+    A = central_difference(M + 1, power=2) / h ** 2
 
     # x1=h, x2=2h, ..., xm+1 = 1
     x = np.arange(1, M + 2).astype(np.float64) * h
@@ -58,6 +58,11 @@ class Scheme:
 
     conditions: Iterable[Condition]
 
+    def __post_init__(self):
+        assert self.k >= 0
+        assert self.h >= 0
+        self.validate_r()
+
     @property
     def h(self):
         return 1 / (self.M + 1)
@@ -79,6 +84,10 @@ class Scheme:
         """Get the x axis indicies where this method has all its needed context"""
         unrestricted = np.arange(0, self.M + 2)
         return unrestricted[np.isin(unrestricted, self.free_indicies, invert=True)]
+
+    def validate_r(self):
+        """Validate that the method is convergent with the given r"""
+        raise NotImplementedError
 
     def rhs(self, context, n):
         raise NotImplementedError
@@ -118,6 +127,9 @@ class Euler(Scheme):
     def free_indicies(self):
         return np.array((0, self.M + 1), dtype=np.int64)
 
+    def validate_r(self):
+        assert self.r <= 1 / 2, f"r <= 1/2 <= {scheme.r} needed for convergence"
+
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
         rhs[self.free_indicies] = 0
@@ -128,19 +140,60 @@ class Euler(Scheme):
             context, self.restricted_x_indicies, n - 1, power=2
         )
 
-
         return rhs
-
-    def rhs_scalar(self, context, m, n):
-        if m == 0 or m == self.M + 1:
-            return 0
-        return context[m, n - 1] + self.r * central_difference_operator(
-            context, m, n - 1, power=2
-        )
 
     def matrix(self):
         # Euler is explicit, so no need to solve a system => identity
         return np.eye(self.M + 2)
+
+
+@dataclass
+class ThetaMethod(Scheme):
+    """
+    The theta method
+    theta=0 => euler
+    theta=1/2 => CN
+    theta=1 => implicit euler
+    """
+
+    theta: float
+
+    @property
+    def free_indicies(self):
+        return np.array((0, self.M + 1), dtype=np.int64)
+
+    def validate_r(self):
+        if 1 / 2 <= self.theta <= 1:
+            # All r >= 0
+            return
+        elif 0 <= self.theta < 1 / 2:
+            eta = 0
+            for condition in self.conditions:
+                if isinstance(condition, Neumann):
+                    eta = max(eta, abs(condition.condition))
+
+            assert self.r <= 1 / (
+                2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
+            ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {scheme.r} needed for convergence"
+        else:
+            raise ValueError(f"Invalid value for theta {self.theta}")
+
+    def rhs(self, context, n):
+        rhs = np.empty((self.M + 2,), dtype=np.float64)
+        rhs[self.free_indicies] = 0
+
+        rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies, n - 1] + (
+            1 - self.theta
+        ) * self.r * central_difference_operator(
+            context, self.restricted_x_indicies, n - 1, power=2
+        )
+
+        return rhs
+
+    def matrix(self):
+        return np.eye(self.M + 2) - self.theta * self.r * central_difference(
+            self.M + 2, power=2
+        )
 
 
 def solve_time_evolution(scheme, f):
