@@ -12,7 +12,9 @@ def central_difference(N, order=2):
     diag = -2 * np.ones(N)
     offdiag = np.ones(N - 1)
 
-    return np.diag(diag) + np.diag(offdiag, k=-1) + np.diag(offdiag, k=1)
+    return (np.diag(diag) + np.diag(offdiag, k=-1) + np.diag(offdiag, k=1)).astype(
+        np.float64
+    )
 
 
 def poisson(f, M, alpha, sigma):
@@ -22,7 +24,7 @@ def poisson(f, M, alpha, sigma):
     A = central_difference(M + 1, order=2) / h ** 2
 
     # x1=h, x2=2h, ..., xm+1 = 1
-    x = np.arange(1, M + 2) * h
+    x = np.arange(1, M + 2).astype(np.float64) * h
     f = f(x)
 
     # Dirichlet
@@ -41,9 +43,9 @@ def poisson(f, M, alpha, sigma):
 
 def central_difference_operator(context, m, n, order=2):
     if order == 1:
-        return context[m + 1][n] - context[m - 1][n]
+        return context[m + 1, n] - context[m - 1, n]
     elif order == 2:
-        return context[m + 1][n] - 2 * context[m][n] + context[m - 1][n]
+        return context[m + 1, n] - 2 * context[m, n] + context[m - 1, n]
 
     raise ValueError
 
@@ -52,6 +54,7 @@ def central_difference_operator(context, m, n, order=2):
 class Scheme:
     M: int
     N: int
+    k: float
 
     conditions: Iterable[Condition]
 
@@ -60,17 +63,13 @@ class Scheme:
         return 1 / (self.M + 1)
 
     @property
-    def k(self):
-        return 1 / self.N
-
-    @property
     def r(self):
         return self.k / self.h ** 2
 
     @property
     def free_indicies(self):
         """
-        Indicies that are not calculated by the scheme
+        np.array of indicies that are not calculated by the scheme
         These are free to be used as conditions
         """
         raise NotImplementedError
@@ -79,7 +78,7 @@ class Scheme:
     def restricted_x_indicies(self):
         """Get the x axis indicies where this method has all its needed context"""
         unrestricted = np.arange(0, self.M + 2)
-        return unrestricted[np.isin(unrestricted, self.free_indicies)]
+        return unrestricted[np.isin(unrestricted, self.free_indicies, invert=True)]
 
     def rhs(self, context, n):
         raise NotImplementedError
@@ -94,14 +93,14 @@ class Scheme:
 
         for condition, index in zip(self.conditions, self.free_indicies):
             lhs, rhs = condition.get_equation(n, self.M, self.h)
-            A[index] = lhs
+            A[index, :] = lhs
             b[index] = rhs
 
         return A, b
 
-    def system(self, context, n, r):
+    def system(self, context, n):
         matrix = self.matrix()
-        rhs = self.rhs(context, n, r)
+        rhs = self.rhs(context, n)
 
         matrix, rhs = self.apply_conditions(matrix, rhs, n)
 
@@ -111,19 +110,20 @@ class Scheme:
 def euler_scheme(context, m, n, r):
     # Return the rhs in the system of eqn to solve for x_m^n
     # For euler, the matrix is the identity
-    return context[m][n] + r * central_difference_operator(context, m, n, order=2)
+    return context[m, n] + r * central_difference_operator(context, m, n, order=2)
 
 
 class Euler(Scheme):
     @property
     def free_indicies(self):
-        return (0, self.M + 1)
+        return np.array((0, self.M + 1), dtype=np.int64)
 
     def rhs(self, context, n):
-        rhs = np.empty((self.M + 2,))
+        rhs = np.empty((self.M + 2,), dtype=np.float64)
         rhs[self.free_indicies] = 0
-        rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies][
-            n - 1
+
+        rhs[self.restricted_x_indicies] = context[
+            self.restricted_x_indicies, n - 1
         ] + self.r * central_difference_operator(
             context, self.restricted_x_indicies, n - 1, order=2
         )
@@ -133,7 +133,7 @@ class Euler(Scheme):
     def rhs_scalar(self, context, m, n):
         if m == 0 or m == self.M + 1:
             return 0
-        return context[m][n - 1] + self.r * central_difference_operator(
+        return context[m, n - 1] + self.r * central_difference_operator(
             context, m, n - 1, order=2
         )
 
@@ -143,19 +143,16 @@ class Euler(Scheme):
 
 
 def solve_time_evolution(scheme, f):
-    sol = np.empty((scheme.M + 2, scheme.N))
+    sol = np.empty((scheme.M + 2, scheme.N + 1), dtype=np.float64)
     x_axis = np.linspace(0, 1, scheme.M + 2)
     sol[:, 0] = f(x_axis)
 
-    for n in range(1, scheme.N):
+    for n in range(1, scheme.N + 1):
         # M+2-2 bc two dirichlet boundary cond. g0 and g1
-        A = scheme.matrix()
+        A, b = scheme.system(sol, n)
 
-        ms = np.arange(1, scheme.M + 1)
-        rhs = scheme.rhs(sol, ms, n, scheme.r)
+        U = np.linalg.solve(A, b)
 
-        U = np.linalg.solve(A, rhs)
+        sol[:, n] = U
 
-        sol[:][n] = U
-
-    return x_axis * scheme.h, sol
+    return x_axis, sol
