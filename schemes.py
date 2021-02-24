@@ -4,6 +4,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 import numpy as np
+import scipy.sparse.linalg
 
 from conditions import Condition, Neumann
 
@@ -202,10 +203,9 @@ def solve_time_evolution(scheme, f):
     sol[:, 0] = f(x_axis)
 
     for n in range(1, scheme.N + 1):
-        # M+2-2 bc two dirichlet boundary cond. g0 and g1
         A, b = scheme.system(sol, n)
 
-        U = np.linalg.solve(A, b)
+        U = scipy.sparse.linalg.spsolve(scipy.sparse.csr_matrix(A), b)
 
         sol[:, n] = U
 
