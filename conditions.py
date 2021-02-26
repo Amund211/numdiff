@@ -1,54 +1,66 @@
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
 
 import numpy as np
 
 
-@dataclass
+@dataclass(frozen=True)
 class Condition:
+    """
+    An additional condition on a differential equation represented as a linear equation
+
+    NOTE: The vector returned from `.get_vector` must be constant
+    """
+
     condition: Any  # Union[float, Callable[[int], float]]
     m: int
 
-    def get_condition_value(self, n):
-        return self.condition(n) if callable(self.condition) else self.condition
+    def get_condition_value(self, t):
+        return self.condition(t) if callable(self.condition) else self.condition
 
-    def get_equation(self, n, M, h):
+    @lru_cache(maxsize=200)
+    def get_vector(self, length, h):
+        """Vector representing the equation"""
         raise NotImplementedError
+
+    def get_scalar(self, t):
+        """Scalar representing the rhs"""
+        # Default implementation
+        return self.get_condition_value(t)
 
 
 class Dirichlet(Condition):
-    def get_equation(self, n, M, h):
-        cond_value = self.get_condition_value(n)
-        lhs = np.zeros(M + 2)
-        lhs[self.m] = 1
-        rhs = cond_value
-        return lhs, rhs
+    @lru_cache(maxsize=200)
+    def get_vector(self, length, **kwargs):
+        eqn = np.zeros(length)
+        eqn[self.m] = 1
+        return eqn
 
 
-@dataclass
+@dataclass(frozen=True)
 class Neumann(Condition):
     order: int = 2  # Order of the neumann condition
 
-    def get_equation(self, n, M, h):
-        cond_value = self.get_condition_value(n)
-        rhs = cond_value / h
-        lhs = np.zeros(M + 2)
+    @lru_cache(maxsize=200)
+    def get_vector(self, length, h, **kwargs):
+        eqn = np.zeros(length)
         if self.m == 0:
             if self.order == 1:
-                lhs[0:2] = np.array((-1, 1)) / h ** 2
+                eqn[0:2] = np.array((-1, 1)) / h ** 2
             elif self.order == 2:
-                lhs[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h ** 2
+                eqn[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h ** 2
             else:
                 raise ValueError
-        elif self.m == M + 1:
+        elif self.m == length - 1:  # Last index
             if self.order == 1:
-                lhs[-2:] = np.array((-1, 1)) / h ** 2
+                eqn[-2:] = np.array((-1, 1)) / h ** 2
             elif self.order == 2:
-                lhs[-3:] = np.array((1 / 2, -2, 3 / 2)) / h ** 2
+                eqn[-3:] = np.array((1 / 2, -2, 3 / 2)) / h ** 2
             else:
                 raise ValueError
         else:
             # Order 2
-            lhs[self.m + 1] = 1 / h ** 2
-            lhs[self.m - 1] = -1 / h ** 2
-        return lhs, rhs
+            eqn[self.m + 1] = 1 / h ** 2
+            eqn[self.m - 1] = -1 / h ** 2
+        return eqn

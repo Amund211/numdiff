@@ -2,6 +2,7 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from functools import lru_cache
 
 import numpy as np
 import scipy.sparse.linalg
@@ -51,13 +52,16 @@ def central_difference_operator(context, m, n, power=2):
     raise ValueError
 
 
-@dataclass
+@dataclass(frozen=True)
 class Scheme:
     M: int
     N: int
     k: float
 
     conditions: Iterable[Condition]
+
+    # Whether the step matrix should be factorized, set to False if it often changes
+    factorize = True
 
     def __post_init__(self):
         assert self.k >= 0
@@ -96,25 +100,37 @@ class Scheme:
     def matrix(self):
         raise NotImplementedError
 
-    def apply_conditions(self, A, b, n):
+    def get_constrained_rhs(self, context, n):
+        b = self.rhs(context, n)
+        for condition, index in zip(self.conditions, self.free_indicies):
+            scalar = condition.get_scalar(n * self.k)
+            b[index] = scalar
+
+        return b
+
+    def get_constrained_matrix(self):
         assert len(self.conditions) == len(
             self.free_indicies
         ), f"Must have exactly  {len(self.free_indicies)} boundary conditions"
 
+        A = self.matrix()
+
         for condition, index in zip(self.conditions, self.free_indicies):
-            lhs, rhs = condition.get_equation(n, self.M, self.h)
-            A[index, :] = lhs
-            b[index] = rhs
+            eqn = condition.get_vector(length=self.M + 2, h=self.h)
+            A[index, :] = eqn
 
-        return A, b
+        return A
 
-    def system(self, context, n):
-        matrix = self.matrix()
-        rhs = self.rhs(context, n)
+    @lru_cache(maxsize=200)
+    def get_solver(self):
+        sparse = scipy.sparse.csc_matrix(self.get_constrained_matrix())
+        if self.factorize:
+            return scipy.sparse.linalg.factorized(sparse)
+        else:
+            return lambda b: scipy.sparse.linalg.spsolve(sparse, b)
 
-        matrix, rhs = self.apply_conditions(matrix, rhs, n)
-
-        return matrix, rhs
+    def step(self, context, n):
+        return self.get_solver()(self.get_constrained_rhs(context, n))
 
 
 def euler_scheme(context, m, n, r):
@@ -129,7 +145,7 @@ class Euler(Scheme):
         return np.array((0, self.M + 1), dtype=np.int64)
 
     def validate_r(self):
-        assert self.r <= 1 / 2, f"r <= 1/2 <= {scheme.r} needed for convergence"
+        assert self.r <= 1 / 2, f"r <= 1/2 <= {self.r} needed for convergence"
 
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
@@ -148,7 +164,7 @@ class Euler(Scheme):
         return np.eye(self.M + 2)
 
 
-@dataclass
+@dataclass(frozen=True)
 class ThetaMethod(Scheme):
     """
     The theta method
@@ -175,7 +191,7 @@ class ThetaMethod(Scheme):
 
             assert self.r <= 1 / (
                 2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
-            ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {scheme.r} needed for convergence"
+            ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {self.r} needed for convergence"
         else:
             raise ValueError(f"Invalid value for theta {self.theta}")
 
@@ -203,9 +219,7 @@ def solve_time_evolution(scheme, f):
     sol[:, 0] = f(x_axis)
 
     for n in range(1, scheme.N + 1):
-        A, b = scheme.system(sol, n)
-
-        U = scipy.sparse.linalg.spsolve(scipy.sparse.csr_matrix(A), b)
+        U = scheme.step(sol, n)
 
         sol[:, n] = U
 

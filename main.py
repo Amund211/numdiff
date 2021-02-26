@@ -1,11 +1,11 @@
+import matplotlib.pyplot as plt
 import numpy as np
+
+from conditions import Dirichlet, Neumann
+from schemes import Euler, ThetaMethod, poisson, solve_time_evolution
 
 
 def test_poisson():
-    import matplotlib.pyplot as plt
-
-    from schemes import poisson
-
     def f(x):
         return np.cos(2 * np.pi * x) + x
 
@@ -30,11 +30,6 @@ def test_poisson():
 
 
 def test_heat_euler():
-    import matplotlib.pyplot as plt
-
-    from conditions import Dirichlet, Neumann
-    from schemes import Euler, solve_time_evolution
-
     M = 100
     N = 2000
     k = 1 / (M + 2) ** 2 / 2.5
@@ -64,13 +59,8 @@ def test_heat_euler():
 
 
 def test_heat_theta():
-    import matplotlib.pyplot as plt
-
-    from conditions import Dirichlet, Neumann
-    from schemes import ThetaMethod, solve_time_evolution
-
-    M = 1000
-    N = 200
+    M = 10000
+    N = 2000
     # k = 1 / (M + 2) ** 2 / 2.5
     k = 0.001
     theta = 1 / 2
