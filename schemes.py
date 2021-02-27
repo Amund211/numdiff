@@ -83,25 +83,40 @@ class Scheme:
         np.array of indicies that are not calculated by the scheme
         These are free to be used as conditions
         """
+
         raise NotImplementedError
 
     @cached_property
     def restricted_x_indicies(self):
         """Get the x axis indicies where this method has all its needed context"""
+
         unrestricted = np.arange(0, self.M + 2)
         return unrestricted[np.isin(unrestricted, self.free_indicies, invert=True)]
 
     def validate_r(self):
         """Validate that the method is convergent with the given r"""
-        raise NotImplementedError
 
-    def rhs(self, context, n):
         raise NotImplementedError
 
     def matrix(self):
+        """
+        A matrix representing the left hand side (t_n+1) of the discretized system
+        in time.
+        """
+
+        raise NotImplementedError
+
+    def rhs(self, context, n):
+        """
+        The right hand side (t_n) corresponding to the time discretized system given
+        by `.matrix()`
+        """
+
         raise NotImplementedError
 
     def operator(self):
+        """A matrix representing the discretized operator L_h"""
+
         raise NotImplementedError
 
     def get_constrained_rhs(self, context, n):
@@ -143,6 +158,7 @@ class Scheme:
 
     def apply_operator(self, context, n):
         """Apply the discretized operator in x to the values from timestep n"""
+
         rhs = self.get_csr_operator() @ context[:, n]
 
         return rhs[self.restricted_x_indicies]
