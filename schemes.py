@@ -11,12 +11,16 @@ from conditions import Condition, Neumann
 
 
 def central_difference(N, power=2):
-    diag = -2 * np.ones(N)
-    offdiag = np.ones(N - 1)
+    if power == 1:
+        ones = np.ones(N - 1)
+        return (np.diag(-ones, k=-1) + np.diag(ones, k=1)).astype(np.float64)
+    elif power == 2:
+        diag = -2 * np.ones(N)
+        offdiag = np.ones(N - 1)
 
-    return (np.diag(diag) + np.diag(offdiag, k=-1) + np.diag(offdiag, k=1)).astype(
-        np.float64
-    )
+        return (np.diag(diag) + np.diag(offdiag, k=-1) + np.diag(offdiag, k=1)).astype(
+            np.float64
+        )
 
 
 def poisson(f, M, condition_1, condition_2):
