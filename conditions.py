@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache
 from typing import Any
 
 import numpy as np
@@ -19,7 +19,7 @@ class Condition:
     def get_condition_value(self, t=None):
         return self.condition(t) if callable(self.condition) else self.condition
 
-    @lru_cache(maxsize=200)
+    @cache
     def get_vector(self, length, h):
         """Vector representing the equation"""
         raise NotImplementedError
@@ -31,7 +31,7 @@ class Condition:
 
 
 class Dirichlet(Condition):
-    @lru_cache(maxsize=200)
+    @cache
     def get_vector(self, length, **kwargs):
         eqn = np.zeros(length)
         eqn[self.m] = 1
@@ -42,7 +42,7 @@ class Dirichlet(Condition):
 class Neumann(Condition):
     order: int = 2  # Order of the neumann condition
 
-    @lru_cache(maxsize=200)
+    @cache
     def get_vector(self, length, h, **kwargs):
         eqn = np.zeros(length)
         if self.m == 0:

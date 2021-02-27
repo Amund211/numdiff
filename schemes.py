@@ -2,7 +2,7 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from functools import lru_cache
+from functools import cache
 
 import numpy as np
 import scipy.sparse.linalg
@@ -105,6 +105,7 @@ class Scheme:
 
         return b
 
+    @cache
     def get_constrained_matrix(self):
         assert len(self.conditions) == len(
             self.free_indicies
@@ -116,11 +117,11 @@ class Scheme:
             eqn = condition.get_vector(length=self.M + 2, h=self.h)
             A[index, :] = eqn
 
-        return A
+        return scipy.sparse.csc_matrix(A)
 
-    @lru_cache(maxsize=200)
+    @cache
     def get_solver(self):
-        sparse = scipy.sparse.csc_matrix(self.get_constrained_matrix())
+        sparse = self.get_constrained_matrix()
         if self.factorize:
             return scipy.sparse.linalg.factorized(sparse)
         else:
