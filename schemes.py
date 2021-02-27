@@ -2,7 +2,7 @@
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from functools import cache
+from functools import cache, cached_property
 
 import numpy as np
 import scipy.sparse.linalg
@@ -65,15 +65,15 @@ class Scheme:
         assert self.h >= 0
         self.validate_r()
 
-    @property
+    @cached_property
     def h(self):
         return 1 / (self.M + 1)
 
-    @property
+    @cached_property
     def r(self):
         return self.k / self.h ** 2
 
-    @property
+    @cached_property
     def free_indicies(self):
         """
         np.array of indicies that are not calculated by the scheme
@@ -81,7 +81,7 @@ class Scheme:
         """
         raise NotImplementedError
 
-    @property
+    @cached_property
     def restricted_x_indicies(self):
         """Get the x axis indicies where this method has all its needed context"""
         unrestricted = np.arange(0, self.M + 2)
@@ -133,9 +133,13 @@ class Scheme:
     def step(self, context, n):
         return self.get_solver()(self.get_constrained_rhs(context, n))
 
+    @cache
+    def get_csr_operator(self):
+        return scipy.sparse.csr_matrix(self.operator())
+
     def apply_operator(self, context, n):
         """Apply the discretized operator in x to the values from timestep n"""
-        rhs = self.operator() @ context[:, n]
+        rhs = self.get_csr_operator() @ context[:, n]
 
         return rhs[self.restricted_x_indicies]
 
@@ -147,7 +151,7 @@ def euler_scheme(context, m, n, r):
 
 
 class Euler(Scheme):
-    @property
+    @cached_property
     def free_indicies(self):
         return np.array((0, self.M + 1), dtype=np.int64)
 
@@ -182,7 +186,7 @@ class ThetaMethod(Scheme):
 
     theta: float
 
-    @property
+    @cached_property
     def free_indicies(self):
         return np.array((0, self.M + 1), dtype=np.int64)
 
