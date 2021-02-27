@@ -97,6 +97,9 @@ class Scheme:
     def matrix(self):
         raise NotImplementedError
 
+    def operator(self):
+        raise NotImplementedError
+
     def get_constrained_rhs(self, context, n):
         b = self.rhs(context, n)
         for condition, index in zip(self.conditions, self.free_indicies):
@@ -130,6 +133,12 @@ class Scheme:
     def step(self, context, n):
         return self.get_solver()(self.get_constrained_rhs(context, n))
 
+    def apply_operator(self, context, n):
+        """Apply the discretized operator in x to the values from timestep n"""
+        rhs = self.operator() @ context[:, n]
+
+        return rhs[self.restricted_x_indicies]
+
 
 def euler_scheme(context, m, n, r):
     # Return the rhs in the system of eqn to solve for x_m^n
@@ -151,15 +160,15 @@ class Euler(Scheme):
 
         rhs[self.restricted_x_indicies] = context[
             self.restricted_x_indicies, n - 1
-        ] + self.r * central_difference_operator(
-            context, self.restricted_x_indicies, n - 1, power=2
-        )
-
+        ] + self.k * self.apply_operator(context, n - 1)
         return rhs
 
     def matrix(self):
         # Euler is explicit, so no need to solve a system => identity
         return np.eye(self.M + 2)
+
+    def operator(self):
+        return central_difference(self.M + 2, power=2) / self.h ** 2
 
 
 @dataclass(frozen=True)
@@ -199,16 +208,15 @@ class ThetaMethod(Scheme):
 
         rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies, n - 1] + (
             1 - self.theta
-        ) * self.r * central_difference_operator(
-            context, self.restricted_x_indicies, n - 1, power=2
-        )
+        ) * self.k * self.apply_operator(context, n - 1)
 
         return rhs
 
     def matrix(self):
-        return np.eye(self.M + 2) - self.theta * self.r * central_difference(
-            self.M + 2, power=2
-        )
+        return np.eye(self.M + 2) - self.theta * self.k * self.operator()
+
+    def operator(self):
+        return central_difference(self.M + 2, power=2) / self.h ** 2
 
 
 def solve_time_evolution(scheme, f):
