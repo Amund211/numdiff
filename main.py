@@ -14,6 +14,8 @@ def test_poisson():
     sigma = 1
 
     def u(x):
+        # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
+        # Here: solved for left dirichlet and right neumann
         return (
             (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
             + x ** 3 / 6
