@@ -9,7 +9,7 @@ def test_poisson():
     def f(x):
         return np.cos(2 * np.pi * x) + x
 
-    M = 9
+    M = 10000
     alpha = 0
     sigma = 1
 
@@ -91,6 +91,6 @@ def test_heat_theta():
 
 
 if __name__ == "__main__":
-    # test_poisson()
+    test_poisson()
     # test_heat_euler()
-    test_heat_theta()
+    # test_heat_theta()

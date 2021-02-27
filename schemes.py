@@ -38,7 +38,7 @@ def poisson(f, M, alpha, sigma):
     A[-1, -3:] = (1 / (2 * h), -2 / h, 3 / (2 * h))
     f[-1] = sigma
 
-    U = np.linalg.solve(A, f)
+    U = scipy.sparse.linalg.spsolve(scipy.sparse.csc_matrix(A), f)
 
     return x, U
 
