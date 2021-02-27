@@ -16,7 +16,7 @@ class Condition:
     condition: Any  # Union[float, Callable[[int], float]]
     m: int
 
-    def get_condition_value(self, t):
+    def get_condition_value(self, t=None):
         return self.condition(t) if callable(self.condition) else self.condition
 
     @lru_cache(maxsize=200)
@@ -24,7 +24,7 @@ class Condition:
         """Vector representing the equation"""
         raise NotImplementedError
 
-    def get_scalar(self, t):
+    def get_scalar(self, t=None):
         """Scalar representing the rhs"""
         # Default implementation
         return self.get_condition_value(t)
@@ -47,20 +47,20 @@ class Neumann(Condition):
         eqn = np.zeros(length)
         if self.m == 0:
             if self.order == 1:
-                eqn[0:2] = np.array((-1, 1)) / h ** 2
+                eqn[0:2] = np.array((-1, 1)) / h
             elif self.order == 2:
-                eqn[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h ** 2
+                eqn[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h
             else:
                 raise ValueError
         elif self.m == length - 1:  # Last index
             if self.order == 1:
-                eqn[-2:] = np.array((-1, 1)) / h ** 2
+                eqn[-2:] = np.array((-1, 1)) / h
             elif self.order == 2:
-                eqn[-3:] = np.array((1 / 2, -2, 3 / 2)) / h ** 2
+                eqn[-3:] = np.array((1 / 2, -2, 3 / 2)) / h
             else:
                 raise ValueError
         else:
             # Order 2
-            eqn[self.m + 1] = 1 / h ** 2
-            eqn[self.m - 1] = -1 / h ** 2
+            eqn[self.m + 1] = 1 / h
+            eqn[self.m - 1] = -1 / h
         return eqn
