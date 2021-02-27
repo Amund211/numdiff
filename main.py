@@ -21,7 +21,12 @@ def test_poisson():
             + alpha
         )
 
-    x, U = poisson(f, M, alpha, sigma)
+    x, U = poisson(
+        f=f,
+        M=M,
+        condition_1=Dirichlet(condition=alpha, m=0),
+        condition_2=Neumann(condition=sigma, m=M + 1),
+    )
 
     plt.plot(x, U, label="U")
     plt.plot(x, u(x), label="u")
