@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from schemes import Euler, ThetaMethod, poisson, solve_time_evolution
+from poisson import poisson
+from schemes import Euler, ThetaMethod, solve_time_evolution
 
 
 def test_poisson():
