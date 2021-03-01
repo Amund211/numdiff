@@ -28,7 +28,10 @@ def test_poisson():
         f=f,
         M=M,
         condition_1=Dirichlet(condition=alpha, m=0),
+        # condition_1=Neumann(condition=sigma - 1 / 2, m=0),
         condition_2=Neumann(condition=sigma, m=M + 1),
+        maxiter=1e6,
+        explain_solution=True,
     )
 
     plt.plot(x, U, label="U")
@@ -69,8 +72,7 @@ def test_heat_euler():
 def test_heat_theta():
     M = 10000
     N = 2000
-    # k = 1 / (M + 2) ** 2 / 2.5
-    k = 0.001
+    k = 3.85e-05
     theta = 1 / 2
 
     def f(x):
