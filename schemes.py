@@ -55,6 +55,18 @@ def central_difference_operator(context, m, n, power=2):
 
 @dataclass(frozen=True)
 class Scheme:
+    """
+    A general scheme class for linear 1D time evolution equations u_t = Lu
+
+    Specify the discretization of the operator L, L_h, in `.operator()` as a matrix.
+    Specify the time discretization in `.matrix()` and `.rhs()`.
+
+    If the time discretization is explicit, the operator need not be linear.
+
+    Uses a direct method for solving the linear system, override `.get_solver()` to use
+    an iterative method. (ex.: scipy.sparse.linalg.cg)
+    """
+
     M: int
     N: int
     k: float
