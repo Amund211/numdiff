@@ -4,7 +4,7 @@ import numpy as np
 from conditions import Dirichlet, Neumann
 from equations import HeatEquation
 from poisson import poisson
-from schemes import Euler, ThetaMethod, solve_time_evolution
+from schemes import Euler, ThetaMethod
 
 
 def test_poisson():
@@ -65,7 +65,7 @@ def test_heat_euler():
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
 
-    x_axis, sol = solve_time_evolution(scheme, f)
+    x_axis, sol = scheme.solve(f)
 
     for n in range(0, N + 1, max(N // 10, 1)):
         plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")
@@ -99,7 +99,7 @@ def test_heat_theta():
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
 
-    x_axis, sol = solve_time_evolution(scheme, f)
+    x_axis, sol = scheme.solve(f)
 
     for n in range(0, N + 1, max(N // 10, 1)):
         plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")

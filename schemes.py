@@ -100,6 +100,22 @@ class Scheme:
     def step(self, context, n):
         return self.get_solver()(self.get_constrained_rhs(context, n))
 
+    def solve(self, f):
+        """
+        Solve the time evolution equation
+        """
+
+        sol = np.empty((self.M + 2, self.N + 1), dtype=np.float64)
+        x_axis = np.linspace(0, 1, self.M + 2)
+        sol[:, 0] = f(x_axis)
+
+        for n in range(1, self.N + 1):
+            U = self.step(sol, n)
+
+            sol[:, n] = U
+
+        return x_axis, sol
+
 
 class Euler(Scheme):
     def validate_r(self):
@@ -158,16 +174,3 @@ class ThetaMethod(Scheme):
 
     def matrix(self):
         return np.eye(self.M + 2) - self.theta * self.k * self.operator()
-
-
-def solve_time_evolution(scheme, f):
-    sol = np.empty((scheme.M + 2, scheme.N + 1), dtype=np.float64)
-    x_axis = np.linspace(0, 1, scheme.M + 2)
-    sol[:, 0] = f(x_axis)
-
-    for n in range(1, scheme.N + 1):
-        U = scheme.step(sol, n)
-
-        sol[:, n] = U
-
-    return x_axis, sol
