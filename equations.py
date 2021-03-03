@@ -38,12 +38,17 @@ class Equation:
     def get_csr_operator(self):
         return scipy.sparse.csr_matrix(self.operator())
 
-    def apply_operator(self, context, n):
-        """Apply the discretized operator in x to the values from timestep n"""
+    def apply_operator(self, v, restrict=True):
+        """Apply the discretized operator in x to the vector v"""
 
-        rhs = self.get_csr_operator() @ context[:, n]
+        res = self.get_csr_operator() @ v
 
-        return rhs[self.restricted_x_indicies]
+        return res[self.restricted_x_indicies] if restrict else res
+
+    def restrict(self, v):
+        """Restrict a vector to self.restricted_x_indicies"""
+
+        return v[self.restricted_x_indicies]
 
 
 class HeatEquation(Equation):
