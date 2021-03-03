@@ -29,6 +29,15 @@ class Condition:
         # Default implementation
         return self.get_condition_value(t)
 
+    def solve_restricted(self, v, length, h, t):
+        """Given a vector, solve for the value at `self.m`"""
+        restriction = self.get_vector(length, h)
+        weight = restriction[self.m]
+        restriction[self.m] = 0
+        lhs = np.dot(restriction, v)
+        rhs = self.get_scalar(t)
+        return (rhs - lhs) / weight
+
 
 class Dirichlet(Condition):
     @cache

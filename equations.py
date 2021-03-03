@@ -50,7 +50,9 @@ class Equation:
         if restrict:
             return res[self.restricted_x_indicies]
         else:
-            res[self.free_indicies] = 0
+            # Assumes independent conditions
+            for condition in self.conditions:
+                res[condition.m] = condition.solve_restricted(v, self.M + 2, self.h, t)
             return res
 
     def restrict(self, v):
