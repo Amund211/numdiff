@@ -68,3 +68,29 @@ class HeatEquation(Equation):
 
     def operator(self):
         return central_difference(self.M + 2, power=2) / self.h ** 2
+
+
+class InviscidBurgers(Equation):
+    @cached_property
+    def free_indicies(self):
+        return np.array((0, self.M + 1), dtype=np.int64)
+
+    @cache
+    def get_operator(self):
+        def operator(v):
+            res = np.empty((self.M + 2,), dtype=np.float64)
+            res[self.restricted_x_indicies] = -v[1:-1] / (2 * self.h) * (v[2:] - v[:-2])
+            return res
+
+        return operator
+
+
+class InviscidBurgers2(InviscidBurgers):
+    @cache
+    def get_operator(self):
+        def operator(v):
+            res = np.empty((self.M + 2,), dtype=np.float64)
+            res[self.restricted_x_indicies] = -(v[2:] ** 2 - v[:-2] ** 2) / (4 * self.h)
+            return res
+
+        return operator

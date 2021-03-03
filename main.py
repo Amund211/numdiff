@@ -2,9 +2,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from equations import HeatEquation
+from equations import HeatEquation, InviscidBurgers, InviscidBurgers2
 from poisson import poisson
-from schemes import Euler, ThetaMethod
+from schemes import RK4, Euler, ThetaMethod
+
+
+def solve_and_plot(scheme, f):
+    x_axis, sol = scheme.solve(f)
+
+    for n in range(0, scheme.N + 1, max(scheme.N // 10, 1)):
+        plt.plot(x_axis, sol[:, n], label=f"U(t={n*scheme.k:.3f}, n={n})")
+    plt.legend()
+    plt.show()
 
 
 def test_poisson():
@@ -65,12 +74,7 @@ def test_heat_euler():
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
 
-    x_axis, sol = scheme.solve(f)
-
-    for n in range(0, N + 1, max(N // 10, 1)):
-        plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")
-    plt.legend()
-    plt.show()
+    solve_and_plot(scheme, f)
 
 
 def test_heat_theta():
@@ -99,15 +103,67 @@ def test_heat_theta():
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
 
-    x_axis, sol = scheme.solve(f)
+    solve_and_plot(scheme, f)
 
-    for n in range(0, N + 1, max(N // 10, 1)):
-        plt.plot(x_axis, sol[:, n], label=f"U(t={n*k:.3f}, n={n})")
-    plt.legend()
-    plt.show()
+
+def test_heat_rk4():
+    M = 1000
+    N = 2000
+    N = 200
+    k = 3.85e-05
+
+    M = 100
+    N = 200000
+    k = 1 / (M + 2) ** 2 / 2.5
+
+    def f(x):
+        return 2 * np.pi * x + np.sin(2 * np.pi * x)
+
+    class HeatRK4(RK4, HeatEquation):
+        pass
+
+    scheme = HeatRK4(
+        M=M,
+        N=N,
+        k=k,
+        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
+    )
+
+    solve_and_plot(scheme, f)
+
+
+def test_burgers_rk4():
+    M = 1000
+    N = 2000
+    N = 200
+    k = 3.85e-05
+
+    M = 1000
+    N = 200000
+    k = 1 / (M + 2) ** 2 / 2.5
+
+    def f(x):
+        return np.exp(-400 * (x - 1 / 2) ** 2)
+
+    class BurgersRK4(Euler, InviscidBurgers):
+        pass
+
+    scheme = BurgersRK4(
+        M=M,
+        N=N,
+        k=k,
+        conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+    )
+
+    solve_and_plot(scheme, f)
 
 
 if __name__ == "__main__":
-    test_poisson()
+    # test_poisson()
     # test_heat_euler()
     # test_heat_theta()
+    # test_heat_rk4()
+    test_burgers_rk4()
