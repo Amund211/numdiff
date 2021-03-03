@@ -8,7 +8,6 @@ import numpy as np
 import scipy.sparse.linalg
 
 from conditions import Condition, Neumann
-from helpers import central_difference
 
 
 @dataclass(frozen=True)
@@ -16,7 +15,7 @@ class Scheme:
     """
     A general scheme class for linear 1D time evolution equations u_t = Lu
 
-    Specify the discretization of the operator L, L_h, in `.operator()` as a matrix.
+    Specify L by inheriting from an `Equation`
     Specify the time discretization in `.matrix()` and `.rhs()`.
 
     If the time discretization is explicit, the operator need not be linear.
@@ -47,22 +46,6 @@ class Scheme:
     def r(self):
         return self.k / self.h ** 2
 
-    @cached_property
-    def free_indicies(self):
-        """
-        np.array of indicies that are not calculated by the scheme
-        These are free to be used as conditions
-        """
-
-        raise NotImplementedError
-
-    @cached_property
-    def restricted_x_indicies(self):
-        """Get the x axis indicies where this method has all its needed context"""
-
-        unrestricted = np.arange(0, self.M + 2)
-        return unrestricted[np.isin(unrestricted, self.free_indicies, invert=True)]
-
     def validate_r(self):
         """Validate that the method is convergent with the given r"""
 
@@ -81,11 +64,6 @@ class Scheme:
         The right hand side (t_n) corresponding to the time discretized system given
         by `.matrix()`
         """
-
-        raise NotImplementedError
-
-    def operator(self):
-        """A matrix representing the discretized operator L_h"""
 
         raise NotImplementedError
 
@@ -122,23 +100,8 @@ class Scheme:
     def step(self, context, n):
         return self.get_solver()(self.get_constrained_rhs(context, n))
 
-    @cache
-    def get_csr_operator(self):
-        return scipy.sparse.csr_matrix(self.operator())
-
-    def apply_operator(self, context, n):
-        """Apply the discretized operator in x to the values from timestep n"""
-
-        rhs = self.get_csr_operator() @ context[:, n]
-
-        return rhs[self.restricted_x_indicies]
-
 
 class Euler(Scheme):
-    @cached_property
-    def free_indicies(self):
-        return np.array((0, self.M + 1), dtype=np.int64)
-
     def validate_r(self):
         assert self.r <= 1 / 2, f"r <= 1/2 <= {self.r} needed for convergence"
 
@@ -155,9 +118,6 @@ class Euler(Scheme):
         # Euler is explicit, so no need to solve a system => identity
         return np.eye(self.M + 2)
 
-    def operator(self):
-        return central_difference(self.M + 2, power=2) / self.h ** 2
-
 
 @dataclass(frozen=True)
 class ThetaMethod(Scheme):
@@ -169,10 +129,6 @@ class ThetaMethod(Scheme):
     """
 
     theta: float
-
-    @cached_property
-    def free_indicies(self):
-        return np.array((0, self.M + 1), dtype=np.int64)
 
     def validate_r(self):
         if 1 / 2 <= self.theta <= 1:
@@ -202,9 +158,6 @@ class ThetaMethod(Scheme):
 
     def matrix(self):
         return np.eye(self.M + 2) - self.theta * self.k * self.operator()
-
-    def operator(self):
-        return central_difference(self.M + 2, power=2) / self.h ** 2
 
 
 def solve_time_evolution(scheme, f):

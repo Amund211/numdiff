@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
+from equations import HeatEquation
 from poisson import poisson
 from schemes import Euler, ThetaMethod, solve_time_evolution
 
@@ -51,7 +52,10 @@ def test_heat_euler():
     # def f(x):
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
-    scheme = Euler(
+    class HeatEuler(Euler, HeatEquation):
+        pass
+
+    scheme = HeatEuler(
         M=M,
         N=N,
         k=k,
@@ -81,7 +85,10 @@ def test_heat_theta():
     # def f(x):
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
-    scheme = ThetaMethod(
+    class HeatTheta(ThetaMethod, HeatEquation):
+        pass
+
+    scheme = HeatTheta(
         M=M,
         N=N,
         k=k,
