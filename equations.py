@@ -10,7 +10,7 @@ class Equation:
     """
     Specify the discretization of the operator L, L_h, in `.operator()` as a matrix.
 
-    If the operator isn't linear you can override `.apply_operator()`
+    If the operator isn't linear you can override `.get_operator()`
     """
 
     @cached_property
@@ -35,15 +35,23 @@ class Equation:
         raise NotImplementedError
 
     @cache
-    def get_csr_operator(self):
-        return scipy.sparse.csr_matrix(self.operator())
+    def get_operator(self):
+        """
+        Return a function that applies the operator to a given vector
+        """
+        sparse = scipy.sparse.csr_matrix(self.operator())
+        return lambda v: sparse @ v
 
-    def apply_operator(self, v, restrict=True):
+    def apply_operator(self, n, v, restrict=True):
         """Apply the discretized operator in x to the vector v"""
 
-        res = self.get_csr_operator() @ v
+        res = self.get_operator()(v)
 
-        return res[self.restricted_x_indicies] if restrict else res
+        if restrict:
+            return res[self.restricted_x_indicies]
+        else:
+            res[self.free_indicies] = 0
+            return res
 
     def restrict(self, v):
         """Restrict a vector to self.restricted_x_indicies"""

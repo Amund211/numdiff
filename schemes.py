@@ -127,7 +127,7 @@ class Euler(Scheme):
 
         rhs[self.restricted_x_indicies] = context[
             self.restricted_x_indicies, n - 1
-        ] + self.k * self.apply_operator(context[:, n - 1])
+        ] + self.k * self.apply_operator(n, context[:, n - 1])
         return rhs
 
     def matrix(self):
@@ -168,7 +168,7 @@ class ThetaMethod(Scheme):
 
         rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies, n - 1] + (
             1 - self.theta
-        ) * self.k * self.apply_operator(context[:, n - 1])
+        ) * self.k * self.apply_operator(n, context[:, n - 1])
 
         return rhs
 
