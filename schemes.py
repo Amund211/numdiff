@@ -174,3 +174,37 @@ class ThetaMethod(Scheme):
 
     def matrix(self):
         return np.eye(self.M + 2) - self.theta * self.k * self.operator()
+
+
+class RK4(Scheme):
+    def validate_r(self):
+        # IDK
+        assert self.r <= 1 / 2, f"r <= 1/2 <= {self.r} needed for convergence"
+
+    def rhs(self, context, n):
+        rhs = np.empty((self.M + 2,), dtype=np.float64)
+        rhs[self.free_indicies] = 0
+
+        k_1 = self.apply_operator(n, context[:, n - 1], restrict=False)
+        k_2 = self.apply_operator(
+            n + self.k / 2,
+            context[:, n - 1] + self.k / 2 * k_1,
+            restrict=False,
+        )
+        k_3 = self.apply_operator(
+            n + self.k / 2,
+            context[:, n - 1] + self.k / 2 * k_2,
+            restrict=False,
+        )
+        k_4 = self.apply_operator(
+            n + self.k, context[:, n - 1] + self.k * k_3, restrict=False
+        )
+
+        rhs[self.restricted_x_indicies] = context[
+            self.restricted_x_indicies, n - 1
+        ] + self.k / 6 * self.restrict(k_1 + 2 * k_2 + 2 * k_3 + k_4)
+
+        return rhs
+
+    def matrix(self):
+        return np.eye(self.M + 2)
