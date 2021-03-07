@@ -94,3 +94,25 @@ class InviscidBurgers2(InviscidBurgers):
             return res
 
         return operator
+
+
+class PeriodicKdV(Equation):
+    """Linearized Korteweg-deVries with periodic boundary condition with period 2"""
+
+    @cached_property
+    def free_indicies(self):
+        return np.array([], dtype=np.int64)
+
+    def operator(self):
+        d3 = np.zeros((self.M + 2,))
+        d3[0:7] = (-1, 0, 3, 0, -3, 0, 1)
+        d1 = np.zeros((self.M + 2,))
+        d1[0:7] = (0, 0, -1, 0, 1, 0, 0)
+
+        single_operator = -d3 - (1 + np.pi ** 2) * d1
+        zero_indexed = np.roll(single_operator, -3)
+
+        # Apply periodicity
+        operator = np.array([np.roll(zero_indexed, i) for i in range(self.M + 2)])
+
+        return operator

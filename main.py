@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from equations import HeatEquation, InviscidBurgers, InviscidBurgers2
+from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from poisson import poisson
 from schemes import RK4, Euler, ThetaMethod
 
@@ -148,7 +148,7 @@ def test_burgers_rk4():
     def f(x):
         return np.exp(-400 * (x - 1 / 2) ** 2)
 
-    class BurgersRK4(Euler, InviscidBurgers):
+    class BurgersRK4(RK4, InviscidBurgers):
         pass
 
     scheme = BurgersRK4(
@@ -161,9 +161,37 @@ def test_burgers_rk4():
     solve_and_plot(scheme, f)
 
 
+def test_KdV():
+    M = 1000
+    N = 2000
+    N = 20000
+    k = 1e-3
+
+    # M = 1000
+    # N = 200000
+    # k = 1 / (M + 2) ** 2 / 2.5
+
+    def f(x):
+        return np.sin(np.pi * (2 * (x - 1 / 2)))
+
+    class KdVTheta(ThetaMethod, PeriodicKdV):
+        pass
+
+    scheme = KdVTheta(
+        M=M - 1,
+        N=N,
+        k=k,
+        conditions=(),
+        theta=1 / 2,  # 1/2 => CN
+    )
+
+    solve_and_plot(scheme, f)
+
+
 if __name__ == "__main__":
     # test_poisson()
     # test_heat_euler()
     # test_heat_theta()
     # test_heat_rk4()
-    test_burgers_rk4()
+    # test_burgers_rk4()
+    test_KdV()
