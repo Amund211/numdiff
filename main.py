@@ -7,12 +7,30 @@ from poisson import poisson
 from schemes import RK4, Euler, ThetaMethod
 
 
-def solve_and_plot(scheme, f):
+def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     x_axis, sol = scheme.solve(f)
 
-    for n in range(0, scheme.N + 1, max(scheme.N // 10, 1)):
-        plt.plot(x_axis, sol[:, n], label=f"U(t={n*scheme.k:.3f}, n={n})")
+    plot_x_axis = transform_x(x_axis) if callable(transform_x) else x_axis
+
+    step_size = max(scheme.N // 10, 1)
+    for i in range(0, (scheme.N + 1) // step_size):
+        n = i * step_size
+        color = f"C{i % 10}"
+        plt.plot(
+            plot_x_axis, sol[:, n], label=f"U(t={n*scheme.k:.3f}, n={n})", color=color
+        )
+
+        if analytic is not None:
+            plt.plot(
+                plot_x_axis,
+                analytic(n * scheme.k, x_axis),
+                label=f"u(t={n*scheme.k:.3f})",
+                linestyle="dashed",
+                color=color,
+            )
+
     plt.legend()
+    plt.grid()
     plt.show()
 
 
@@ -162,17 +180,23 @@ def test_burgers_rk4():
 
 
 def test_KdV():
-    M = 1000
+    M = 10000
     N = 2000
     N = 20000
-    k = 1e-3
+    k = 1e-4
 
     # M = 1000
     # N = 200000
     # k = 1 / (M + 2) ** 2 / 2.5
 
+    def transform_x(x):
+        return 2 * (x - 1 / 2)
+
     def f(x):
-        return np.sin(np.pi * (2 * (x - 1 / 2)))
+        return np.sin(np.pi * transform_x(x))
+
+    def analytic(t, x):
+        return np.sin(np.pi * (transform_x(x) - t))
 
     class KdVTheta(ThetaMethod, PeriodicKdV):
         pass
@@ -185,7 +209,7 @@ def test_KdV():
         theta=1 / 2,  # 1/2 => CN
     )
 
-    solve_and_plot(scheme, f)
+    solve_and_plot(scheme, f, analytic, transform_x)
 
 
 if __name__ == "__main__":
