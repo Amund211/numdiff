@@ -20,7 +20,6 @@ class Condition:
     def get_condition_value(self, t=None):
         return self.condition(t) if callable(self.condition) else self.condition
 
-    @cache
     def get_vector(self, length, h):
         """Vector representing the equation"""
         raise NotImplementedError
@@ -32,16 +31,19 @@ class Condition:
 
     def solve_restricted(self, v, length, h, t):
         """Given a vector, solve for the value at `self.m`"""
-        restriction = self.get_vector(length, h)
+
+        restriction = self.get_vector(length, h=h)
         weight = restriction[self.m]
+        assert weight != 0, "Cannot solve for this index when its weight is 0"
+
         restriction[self.m] = 0
         lhs = np.dot(restriction, v)
         rhs = self.get_scalar(t)
+
         return (rhs - lhs) / weight
 
 
 class Dirichlet(Condition):
-    @cache
     def get_vector(self, length, **kwargs):
         eqn = np.zeros(length)
         eqn[self.m] = 1
@@ -52,7 +54,6 @@ class Dirichlet(Condition):
 class Neumann(Condition):
     order: int = 2  # Order of the neumann condition
 
-    @cache
     def get_vector(self, length, h, **kwargs):
         eqn = np.zeros(length)
         if self.m == 0:
