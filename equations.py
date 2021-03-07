@@ -52,7 +52,9 @@ class Equation:
         else:
             # Assumes independent conditions
             for condition in self.conditions:
-                res[condition.m] = condition.solve_restricted(v, self.M + 2, self.h, t)
+                res[condition.m] = condition.solve_restricted(
+                    v, self.M + 2, self.h, n * self.k
+                )
             return res
 
     def restrict(self, v):
