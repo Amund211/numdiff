@@ -103,22 +103,27 @@ class PeriodicKdV(Equation):
 
     @cached_property
     def free_indicies(self):
-        return np.array([], dtype=np.int64)
+        return np.array([self.M + 1], dtype=np.int64)
 
     def operator(self):
         # Since the equation is on [-1, 1] we introduce a shift in x: 2 * (x-1/2) to
         # solve it on [0, 1] instead. By solving this alternate diff. eqn we introduce a
         # factor 2 for each power of the derivative, so we divide the operator by 2**p.
 
-        d3 = np.zeros((self.M + 2,))
+        d3 = np.zeros((self.M + 1,))
         d3[0:7] = np.array((-1, 0, 3, 0, -3, 0, 1)) / (8 * self.h ** 3) / 2 ** 3
-        d1 = np.zeros((self.M + 2,))
+        d1 = np.zeros((self.M + 1,))
         d1[0:7] = np.array((0, 0, -1, 0, 1, 0, 0)) / (2 * self.h) / 2
 
         single_operator = -d3 - (1 + np.pi ** 2) * d1
         zero_indexed = np.roll(single_operator, -3)
 
         # Apply periodicity
-        operator = np.array([np.roll(zero_indexed, i) for i in range(self.M + 2)])
+        operator = np.array([np.roll(zero_indexed, i) for i in range(self.M + 1)])
 
-        return operator
+        # Embed in M+2 matrix
+        matrix = np.zeros((self.M + 2, self.M + 2), dtype=np.float64)
+        matrix[: self.M + 1, : self.M + 1] = operator
+        matrix[self.M + 1, :] = matrix[0, :]  # 2-periodicity
+
+        return matrix

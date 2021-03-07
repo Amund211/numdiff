@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from conditions import Dirichlet, Neumann
+from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from poisson import poisson
 from schemes import RK4, Euler, ThetaMethod
@@ -32,6 +32,8 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     plt.legend()
     plt.grid()
     plt.show()
+
+    return sol
 
 
 def test_poisson():
@@ -205,11 +207,12 @@ def test_KdV():
         M=M - 1,
         N=N,
         k=k,
-        conditions=(),
+        conditions=(Periodic(m=0, period=M),),
         theta=1 / 2,  # 1/2 => CN
     )
 
-    solve_and_plot(scheme, f, analytic, transform_x)
+    solution = solve_and_plot(scheme, f, analytic, transform_x)
+    assert np.allclose(solution[0, :], solution[M, :]), "Solution must be periodic"
 
 
 if __name__ == "__main__":
