@@ -1,6 +1,5 @@
 from collections.abc import Callable
 from dataclasses import dataclass
-from functools import cache
 from typing import Union
 
 import numpy as np
@@ -14,8 +13,8 @@ class Condition:
     NOTE: The vector returned from `.get_vector` must be constant
     """
 
-    condition: Union[float, Callable[[float], float]]
     m: int
+    condition: Union[float, Callable[[float], float]]
 
     def get_condition_value(self, t=None):
         return self.condition(t) if callable(self.condition) else self.condition
@@ -74,4 +73,16 @@ class Neumann(Condition):
             # Order 2
             eqn[self.m + 1] = 1 / h
             eqn[self.m - 1] = -1 / h
+        return eqn
+
+
+@dataclass(frozen=True)
+class Periodic(Condition):
+    condition: Union[float, Callable[[float], float]] = 0
+    period: int = 1
+
+    def get_vector(self, length, **kwargs):
+        eqn = np.zeros(length)
+        eqn[self.m] = 1
+        eqn[self.m + self.period] = -1
         return eqn
