@@ -1,6 +1,7 @@
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import cache
-from typing import Any
+from typing import Union
 
 import numpy as np
 
@@ -13,7 +14,7 @@ class Condition:
     NOTE: The vector returned from `.get_vector` must be constant
     """
 
-    condition: Any  # Union[float, Callable[[int], float]]
+    condition: Union[float, Callable[[float], float]]
     m: int
 
     def get_condition_value(self, t=None):
