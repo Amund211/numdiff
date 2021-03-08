@@ -1,16 +1,11 @@
 # https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_1.pdf
 
-from collections.abc import Iterable
-from dataclasses import dataclass
-from functools import cache, cached_property
+from functools import cache
 
 import numpy as np
 import scipy.sparse.linalg
 
-from conditions import Condition
 
-
-@dataclass(frozen=True)
 class Scheme:
     """
     A general scheme class for linear 1D time evolution equations u_t = Lu
@@ -24,23 +19,17 @@ class Scheme:
     an iterative method. (ex.: scipy.sparse.linalg.cg)
     """
 
-    M: int
-    N: int
-    k: float
+    def __init__(self, *, k, N, factorize=True, **kwargs):
+        self.k = k
+        self.N = N
+        # Whether the step matrix should be factorized, set to False if it often changes
+        self.factorize = factorize
 
-    conditions: Iterable[Condition]
+        super().__init__(**kwargs)
 
-    # Whether the step matrix should be factorized, set to False if it often changes
-    factorize = True
-
-    def __post_init__(self):
-        assert self.k >= 0
-        assert self.h >= 0
+        assert self.k > 0
+        assert self.N > 0
         self.validate_params()
-
-    @cached_property
-    def h(self):
-        return 1 / (self.M + 1)
 
     def validate_params(self):
         """Validate that the method is convergent with the given parameters"""
@@ -128,7 +117,6 @@ class Euler(Scheme):
         return np.eye(self.M + 2)
 
 
-@dataclass(frozen=True)
 class ThetaMethod(Scheme):
     """
     The theta method
@@ -137,7 +125,9 @@ class ThetaMethod(Scheme):
     theta=1 => implicit euler
     """
 
-    theta: float
+    def __init__(self, *, theta, **kwargs):
+        self.theta = theta
+        super().__init__(**kwargs)
 
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)

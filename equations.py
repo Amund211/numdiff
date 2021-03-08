@@ -13,6 +13,17 @@ class Equation:
     If the operator isn't linear you can override `.get_operator()`
     """
 
+    def __init__(self, *, M, conditions, **kwargs):
+        self.M = M
+        self.conditions = conditions
+        super().__init__(**kwargs)
+
+        assert self.M > 0
+
+    @cached_property
+    def h(self):
+        return 1 / (self.M + 1)
+
     @cached_property
     def free_indicies(self):
         """
