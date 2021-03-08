@@ -82,7 +82,9 @@ def test_heat_euler():
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
     class HeatEuler(Euler, HeatEquation):
-        pass
+        def validate_params(self):
+            r = self.k / self.h ** 2
+            assert r <= 1 / 2, f"r <= 1/2 <= {r} needed for convergence"
 
     scheme = HeatEuler(
         M=M,
@@ -110,7 +112,22 @@ def test_heat_theta():
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
     class HeatTheta(ThetaMethod, HeatEquation):
-        pass
+        def validate_params(self):
+            if 1 / 2 <= self.theta <= 1:
+                # All r >= 0
+                return
+            elif 0 <= self.theta < 1 / 2:
+                r = self.k / self.h ** 2
+                eta = 0
+                for condition in self.conditions:
+                    if isinstance(condition, Neumann):
+                        eta = max(eta, abs(condition.condition))
+
+                assert r <= 1 / (
+                    2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
+                ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {r} needed for convergence"
+            else:
+                raise ValueError(f"Invalid value for theta {self.theta}")
 
     scheme = HeatTheta(
         M=M,

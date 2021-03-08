@@ -7,7 +7,7 @@ from functools import cache, cached_property
 import numpy as np
 import scipy.sparse.linalg
 
-from conditions import Condition, Neumann
+from conditions import Condition
 
 
 @dataclass(frozen=True)
@@ -36,20 +36,16 @@ class Scheme:
     def __post_init__(self):
         assert self.k >= 0
         assert self.h >= 0
-        self.validate_r()
+        self.validate_params()
 
     @cached_property
     def h(self):
         return 1 / (self.M + 1)
 
-    @cached_property
-    def r(self):
-        return self.k / self.h ** 2
+    def validate_params(self):
+        """Validate that the method is convergent with the given parameters"""
 
-    def validate_r(self):
-        """Validate that the method is convergent with the given r"""
-
-        raise NotImplementedError
+        pass
 
     def matrix(self):
         """
@@ -118,9 +114,6 @@ class Scheme:
 
 
 class Euler(Scheme):
-    def validate_r(self):
-        assert self.r <= 1 / 2, f"r <= 1/2 <= {self.r} needed for convergence"
-
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
         rhs[self.free_indicies] = 0
@@ -146,22 +139,6 @@ class ThetaMethod(Scheme):
 
     theta: float
 
-    def validate_r(self):
-        if 1 / 2 <= self.theta <= 1:
-            # All r >= 0
-            return
-        elif 0 <= self.theta < 1 / 2:
-            eta = 0
-            for condition in self.conditions:
-                if isinstance(condition, Neumann):
-                    eta = max(eta, abs(condition.condition))
-
-            assert self.r <= 1 / (
-                2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
-            ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {self.r} needed for convergence"
-        else:
-            raise ValueError(f"Invalid value for theta {self.theta}")
-
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
         rhs[self.free_indicies] = 0
@@ -177,10 +154,6 @@ class ThetaMethod(Scheme):
 
 
 class RK4(Scheme):
-    def validate_r(self):
-        # IDK
-        assert self.r <= 1 / 2, f"r <= 1/2 <= {self.r} needed for convergence"
-
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
         rhs[self.free_indicies] = 0
