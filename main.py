@@ -40,7 +40,7 @@ def test_poisson():
     def f(x):
         return np.cos(2 * np.pi * x) + x
 
-    M = 10000
+    M = 1000
     alpha = 0
     sigma = 1
 
@@ -100,7 +100,7 @@ def test_heat_euler():
 
 
 def test_heat_theta():
-    M = 10000
+    M = 1000
     N = 2000
     k = 3.85e-05
     theta = 1 / 2
@@ -150,7 +150,7 @@ def test_heat_rk4():
     k = 3.85e-05
 
     M = 100
-    N = 200000
+    N = 2000
     k = 1 / (M + 2) ** 2 / 2.5
 
     def f(x):
@@ -173,14 +173,16 @@ def test_heat_rk4():
 
 
 def test_burgers_rk4():
-    M = 1000
-    N = 2000
-    N = 200
-    k = 3.85e-05
-
+    # These parameters show breaking at about t = 0.056
     M = 1000
     N = 200000
     k = 1 / (M + 2) ** 2 / 2.5
+
+    # Parameters that run a bit faster
+    M = 1000
+    N = 2000
+    N = 700
+    k = 0.0001
 
     def f(x):
         return np.exp(-400 * (x - 1 / 2) ** 2)
@@ -204,9 +206,9 @@ def test_KdV():
     N = 20000
     k = 1e-4
 
-    # M = 1000
-    # N = 200000
-    # k = 1 / (M + 2) ** 2 / 2.5
+    M = 1000
+    N = 2000
+    k = 1e-3
 
     def transform_x(x):
         return 2 * (x - 1 / 2)
@@ -233,9 +235,9 @@ def test_KdV():
 
 
 if __name__ == "__main__":
-    # test_poisson()
-    # test_heat_euler()
-    # test_heat_theta()
-    # test_heat_rk4()
-    # test_burgers_rk4()
+    test_poisson()
+    test_heat_euler()
+    test_heat_theta()
+    test_heat_rk4()
+    test_burgers_rk4()
     test_KdV()
