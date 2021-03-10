@@ -1,6 +1,12 @@
 import numpy as np
 
 
+def embed(array, length):
+    embedded = np.zeros(length)
+    embedded[: array.shape[0]] = array
+    return embedded
+
+
 def central_difference(N, power=2):
     if power == 1:
         ones = np.ones(N - 1)
