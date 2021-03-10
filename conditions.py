@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Union
+from typing import Any
 
 import numpy as np
 
@@ -14,7 +14,6 @@ class Condition:
     """
 
     m: int
-    condition: Union[float, Callable[[float], float]]
 
     def get_condition_value(self, t=None):
         return self.condition(t) if callable(self.condition) else self.condition
@@ -42,7 +41,10 @@ class Condition:
         return (rhs - lhs) / weight
 
 
+@dataclass(frozen=True)
 class Dirichlet(Condition):
+    condition: Any  # Union[float, Callable[[float], float]]
+
     def get_vector(self, length, **kwargs):
         eqn = np.zeros(length)
         eqn[self.m] = 1
@@ -51,6 +53,7 @@ class Dirichlet(Condition):
 
 @dataclass(frozen=True)
 class Neumann(Condition):
+    condition: Any  # Union[float, Callable[[float], float]]
     order: int = 2  # Order of the neumann condition
 
     def get_vector(self, length, h, **kwargs):
@@ -78,11 +81,13 @@ class Neumann(Condition):
 
 @dataclass(frozen=True)
 class Periodic(Condition):
-    condition: Union[float, Callable[[float], float]] = 0
-    period: int = 1
+    period: int
 
     def get_vector(self, length, **kwargs):
         eqn = np.zeros(length)
         eqn[self.m] = 1
         eqn[self.m + self.period] = -1
         return eqn
+
+    def get_scalar(self, t=None):
+        return 0
