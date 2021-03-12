@@ -65,7 +65,7 @@ class Neumann(Condition):
                 eqn[0:3] = np.array((-3 / 2, 2, -1 / 2)) / h
             else:
                 raise ValueError
-        elif self.m == length - 1:  # Last index
+        elif self.m == -1 or self.m == length - 1:  # Last index
             if self.order == 1:
                 eqn[-2:] = np.array((-1, 1)) / h
             elif self.order == 2:

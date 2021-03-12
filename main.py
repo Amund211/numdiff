@@ -58,8 +58,9 @@ def test_poisson():
         f=f,
         M=M,
         condition_1=Dirichlet(condition=alpha, m=0),
+        condition_2=Dirichlet(condition=beta, m=-1),
         # condition_1=Neumann(condition=sigma - 1 / 2, m=0),
-        condition_2=Neumann(condition=sigma, m=M + 1),
+        # condition_2=Neumann(condition=sigma, m=-1),
         maxiter=1e6,
         explain_solution=True,
     )
@@ -90,10 +91,10 @@ def test_heat_euler():
         M=M,
         N=N,
         k=k,
-        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
-        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
-        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
-        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
+        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=-1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=-1)),
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=-1,
+        # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=-1,
     )
 
     solve_and_plot(scheme, f)
@@ -134,8 +135,8 @@ def test_heat_theta():
         N=N,
         k=k,
         theta=theta,
-        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
-        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=-1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=-1)),
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
@@ -163,8 +164,8 @@ def test_heat_rk4():
         M=M,
         N=N,
         k=k,
-        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=M + 1)),
-        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        conditions=(Neumann(condition=0, m=0), Neumann(condition=0, m=-1)),
+        # conditions=(Neumann(condition=0, m=0), Dirichlet(condition=0, m=-1)),
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M+1)),
         # conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=2*np.pi, m=M+1)),
     )
@@ -194,7 +195,7 @@ def test_burgers_rk4():
         M=M,
         N=N,
         k=k,
-        conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=M + 1)),
+        conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=-1)),
     )
 
     solve_and_plot(scheme, f)
