@@ -3,7 +3,7 @@ import numpy as np
 
 from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
-from poisson import poisson
+from poisson import amr, poisson
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -43,9 +43,17 @@ def test_poisson():
     M = 1000
     alpha = 0
     sigma = 1
+    beta = 0
 
     def u(x):
         # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
+        # Here: solved for left dirichlet and right dirichlet
+        return (
+            (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
+            + x ** 3 / 6
+            + (beta - 1 / 6) * x
+            + alpha
+        )
         # Here: solved for left dirichlet and right neumann
         return (
             (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
@@ -54,7 +62,7 @@ def test_poisson():
             + alpha
         )
 
-    x, U = poisson(
+    x_uniform, U_uniform = poisson(
         f=f,
         M=M,
         condition_1=Dirichlet(condition=alpha, m=0),
@@ -64,9 +72,21 @@ def test_poisson():
         maxiter=1e6,
         explain_solution=True,
     )
+    plt.plot(x_uniform, U_uniform, label="$U_{uniform}$")
 
-    plt.plot(x, U, label="U")
+    x_adaptive, U_adaptive = amr(
+        f=f,
+        u=u,
+        condition_1=Dirichlet(condition=alpha, m=0),
+        condition_2=Dirichlet(condition=beta, m=-1),
+        amt_points=M,
+    )
+    plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")
+
+    M = 10000
+    x = np.arange(0, M + 2).astype(np.float64) * 1 / (M + 1)
     plt.plot(x, u(x), label="u")
+
     plt.legend()
     plt.show()
 
