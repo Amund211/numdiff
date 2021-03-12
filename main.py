@@ -65,10 +65,7 @@ def test_poisson():
     x_uniform, U_uniform = poisson(
         f=f,
         M=M,
-        condition_1=Dirichlet(condition=alpha, m=0),
-        condition_2=Dirichlet(condition=beta, m=-1),
-        # condition_1=Neumann(condition=sigma - 1 / 2, m=0),
-        # condition_2=Neumann(condition=sigma, m=-1),
+        conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
         maxiter=1e6,
         explain_solution=True,
     )
@@ -77,8 +74,7 @@ def test_poisson():
     x_adaptive, U_adaptive = amr(
         f=f,
         u=u,
-        condition_1=Dirichlet(condition=alpha, m=0),
-        condition_2=Dirichlet(condition=beta, m=-1),
+        conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
         amt_points=M,
     )
     plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")

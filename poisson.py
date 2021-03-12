@@ -27,8 +27,9 @@ explain_istop = {
 bad_istops = (3, 6, 7)
 
 
-def poisson(f, M, condition_1, condition_2, maxiter=1e6, explain_solution=True):
-    assert M >= 4
+def poisson(f, M, conditions, maxiter=1e6, explain_solution=True):
+    assert M >= 1
+    assert len(conditions) == 2
 
     h = 1 / (M + 1)
     A = central_difference(M + 2, power=2) / h ** 2
@@ -37,15 +38,15 @@ def poisson(f, M, condition_1, condition_2, maxiter=1e6, explain_solution=True):
     x = np.arange(0, M + 2).astype(np.float64) * h
     f = f(x)
 
-    A[0, :] = condition_1.get_vector(length=M + 2, h=h)
-    f[0] = condition_1.get_scalar()
-
-    A[-1, :] = condition_2.get_vector(length=M + 2, h=h)
-    f[-1] = condition_2.get_scalar()
+    for condition in conditions:
+        vector = condition.get_vector(length=M + 2, h=h)
+        context = np.nonzero(vector)
+        A[condition.m, context] = vector[context]
+        f[condition.m] = condition.get_scalar()
 
     sparse = scipy.sparse.csc_matrix(A)
 
-    if isinstance(condition_1, Neumann) and isinstance(condition_2, Neumann):
+    if isinstance(conditions[0], Neumann) and isinstance(conditions[1], Neumann):
         # Ill posed equation -> use a least squares solution instead
         # The norms of A and f scale rapidly with M, so we set the tolerance to
         # machine precision, and limit ourselves to `iter_lim` iterations
@@ -99,7 +100,7 @@ def has_uniform_steps(x, indicies):
     return np.allclose(steps[indicies], steps[indicies[0]])
 
 
-def poisson_4_point(f, x, condition_1, condition_2):
+def poisson_4_point(f, x, conditions):
     """
     Solve Poisson's equation on the mesh x
 
@@ -114,8 +115,9 @@ def poisson_4_point(f, x, condition_1, condition_2):
     https://doi.org/10.1016/0307-904X(94)00020-7.
     """
     assert has_uniform_steps(x, (0, 1)), "First two spaces must be of equal length"
-    assert not isinstance(condition_1, Neumann) or not isinstance(
-        condition_2, Neumann
+    assert len(conditions) == 2
+    assert not isinstance(conditions[0], Neumann) or not isinstance(
+        conditions[1], Neumann
     ), "The problem is ill posed"
 
     length = x.shape[0]
@@ -146,7 +148,6 @@ def poisson_4_point(f, x, condition_1, condition_2):
 
     f = f(x)
 
-    conditions = (condition_1, condition_2)
     steps = x[1:] - x[:-1]
     for condition in conditions:
         vector = condition.get_vector(length=length, h=steps[condition.m])
@@ -166,13 +167,13 @@ def poisson_4_point(f, x, condition_1, condition_2):
     return x, U
 
 
-def amr(f, u, condition_1, condition_2, amt_points):
+def amr(f, u, conditions, amt_points):
     x = np.array((0, 0.5, 1), dtype=np.float64)
     to_refine = np.array((), dtype=np.int32)
 
     while x.shape[0] < amt_points:
         x = refine_symmetric(x, to_refine)
-        x, U = poisson_4_point(f, x, condition_1, condition_2)
+        x, U = poisson_4_point(f, x, conditions)
         err = np.abs(u(x) - U)
         max_err = np.max(err)
         to_refine = np.flatnonzero(err > 0.7 * max_err)
