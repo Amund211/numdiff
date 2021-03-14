@@ -75,7 +75,7 @@ def test_poisson():
         f=f,
         u=u,
         conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
-        amt_points=M,
+        amt_points_target=M,
     )
     plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")
 

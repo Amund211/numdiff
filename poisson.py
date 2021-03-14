@@ -166,11 +166,11 @@ def poisson_4_point(f, x, conditions):
     return x, U
 
 
-def amr(f, u, conditions, amt_points):
+def amr(f, u, conditions, amt_points_target):
     x = np.array((0, 0.5, 1), dtype=np.float64)
     to_refine = np.array((), dtype=np.int32)
 
-    while x.shape[0] < amt_points:
+    while x.shape[0] < amt_points_target:
         x = refine_symmetric(x, to_refine)
         x, U = poisson_4_point(f, x, conditions)
         err = np.abs(u(x) - U)
