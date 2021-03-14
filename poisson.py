@@ -40,8 +40,7 @@ def poisson(f, M, conditions, maxiter=1e6, explain_solution=True):
 
     for condition in conditions:
         vector = condition.get_vector(length=M + 2, h=h)
-        context = np.nonzero(vector)
-        A[condition.m, context] = vector[context]
+        A[condition.m, :] = vector
         f[condition.m] = condition.get_scalar()
 
     sparse = scipy.sparse.csc_matrix(A)
@@ -157,7 +156,7 @@ def poisson_4_point(f, x, conditions):
             x, indicies
         ), "Step sizes for boundary conditions must be uniform"
 
-        A[condition.m, context] = vector[context]
+        A[condition.m, :] = vector
         f[condition.m] = condition.get_scalar()
 
     sparse = scipy.sparse.csc_matrix(A)
