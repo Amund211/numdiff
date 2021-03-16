@@ -25,13 +25,13 @@ def calculate_relative_discrete_l2(x, analytical, numerical):
     return relative_discrete_l2(analytical(x), numerical)
 
 
-def make_solver(cls, **kwargs):
+def make_solver(cls, f, **kwargs):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
     """
     def solver(M):
         scheme = cls(M=M, **kwargs)
-        x_axis, solution = scheme.solve()
+        x_axis, solution = scheme.solve(f)
         return x_axis, solution[:, -1]
 
     return solver

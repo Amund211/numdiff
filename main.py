@@ -4,6 +4,7 @@ import numpy as np
 from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from poisson import amr, poisson
+from refine import calculate_relative_discrete_l2, make_solver, refine_mesh
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -71,6 +72,28 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     plt.show()
 
     return sol
+
+
+def refine_and_plot(
+    cls,
+    scheme_kwargs,
+    f,
+    analytical,
+    M_range=np.unique(np.logspace(1e1, 1e4, num=50, dtype=np.int32)),
+    calculate_distance=calculate_relative_discrete_l2,
+):
+    amt_points, distances = refine_mesh(
+        solver=make_solver(cls, f, **scheme_kwargs),
+        M_range=M_range,
+        analytical=analytical,
+        calculate_distance=calculate_distance,
+    )
+
+    plt.loglog(amt_points, distances, label=r"$\|U-u\|$")
+
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
 def test_poisson():
@@ -256,6 +279,35 @@ def test_KdV():
     assert np.allclose(solution[0, :], solution[M, :]), "Solution must be periodic"
 
 
+def refine_KdV_theta():
+    def transform_x(x):
+        return 2 * (x - 1 / 2)
+
+    def f(x):
+        return np.sin(np.pi * transform_x(x))
+
+    def analytical(t, x):
+        return np.sin(np.pi * (transform_x(x) - t))
+
+    scheme_kwargs = {
+        "N": int(1e3),
+        "k": 1e-3,
+        "theta": 1 / 2,
+        "conditions": (Periodic(m=0, period=-1),),
+    }
+
+    from functools import partial
+    analytical = partial(analytical, scheme_kwargs["N"] * scheme_kwargs["k"])
+
+    refine_and_plot(
+        cls=KdVTheta,
+        scheme_kwargs=scheme_kwargs,
+        f=f,
+        analytical=analytical,
+        M_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
+    )
+
+
 if __name__ == "__main__":
     test_poisson()
     test_heat_euler()
@@ -263,3 +315,4 @@ if __name__ == "__main__":
     test_heat_rk4()
     test_burgers_rk4()
     test_KdV()
+    refine_KdV_theta()
