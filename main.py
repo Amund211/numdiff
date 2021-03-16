@@ -7,6 +7,43 @@ from poisson import amr, poisson
 from schemes import RK4, Euler, ThetaMethod
 
 
+class HeatEuler(Euler, HeatEquation):
+    def validate_params(self):
+        r = self.k / self.h ** 2
+        assert r <= 1 / 2, f"r <= 1/2 <= {r} needed for convergence"
+
+
+class HeatTheta(ThetaMethod, HeatEquation):
+    def validate_params(self):
+        if 1 / 2 <= self.theta <= 1:
+            # All r >= 0
+            return
+        elif 0 <= self.theta < 1 / 2:
+            r = self.k / self.h ** 2
+            eta = 0
+            for condition in self.conditions:
+                if isinstance(condition, Neumann):
+                    eta = max(eta, abs(condition.condition))
+
+            assert r <= 1 / (
+                2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
+            ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {r} needed for convergence"
+        else:
+            raise ValueError(f"Invalid value for theta {self.theta}")
+
+
+class HeatRK4(RK4, HeatEquation):
+    pass
+
+
+class BurgersRK4(RK4, InviscidBurgers):
+    pass
+
+
+class KdVTheta(ThetaMethod, PeriodicKdV):
+    pass
+
+
 def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     x_axis, sol = scheme.solve(f)
 
@@ -98,11 +135,6 @@ def test_heat_euler():
     # def f(x):
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
 
-    class HeatEuler(Euler, HeatEquation):
-        def validate_params(self):
-            r = self.k / self.h ** 2
-            assert r <= 1 / 2, f"r <= 1/2 <= {r} needed for convergence"
-
     scheme = HeatEuler(
         M=M,
         N=N,
@@ -127,24 +159,6 @@ def test_heat_theta():
 
     # def f(x):
     # return 2 * x * (x < 1 / 2) + (2 - 2 * x) * (x >= 1 / 2)
-
-    class HeatTheta(ThetaMethod, HeatEquation):
-        def validate_params(self):
-            if 1 / 2 <= self.theta <= 1:
-                # All r >= 0
-                return
-            elif 0 <= self.theta < 1 / 2:
-                r = self.k / self.h ** 2
-                eta = 0
-                for condition in self.conditions:
-                    if isinstance(condition, Neumann):
-                        eta = max(eta, abs(condition.condition))
-
-                assert r <= 1 / (
-                    2 * (1 - 2 * self.theta) * (1 + eta * self.h / 2)
-                ), f"r <= 1/(2(1-2theta)(1+eta*h/2)) <= {r} needed for convergence"
-            else:
-                raise ValueError(f"Invalid value for theta {self.theta}")
 
     scheme = HeatTheta(
         M=M,
@@ -172,9 +186,6 @@ def test_heat_rk4():
 
     def f(x):
         return 2 * np.pi * x + np.sin(2 * np.pi * x)
-
-    class HeatRK4(RK4, HeatEquation):
-        pass
 
     scheme = HeatRK4(
         M=M,
@@ -204,9 +215,6 @@ def test_burgers_rk4():
     def f(x):
         return np.exp(-400 * (x - 1 / 2) ** 2)
 
-    class BurgersRK4(RK4, InviscidBurgers):
-        pass
-
     scheme = BurgersRK4(
         M=M,
         N=N,
@@ -235,9 +243,6 @@ def test_KdV():
 
     def analytic(t, x):
         return np.sin(np.pi * (transform_x(x) - t))
-
-    class KdVTheta(ThetaMethod, PeriodicKdV):
-        pass
 
     scheme = KdVTheta(
         M=M - 1,
