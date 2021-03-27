@@ -143,6 +143,11 @@ def test_poisson():
     x = np.arange(0, M + 2).astype(np.float64) * 1 / (M + 1)
     plt.plot(x, u(x), label="u")
 
+    from interpolate import interpolate, calculate_poisson_derivatives
+    interpolated = interpolate(x_adaptive, U_adaptive, calculate_poisson_derivatives(f))
+
+    plt.plot(x, interpolated(x), label="$U_{adaptive interpolated}$")
+
     plt.legend()
     plt.show()
 
