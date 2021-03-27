@@ -100,7 +100,9 @@ def test_poisson():
     def f(x):
         return np.cos(2 * np.pi * x) + x
 
-    M = 1000
+    # The target for the mesh size
+    # The amr method may exceed this number
+    M_target = 100
     alpha = 0
     sigma = 1
     beta = 0
@@ -122,31 +124,36 @@ def test_poisson():
             + alpha
         )
 
-    x_uniform, U_uniform = poisson(
-        f=f,
-        M=M,
-        conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
-        maxiter=1e6,
-        explain_solution=True,
-    )
-    plt.plot(x_uniform, U_uniform, label="$U_{uniform}$")
-
     x_adaptive, U_adaptive = amr(
         f=f,
         u=u,
         conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
-        amt_points_target=M,
+        amt_points_target=M_target,
     )
-    plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")
+    # plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")
+
+    x_uniform, U_uniform = poisson(
+        f=f,
+        M=x_adaptive.shape[0],  # Use the same amount of point for a fair comparison
+        conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
+        maxiter=1e6,
+        explain_solution=True,
+    )
+    # plt.plot(x_uniform, U_uniform, label="$U_{uniform}$")
 
     M = 10000
     x = np.arange(0, M + 2).astype(np.float64) * 1 / (M + 1)
     plt.plot(x, u(x), label="u")
 
     from interpolate import interpolate, calculate_poisson_derivatives
-    interpolated = interpolate(x_adaptive, U_adaptive, calculate_poisson_derivatives(f))
 
-    plt.plot(x, interpolated(x), label="$U_{adaptive interpolated}$")
+    calculate_derivatives = calculate_poisson_derivatives(f)
+
+    adaptive_interpolated = interpolate(x_adaptive, U_adaptive, calculate_derivatives)
+    plt.plot(x, adaptive_interpolated(x), label="$U_{adaptive interpolated}$")
+
+    uniform_interpolated = interpolate(x_uniform, U_uniform, calculate_derivatives)
+    plt.plot(x, uniform_interpolated(x), label="$U_{uniform interpolated}$")
 
     plt.legend()
     plt.show()
@@ -302,6 +309,7 @@ def refine_KdV_theta():
     }
 
     from functools import partial
+
     analytical = partial(analytical, scheme_kwargs["N"] * scheme_kwargs["k"])
 
     refine_and_plot(
