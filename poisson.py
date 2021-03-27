@@ -5,6 +5,7 @@ import scipy.sparse.linalg
 
 from conditions import Neumann
 from helpers import central_difference
+from refine import refine_symmetric
 
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.lsmr.html
 explain_istop = {
@@ -68,25 +69,6 @@ def poisson(f, M, conditions, maxiter=1e6, explain_solution=True):
         U = scipy.sparse.linalg.spsolve(sparse, f)
 
     return x, U
-
-
-def refine_after(x, indicies):
-    """Halve the step size between i and i+1 for each i in indicies"""
-    return np.insert(x, indicies + 1, x[indicies] + (x[indicies + 1] - x[indicies]) / 2)
-
-
-def refine_symmetric(x, indicies):
-    """
-    Refine to the left and right of each i
-
-    Makes sure that the two first steps are of equal length
-    """
-    indicies = np.unique(np.concatenate((indicies - 1, indicies)))
-    indicies = indicies[np.logical_and(indicies >= 0, indicies < x.shape[0] - 1)]
-    if 1 in indicies and 0 not in indicies:
-        indicies = np.insert(indicies, 0, 0)
-
-    return refine_after(x, indicies)
 
 
 def has_uniform_steps(x, indicies):

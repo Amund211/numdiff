@@ -3,6 +3,25 @@ import numpy as np
 from helpers import relative_discrete_l2
 
 
+def refine_after(x, indicies):
+    """Halve the step size between i and i+1 for each i in indicies"""
+    return np.insert(x, indicies + 1, x[indicies] + (x[indicies + 1] - x[indicies]) / 2)
+
+
+def refine_symmetric(x, indicies):
+    """
+    Refine to the left and right of each i
+
+    Makes sure that the two first steps are of equal length
+    """
+    indicies = np.unique(np.concatenate((indicies - 1, indicies)))
+    indicies = indicies[np.logical_and(indicies >= 0, indicies < x.shape[0] - 1)]
+    if 1 in indicies and 0 not in indicies:
+        indicies = np.insert(indicies, 0, 0)
+
+    return refine_after(x, indicies)
+
+
 def refine_mesh(solver, M_range, analytical, calculate_distance):
     """Solve a numerical scheme for a range of M-values and return the error for each"""
     distances = np.empty(M_range.shape, dtype=np.float64)
@@ -29,6 +48,7 @@ def make_solver(cls, f, **kwargs):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
     """
+
     def solver(M):
         scheme = cls(M=M, **kwargs)
         x_axis, solution = scheme.solve(f)
