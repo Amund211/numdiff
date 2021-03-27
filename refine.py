@@ -12,12 +12,15 @@ def refine_symmetric(x, indicies):
     """
     Refine to the left and right of each i
 
-    Makes sure that the two first steps are of equal length
+    Makes sure that the two first and last steps are of equal length
     """
     indicies = np.unique(np.concatenate((indicies - 1, indicies)))
     indicies = indicies[np.logical_and(indicies >= 0, indicies < x.shape[0] - 1)]
+
     if 1 in indicies and 0 not in indicies:
         indicies = np.insert(indicies, 0, 0)
+    if x.shape[0] - 3 in indicies and x.shape[0] - 2 not in indicies:
+        indicies = np.insert(indicies, 0, x.shape[0] - 2)
 
     return refine_after(x, indicies)
 
