@@ -5,6 +5,7 @@ import scipy.sparse.linalg
 
 from conditions import Neumann
 from helpers import central_difference
+from nonuniform import has_uniform_steps, liu_coefficients
 from refine import refine_symmetric
 
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.lsmr.html
@@ -71,16 +72,6 @@ def poisson(f, M, conditions, maxiter=1e6, explain_solution=True):
     return x, U
 
 
-def has_uniform_steps(x, indicies):
-    """Check that each of the indicies i of the step-length vector are equal"""
-    indicies = np.array(indicies, dtype=np.int32)
-    if indicies.shape[0] <= 1:
-        return True
-
-    steps = x[1:] - x[:-1]
-    return np.allclose(steps[indicies], steps[indicies[0]])
-
-
 def poisson_4_point(f, x, conditions):
     """
     Solve Poisson's equation on the mesh x
@@ -110,21 +101,7 @@ def poisson_4_point(f, x, conditions):
     # Populate the matrix with the four point formula
     for i in range(2, length - 1):
         d = np.abs(x - x[i])
-        a = (
-            2
-            * (d[i + 1] - d[i - 1])
-            / (d[i - 2] * (d[i - 2] + d[i + 1]) * (d[i - 2] - d[i - 1]))
-        )
-        b = (
-            2
-            * (d[i - 2] - d[i + 1])
-            / (d[i - 1] * (d[i - 2] - d[i - 1]) * (d[i - 1] + d[i + 1]))
-        )
-        c = (
-            2
-            * (d[i - 2] + d[i - 1])
-            / (d[i + 1] * (d[i - 1] + d[i + 1]) * (d[i - 2] + d[i + 1]))
-        )
+        a, b, c = liu_coefficients(d, i, order=2)
         A[i, i - 2 : i + 2] = (a, b, -(a + b + c), c)
 
     f = f(x)
