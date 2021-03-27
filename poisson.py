@@ -100,8 +100,7 @@ def poisson_4_point(f, x, conditions):
 
     # Populate the matrix with the four point formula
     for i in range(2, length - 1):
-        d = np.abs(x - x[i])
-        a, b, c = liu_coefficients(d, i, order=2)
+        a, b, c = liu_coefficients(x, i, order=2)
         A[i, i - 2 : i + 2] = (a, b, -(a + b + c), c)
 
     f = f(x)

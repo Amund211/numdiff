@@ -30,8 +30,7 @@ def calculate_poisson_derivatives(f):
             h = x[i] - x[i - 1]
             return (1 / 2 * y[i - 2] - 2 * y[i - 1] + 3 / 2 * y[i]) / h
         else:
-            d = np.abs(x - x[i])
-            a, b, c = liu_coefficients(d, i, order=1)
+            a, b, c = liu_coefficients(x, i, order=1)
             return a * y[i - 2] + b * y[i - 1] - (a + b + c) * y[i] + c * y[i + 1]
 
     def calculate_derivatives(x, y):

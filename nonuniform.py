@@ -15,7 +15,7 @@ def has_uniform_steps(x, indicies):
     return np.allclose(steps[indicies], steps[indicies[0]])
 
 
-def liu_coefficients(d, i, order):
+def liu_coefficients(x, i, order):
     """
     Return the coefficients for the finite difference operator on a nonuniform grid
 
@@ -29,6 +29,8 @@ def liu_coefficients(d, i, order):
     ISSN 0307-904X,
     https://doi.org/10.1016/0307-904X(94)00020-7.
     """
+    d = np.abs(x - x[i])
+
     if order == 1:
         a = (
             d[i - 1]
