@@ -29,43 +29,17 @@ def liu_coefficients(x, i, order):
     ISSN 0307-904X,
     https://doi.org/10.1016/0307-904X(94)00020-7.
     """
-    d = np.abs(x - x[i])
+    # di[n] = d_{i + n} = the distance from element i to element i + n
+    di = (0, x[i + 1] - x[i], x[i] - x[i - 2], x[i] - x[i - 1])
 
     if order == 1:
-        a = (
-            d[i - 1]
-            * d[i + 1]
-            / (d[i - 2] * (d[i - 2] + d[i + 1]) * (d[i - 2] - d[i - 1]))
-        )
-
-        b = (
-            -d[i - 2]
-            * d[i + 1]
-            / (d[i - 1] * (d[i - 2] - d[i - 1]) * (d[i - 1] + d[i + 1]))
-        )
-
-        c = (
-            d[i - 2]
-            * d[i - 1]
-            / (d[i + 1] * (d[i - 1] + d[i + 1]) * (d[i - 2] + d[i + 1]))
-        )
-
+        a = di[-1] * di[1] / (di[-2] * (di[-2] + di[1]) * (di[-2] - di[-1]))
+        b = -di[-2] * di[1] / (di[-1] * (di[-2] - di[-1]) * (di[-1] + di[1]))
+        c = di[-2] * di[-1] / (di[1] * (di[-1] + di[1]) * (di[-2] + di[1]))
     elif order == 2:
-        a = (
-            2
-            * (d[i + 1] - d[i - 1])
-            / (d[i - 2] * (d[i - 2] + d[i + 1]) * (d[i - 2] - d[i - 1]))
-        )
-        b = (
-            2
-            * (d[i - 2] - d[i + 1])
-            / (d[i - 1] * (d[i - 2] - d[i - 1]) * (d[i - 1] + d[i + 1]))
-        )
-        c = (
-            2
-            * (d[i - 2] + d[i - 1])
-            / (d[i + 1] * (d[i - 1] + d[i + 1]) * (d[i - 2] + d[i + 1]))
-        )
+        a = 2 * (di[1] - di[-1]) / (di[-2] * (di[-2] + di[1]) * (di[-2] - di[-1]))
+        b = 2 * (di[-2] - di[1]) / (di[-1] * (di[-2] - di[-1]) * (di[-1] + di[1]))
+        c = 2 * (di[-2] + di[-1]) / (di[1] * (di[-1] + di[1]) * (di[-2] + di[1]))
     else:
         raise NotImplementedError("That order is not implemented")
 
