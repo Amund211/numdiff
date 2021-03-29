@@ -29,17 +29,17 @@ def select_max(err, alpha=0.7):
     return ensure_uniform_steps(to_refine, err.shape[0])
 
 
-def refine_mesh(solver, M_range, analytical, calculate_distance):
+def refine_mesh(solver, param_range, analytical, calculate_distance):
     """
-    Solve a numerical scheme for a range of M-values and return the error for each
+    Solve a numerical scheme for a range of parameters and return the error for each
 
     `calculate_distance` should take the grid, the analytical function and the
     value returned by the solver (function or values at gridpoints)
     """
-    distances = np.empty(M_range.shape, dtype=np.float64)
-    amt_points = np.empty(M_range.shape, dtype=np.int32)
-    for i, M in enumerate(M_range):
-        x, numerical = solver(M)
+    distances = np.empty(param_range.shape, dtype=np.float64)
+    amt_points = np.empty(param_range.shape, dtype=np.int32)
+    for i, param in enumerate(param_range):
+        x, numerical = solver(param)
         distances[i] = calculate_distance(x, analytical, numerical)
         amt_points[i] = x.shape[0]
 

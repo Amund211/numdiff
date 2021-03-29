@@ -79,12 +79,12 @@ def refine_and_plot(
     scheme_kwargs,
     f,
     analytical,
-    M_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
+    param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
     calculate_distance=calculate_relative_l2_error,
 ):
     amt_points, distances = refine_mesh(
         solver=make_solver(cls, f, **scheme_kwargs),
-        M_range=M_range,
+        param_range=param_range,
         analytical=analytical,
         calculate_distance=calculate_distance,
     )
@@ -317,7 +317,7 @@ def refine_KdV_theta():
         scheme_kwargs=scheme_kwargs,
         f=f,
         analytical=analytical,
-        M_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
+        param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
     )
 
 
