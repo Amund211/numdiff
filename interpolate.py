@@ -1,18 +1,23 @@
-import numpy as np
-from scipy.interpolate import BPoly
+from scipy.interpolate import BPoly, CubicSpline
 
 from nonuniform import has_uniform_steps, liu_coefficients
 
 
-def interpolate(x, y, calculate_derivatives):
+def interpolate(x, y, calculate_derivatives=None, bc_type="not-a-knot"):
     """
     Return a spline interpolation of y, with the given derivatives
 
     `calculate_derivatives` should take x and y, and return a list of lists where
     ret[i][j] is the (i+1)-th derivative at x[j]. Each list ret[i] should have the same
     length as x.
+
+    If `calculate_derivatives` is `None`, cubic spline interpolation is used, and
+    `bc_type` may be specified
     """
-    return BPoly.from_derivatives(x, list(zip(y, *calculate_derivatives(x, y))))
+    if calculate_derivatives is None:
+        return CubicSpline(x, y, bc_type=bc_type)
+    else:
+        return BPoly.from_derivatives(x, list(zip(y, *calculate_derivatives(x, y))))
 
 
 def calculate_poisson_derivatives(f):

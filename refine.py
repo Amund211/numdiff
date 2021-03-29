@@ -1,6 +1,7 @@
 import numpy as np
 
 from helpers import relative_l2_error, relative_L2_error
+from interpolate import interpolate
 
 
 def refine_after(x, indicies):
@@ -52,7 +53,7 @@ def calculate_relative_L2_error(x, analytical, numerical):
     return relative_L2_error(analytical, numerical, x)
 
 
-def make_solver(cls, f, **kwargs):
+def make_solver(cls, f, interpolate_result=False, bc_type="not-a-knot", **kwargs):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
     """
@@ -60,6 +61,9 @@ def make_solver(cls, f, **kwargs):
     def solver(M):
         scheme = cls(M=M, **kwargs)
         x_axis, solution = scheme.solve(f)
-        return x_axis, solution[:, -1]
+        if interpolate_result:
+            return x_axis, interpolate(x_axis, solution[:, -1], bc_type=bc_type)
+        else:
+            return x_axis, solution[:, -1]
 
     return solver
