@@ -1,6 +1,6 @@
 import numpy as np
 
-from helpers import relative_l2_error
+from helpers import relative_l2_error, relative_L2_error
 
 
 def refine_after(x, indicies):
@@ -30,7 +30,7 @@ def refine_mesh(solver, M_range, analytical, calculate_distance):
     Solve a numerical scheme for a range of M-values and return the error for each
 
     `calculate_distance` should take the grid, the analytical function and the
-    numerical values at the gridpoints
+    value returned by the solver (function or values at gridpoints)
     """
     distances = np.empty(M_range.shape, dtype=np.float64)
     amt_points = np.empty(M_range.shape, dtype=np.int32)
@@ -45,6 +45,11 @@ def refine_mesh(solver, M_range, analytical, calculate_distance):
 def calculate_relative_l2_error(x, analytical, numerical):
     """Helper to calculate discrete e^r_l2"""
     return relative_l2_error(analytical(x), numerical)
+
+
+def calculate_relative_L2_error(x, analytical, numerical):
+    """Helper to calculate continuous e^r_l2"""
+    return relative_L2_error(analytical, numerical, x)
 
 
 def make_solver(cls, f, **kwargs):
