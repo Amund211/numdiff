@@ -4,7 +4,7 @@ import numpy as np
 from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from poisson import amr, poisson
-from refine import calculate_relative_discrete_l2, make_solver, refine_mesh
+from refine import calculate_relative_l2, make_solver, refine_mesh
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -80,7 +80,7 @@ def refine_and_plot(
     f,
     analytical,
     M_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
-    calculate_distance=calculate_relative_discrete_l2,
+    calculate_distance=calculate_relative_l2,
 ):
     amt_points, distances = refine_mesh(
         solver=make_solver(cls, f, **scheme_kwargs),
