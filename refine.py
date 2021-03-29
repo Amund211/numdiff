@@ -5,7 +5,7 @@ from helpers import relative_discrete_l2
 
 def refine_after(x, indicies):
     """Halve the step size between i and i+1 for each i in indicies"""
-    return np.insert(x, indicies + 1, x[indicies] + (x[indicies + 1] - x[indicies]) / 2)
+    return np.insert(x, indicies + 1, (x[indicies + 1] + x[indicies]) / 2)
 
 
 def refine_symmetric(x, indicies):
