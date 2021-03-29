@@ -79,7 +79,7 @@ def refine_and_plot(
     scheme_kwargs,
     f,
     analytical,
-    M_range=np.unique(np.logspace(1e1, 1e4, num=50, dtype=np.int32)),
+    M_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
     calculate_distance=calculate_relative_discrete_l2,
 ):
     amt_points, distances = refine_mesh(
@@ -145,7 +145,7 @@ def test_poisson():
     x = np.arange(0, M + 2).astype(np.float64) * 1 / (M + 1)
     plt.plot(x, u(x), label="u")
 
-    from interpolate import interpolate, calculate_poisson_derivatives
+    from interpolate import calculate_poisson_derivatives, interpolate
 
     calculate_derivatives = calculate_poisson_derivatives(f)
 
