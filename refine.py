@@ -9,21 +9,24 @@ def refine_after(x, indicies):
     return np.insert(x, indicies + 1, (x[indicies + 1] + x[indicies]) / 2)
 
 
-def refine_symmetric(x, indicies):
+def ensure_uniform_steps(indicies, amt_intervals):
     """
-    Refine to the left and right of each i
-
-    Makes sure that the two first and last steps are of equal length
+    Ensure that the two first and last steps have uniform step lengths after refinement
     """
-    indicies = np.unique(np.concatenate((indicies - 1, indicies)))
-    indicies = indicies[np.logical_and(indicies >= 0, indicies < x.shape[0] - 1)]
-
     if 1 in indicies and 0 not in indicies:
         indicies = np.insert(indicies, 0, 0)
-    if x.shape[0] - 3 in indicies and x.shape[0] - 2 not in indicies:
-        indicies = np.insert(indicies, 0, x.shape[0] - 2)
+    if amt_intervals - 2 in indicies and amt_intervals - 1 not in indicies:
+        indicies = np.insert(indicies, 0, amt_intervals - 1)
 
-    return refine_after(x, indicies)
+    return indicies
+
+
+def select_max(err, alpha=0.7):
+    """Select indicies to refine where the error exceeds `alpha` * max(err)"""
+    max_err = np.max(err)
+    to_refine = np.flatnonzero(err > 0.7 * max_err)
+
+    return ensure_uniform_steps(to_refine, err.shape[0])
 
 
 def refine_mesh(solver, M_range, analytical, calculate_distance):

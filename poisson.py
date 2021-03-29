@@ -5,8 +5,10 @@ import scipy.sparse.linalg
 
 from conditions import Neumann
 from helpers import central_difference
+from integrate import integrate
+from interpolate import calculate_poisson_derivatives, interpolate
 from nonuniform import has_uniform_steps, liu_coefficients
-from refine import refine_symmetric
+from refine import refine_after, select_max
 
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.lsmr.html
 explain_istop = {
@@ -124,15 +126,15 @@ def poisson_4_point(f, x, conditions):
     return x, U
 
 
-def amr(f, u, conditions, amt_points_target):
+def amr(f, u, conditions, amt_points_target, select_refinement=select_max):
     x = np.array((0, 0.5, 1), dtype=np.float64)
     to_refine = np.array((), dtype=np.int32)
 
     while x.shape[0] < amt_points_target:
-        x = refine_symmetric(x, to_refine)
+        x = refine_after(x, to_refine)
         x, U = poisson_4_point(f, x, conditions)
-        err = np.abs(u(x) - U)
-        max_err = np.max(err)
-        to_refine = np.flatnonzero(err > 0.7 * max_err)
+        interpolated = interpolate(x, U, calculate_poisson_derivatives(f))
+        err = integrate(lambda x: (u(x) - interpolated(x)) ** 2, x[:-1], x[1:])
+        to_refine = select_refinement(err)
 
     return x, U
