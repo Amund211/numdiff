@@ -13,10 +13,12 @@ def central_difference(N, power=2):
         )
 
 
-def discrete_l2(v):
+def l2(v):
+    """Calculate the discrete l2 norm of the vector v"""
     l = v.shape[0]
     return np.sqrt(np.sum(np.square(v)) / l)
 
 
-def relative_discrete_l2(u, U):
-    return discrete_l2(u - U) / discrete_l2(u)
+def relative_l2_error(u, U):
+    """Calculate the relative discrete l2 norm of u - U"""
+    return l2(u - U) / l2(u)

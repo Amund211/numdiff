@@ -1,6 +1,6 @@
 import numpy as np
 
-from helpers import relative_discrete_l2
+from helpers import relative_l2_error
 
 
 def refine_after(x, indicies):
@@ -42,9 +42,9 @@ def refine_mesh(solver, M_range, analytical, calculate_distance):
     return amt_points, distances
 
 
-def calculate_relative_l2(x, analytical, numerical):
+def calculate_relative_l2_error(x, analytical, numerical):
     """Helper to calculate discrete e^r_l2"""
-    return relative_discrete_l2(analytical(x), numerical)
+    return relative_l2_error(analytical(x), numerical)
 
 
 def make_solver(cls, f, **kwargs):
