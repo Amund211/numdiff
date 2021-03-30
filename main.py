@@ -17,9 +17,7 @@ def poisson_1D_UMR(
     f, conditions, analytical, calculate_distance, plot_kwargs={"label": r"$\|U-u\|$"}
 ):
     refine_and_plot(
-        solver=make_poisson_solver(
-            f=f, conditions=conditions, interpolate_result=False
-        ),
+        solver=make_poisson_solver(f=f, conditions=conditions),
         analytical=analytical,
         param_range=np.unique(np.logspace(0, 5, num=50, dtype=np.int32)),
         calculate_distance=calculate_distance,
