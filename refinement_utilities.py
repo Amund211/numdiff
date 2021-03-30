@@ -1,5 +1,6 @@
 from helpers import relative_l2_error, relative_L2_error
-from interpolate import interpolate
+from interpolate import calculate_poisson_derivatives, interpolate
+from poisson import amr, poisson
 
 
 def calculate_relative_l2_error(x, analytical, numerical):
@@ -10,6 +11,44 @@ def calculate_relative_l2_error(x, analytical, numerical):
 def calculate_relative_L2_error(x, analytical, numerical):
     """Helper to calculate continuous e^r_L2"""
     return relative_L2_error(analytical, numerical, x)
+
+
+def make_poisson_solver(f, conditions, interpolate_result):
+    """
+    Create a solver function for solving Poisson's equation for use in `refine_mesh`
+    """
+    calculate_derivatives = calculate_poisson_derivatives(f)
+
+    def solver(param):
+        x, U = poisson(f=f, conditions=conditions, M=param)
+        if interpolate_result:
+            return x, interpolate(x, U, calculate_derivatives)
+        else:
+            return x, U
+
+    return solver
+
+
+def make_amr_poisson_solver(f, u, conditions, select_refinement, interpolate_result):
+    """
+    Create a solver function for solving Poisson's equation for use in `refine_mesh`
+    """
+    calculate_derivatives = calculate_poisson_derivatives(f)
+
+    def solver(param):
+        x, U = amr(
+            f=f,
+            u=u,
+            conditions=conditions,
+            amt_points_target=param,
+            select_refinement=select_refinement,
+        )
+        if interpolate_result:
+            return x, interpolate(x, U, calculate_derivatives)
+        else:
+            return x, U
+
+    return solver
 
 
 def make_scheme_solver(
