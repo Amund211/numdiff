@@ -3,8 +3,8 @@ import numpy as np
 
 from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
+from plotting import refine_and_plot, solve_and_plot
 from poisson import amr, poisson
-from refine import calculate_relative_l2_error, make_solver, refine_mesh
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -43,57 +43,6 @@ class BurgersRK4(RK4, InviscidBurgers):
 
 class KdVTheta(ThetaMethod, PeriodicKdV):
     pass
-
-
-def solve_and_plot(scheme, f, analytic=None, transform_x=None):
-    x_axis, sol = scheme.solve(f)
-
-    plot_x_axis = transform_x(x_axis) if callable(transform_x) else x_axis
-
-    step_size = max(scheme.N // 10, 1)
-    for i in range(0, (scheme.N + 1) // step_size):
-        n = i * step_size
-        color = f"C{i % 10}"
-        plt.plot(
-            plot_x_axis, sol[:, n], label=f"U(t={n*scheme.k:.3f}, n={n})", color=color
-        )
-
-        if analytic is not None:
-            plt.plot(
-                plot_x_axis,
-                analytic(n * scheme.k, x_axis),
-                label=f"u(t={n*scheme.k:.3f})",
-                linestyle="dashed",
-                color=color,
-            )
-
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-    return sol
-
-
-def refine_and_plot(
-    cls,
-    scheme_kwargs,
-    f,
-    analytical,
-    param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
-    calculate_distance=calculate_relative_l2_error,
-):
-    amt_points, distances = refine_mesh(
-        solver=make_solver(cls, f, **scheme_kwargs),
-        param_range=param_range,
-        analytical=analytical,
-        calculate_distance=calculate_distance,
-    )
-
-    plt.loglog(amt_points, distances, label=r"$\|U-u\|$")
-
-    plt.legend()
-    plt.grid()
-    plt.show()
 
 
 def test_poisson():
