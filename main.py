@@ -13,7 +13,7 @@ from plotting import refine_and_plot
 from refinement_utilities import calculate_relative_l2_error, make_poisson_solver
 
 
-def poisson_1D_UMR(conditions, analytical):
+def poisson_1D_UMR(conditions, analytical, plot_kwargs={"label": r"$\|U-u\|$"}):
     def f(x):
         return np.cos(2 * np.pi * x) + x
 
@@ -24,6 +24,7 @@ def poisson_1D_UMR(conditions, analytical):
         analytical=analytical,
         param_range=np.unique(np.logspace(0, 5, num=50, dtype=np.int32)),
         calculate_distance=calculate_relative_l2_error,
+        plot_kwargs=plot_kwargs,
     )
 
 

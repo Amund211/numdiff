@@ -39,6 +39,7 @@ def refine_and_plot(
     analytical,
     param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
     calculate_distance=calculate_relative_l2_error,
+    plot_kwargs={"label": r"$\|U-u\|$"},
 ):
     """Perform refinement and plot the error in a log-log plot"""
     amt_points, distances = refine_mesh(
@@ -48,7 +49,7 @@ def refine_and_plot(
         calculate_distance=calculate_distance,
     )
 
-    plt.loglog(amt_points, distances, label=r"$\|U-u\|$")
+    plt.loglog(amt_points, distances, **plot_kwargs)
 
     plt.legend()
     plt.grid()
