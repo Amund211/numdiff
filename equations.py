@@ -129,12 +129,8 @@ class PeriodicKdV(Equation):
         single_operator = -d3 - (1 + np.pi ** 2) * d1
         zero_indexed = np.roll(single_operator, -3)
 
-        # Apply periodicity
-        operator = np.array([np.roll(zero_indexed, i) for i in range(self.M + 1)])
+        operator = scipy.sparse.lil_matrix((self.M + 2, self.M + 2), dtype=np.float64)
+        for i in range(self.M + 2):
+            operator[i, :-1] = np.roll(zero_indexed, i)
 
-        # Embed in M+2 matrix
-        matrix = np.zeros((self.M + 2, self.M + 2), dtype=np.float64)
-        matrix[: self.M + 1, : self.M + 1] = operator
-        matrix[self.M + 1, :] = matrix[0, :]  # 2-periodicity
-
-        return matrix
+        return operator
