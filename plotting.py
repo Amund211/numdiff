@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from refine import calculate_relative_l2_error, refine_mesh
+from refine import refine_mesh
+from refinement_utilities import calculate_relative_l2_error
 
 
 def solve_and_plot(scheme, f, analytic=None, transform_x=None):

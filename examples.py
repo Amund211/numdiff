@@ -5,7 +5,7 @@ from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from plotting import refine_and_plot, solve_and_plot
 from poisson import amr, poisson
-from refine import make_solver
+from refinement_utilities import make_scheme_solver
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -263,7 +263,7 @@ def refine_KdV_theta():
     analytical = partial(analytical, T)
 
     refine_and_plot(
-        solver=make_solver(KdVTheta, f=f, T=T, c=1, **scheme_kwargs),
+        solver=make_scheme_solver(KdVTheta, f=f, T=T, c=1, **scheme_kwargs),
         analytical=analytical,
         param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
     )
