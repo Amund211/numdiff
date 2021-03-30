@@ -22,7 +22,7 @@ def poisson_1D_UMR(
 ):
     amt_points, distances = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
-        param_range=np.unique(np.logspace(0, 5/5, num=50, dtype=np.int32)),
+        param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
         analytical=analytical,
         calculate_distance=calculate_distance,
     )
@@ -91,6 +91,15 @@ if __name__ == "__main__":
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
                 plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
             )
+
+            x = np.logspace(0, 3)
+            plt.plot(
+                x,
+                3 * np.divide(1, x ** 2),
+                linestyle="dashed",
+                label=r"$O\left(h^2\right)$",
+            )
+
             plt.show()
         elif task == "1b":
             alpha = 0
@@ -127,6 +136,16 @@ if __name__ == "__main__":
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
                 plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
             )
+
+            x = np.logspace(0, 3)
+            plt.plot(
+                x,
+                10 * np.divide(1, x ** 2),
+                linestyle="dashed",
+                label=r"$O\left(h^2\right)$",
+            )
+            plt.legend()
+
             plt.show()
         else:
             raise ValueError(
