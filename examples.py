@@ -131,6 +131,7 @@ def test_heat_euler():
     )
 
     solve_and_plot(scheme, f)
+    plt.show()
 
 
 def test_heat_theta():
@@ -157,6 +158,7 @@ def test_heat_theta():
     )
 
     solve_and_plot(scheme, f)
+    plt.show()
 
 
 def test_heat_rk4():
@@ -183,6 +185,7 @@ def test_heat_rk4():
     )
 
     solve_and_plot(scheme, f)
+    plt.show()
 
 
 def test_burgers_rk4():
@@ -208,6 +211,7 @@ def test_burgers_rk4():
     )
 
     solve_and_plot(scheme, f)
+    plt.show()
 
 
 def test_KdV():
@@ -239,6 +243,7 @@ def test_KdV():
 
     solution = solve_and_plot(scheme, f, analytic, transform_x)
     assert np.allclose(solution[0, :], solution[M, :]), "Solution must be periodic"
+    plt.show()
 
 
 def refine_KdV_theta():
@@ -267,6 +272,7 @@ def refine_KdV_theta():
         analytical=analytical,
         param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
     )
+    plt.show()
 
 
 if __name__ == "__main__":

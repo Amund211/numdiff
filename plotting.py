@@ -30,7 +30,6 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
 
     plt.legend()
     plt.grid()
-    plt.show()
 
     return sol
 
@@ -53,4 +52,3 @@ def refine_and_plot(
 
     plt.legend()
     plt.grid()
-    plt.show()
