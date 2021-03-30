@@ -30,6 +30,8 @@ def poisson_1D_UMR(conditions, analytical):
 if __name__ == "__main__":
     import sys
 
+    plt.rcParams.update({"text.usetex": True})
+
     available_tasks = ("1a", "1b")
 
     if len(sys.argv) > 1:
