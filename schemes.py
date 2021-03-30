@@ -1,5 +1,3 @@
-# https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_1.pdf
-
 from functools import cache
 
 import numpy as np
