@@ -46,9 +46,7 @@ if __name__ == "__main__":
 
     for task in tasks:
         if task not in available_tasks:
-            print(
-                f"Did not recognize command '{command}', skipping...", file=sys.stdout
-            )
+            print(f"Did not recognize task '{task}', skipping...", file=sys.stdout)
             continue
 
         if task == "1a":
