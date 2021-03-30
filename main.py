@@ -10,7 +10,11 @@ import numpy as np
 
 from conditions import Dirichlet, Neumann
 from plotting import refine_and_plot
-from refinement_utilities import calculate_relative_l2_error, make_poisson_solver
+from refinement_utilities import (
+    calculate_relative_l2_error,
+    make_calculate_relative_L2_error_poisson,
+    make_poisson_solver,
+)
 
 
 def poisson_1D_UMR(
@@ -75,6 +79,13 @@ if __name__ == "__main__":
                 calculate_distance=calculate_relative_l2_error,
                 plot_kwargs={"label": r"$\|U-u\|_{l_2}$"},
             )
+            poisson_1D_UMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                calculate_distance=make_calculate_relative_L2_error_poisson(f),
+                plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
+            )
             plt.show()
         elif task == "1b":
             alpha = 0
@@ -103,6 +114,13 @@ if __name__ == "__main__":
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
                 plot_kwargs={"label": r"$\|U-u\|_{l_2}$"},
+            )
+            poisson_1D_UMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                calculate_distance=make_calculate_relative_L2_error_poisson(f),
+                plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
             )
             plt.show()
         else:
