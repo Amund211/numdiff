@@ -1,8 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
-
-from refine import refine_mesh
-from refinement_utilities import calculate_relative_l2_error
 
 
 def solve_and_plot(scheme, f, analytic=None, transform_x=None):
@@ -32,24 +28,3 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     plt.grid()
 
     return sol
-
-
-def refine_and_plot(
-    solver,
-    analytical,
-    param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
-    calculate_distance=calculate_relative_l2_error,
-    plot_kwargs={"label": r"$\|U-u\|$"},
-):
-    """Perform refinement and plot the error in a log-log plot"""
-    amt_points, distances = refine_mesh(
-        solver=solver,
-        param_range=param_range,
-        analytical=analytical,
-        calculate_distance=calculate_distance,
-    )
-
-    plt.loglog(amt_points, distances, **plot_kwargs)
-
-    plt.legend()
-    plt.grid()

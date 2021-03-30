@@ -3,9 +3,10 @@ import numpy as np
 
 from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
-from plotting import refine_and_plot, solve_and_plot
+from plotting import solve_and_plot
 from poisson import amr, poisson
-from refinement_utilities import make_scheme_solver
+from refine import refine_mesh
+from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -256,10 +257,7 @@ def refine_KdV_theta():
     def analytical(t, x):
         return np.sin(np.pi * (transform_x(x) - t))
 
-    scheme_kwargs = {
-        "theta": 1 / 2,
-        "conditions": (Periodic(m=0, period=-1),),
-    }
+    scheme_kwargs = {"theta": 1 / 2, "conditions": (Periodic(m=0, period=-1),)}
 
     T = 1
 
@@ -267,11 +265,19 @@ def refine_KdV_theta():
 
     analytical = partial(analytical, T)
 
-    refine_and_plot(
+    amt_points, distances = refine_mesh(
         solver=make_scheme_solver(KdVTheta, f=f, T=T, c=1, **scheme_kwargs),
-        analytical=analytical,
         param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
+        analytical=analytical,
+        calculate_distance=calculate_relative_l2_error,
     )
+
+    # Subtract 2 from amt_points bc we have one boundary condition
+    plt.loglog(amt_points - 1, distances, label=r"$\|U-u\|_{l_2}$")
+
+    plt.legend()
+    plt.grid()
+
     plt.show()
 
 

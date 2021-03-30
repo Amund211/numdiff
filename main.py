@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from plotting import refine_and_plot
+from refine import refine_mesh
 from refinement_utilities import (
     calculate_relative_l2_error,
     make_calculate_relative_L2_error_poisson,
@@ -20,13 +20,18 @@ from refinement_utilities import (
 def poisson_1D_UMR(
     f, conditions, analytical, calculate_distance, plot_kwargs={"label": r"$\|U-u\|$"}
 ):
-    refine_and_plot(
+    amt_points, distances = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
+        param_range=np.unique(np.logspace(0, 5/5, num=50, dtype=np.int32)),
         analytical=analytical,
-        param_range=np.unique(np.logspace(0, 5, num=50, dtype=np.int32)),
         calculate_distance=calculate_distance,
-        plot_kwargs=plot_kwargs,
     )
+
+    # Subtract 2 from amt_points bc we have two boundary conditions
+    plt.loglog(amt_points - 2, distances, **plot_kwargs)
+
+    plt.legend()
+    plt.grid()
 
 
 if __name__ == "__main__":
