@@ -92,10 +92,10 @@ def make_solver(
             M = kwargs["M"] = param
             if r is not None:
                 # Keep a constant r = k/h^2
-                kwargs["N"] = np.floor((M + 1) ** 2 / r)
+                kwargs["N"] = int((M + 1) ** 2 / r)
             elif c is not None:
                 # Keep a constant c = k/h
-                kwargs["N"] = np.floor((M + 1) / c)
+                kwargs["N"] = int((M + 1) / c)
         else:
             kwargs["N"] = param
 
