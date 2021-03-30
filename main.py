@@ -14,11 +14,8 @@ from refinement_utilities import calculate_relative_l2_error, make_poisson_solve
 
 
 def poisson_1D_UMR(
-    conditions, analytical, calculate_distance, plot_kwargs={"label": r"$\|U-u\|$"}
+    f, conditions, analytical, calculate_distance, plot_kwargs={"label": r"$\|U-u\|$"}
 ):
-    def f(x):
-        return np.cos(2 * np.pi * x) + x
-
     refine_and_plot(
         solver=make_poisson_solver(
             f=f, conditions=conditions, interpolate_result=False
@@ -62,6 +59,9 @@ if __name__ == "__main__":
                 Neumann(condition=sigma, m=-1),
             )
 
+            def f(x):
+                return np.cos(2 * np.pi * x) + x
+
             def u(x):
                 # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
                 # Here: solved for left dirichlet and right neumann
@@ -73,6 +73,7 @@ if __name__ == "__main__":
                 )
 
             poisson_1D_UMR(
+                f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
@@ -87,6 +88,9 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
+            def f(x):
+                return np.cos(2 * np.pi * x) + x
+
             def u(x):
                 # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
                 # Here: solved for left dirichlet and right dirichlet
@@ -98,6 +102,7 @@ if __name__ == "__main__":
                 )
 
             poisson_1D_UMR(
+                f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
