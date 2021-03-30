@@ -5,6 +5,7 @@ from conditions import Dirichlet, Neumann, Periodic
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from plotting import refine_and_plot, solve_and_plot
 from poisson import amr, poisson
+from refine import make_solver
 from schemes import RK4, Euler, ThetaMethod
 
 
@@ -251,20 +252,18 @@ def refine_KdV_theta():
         return np.sin(np.pi * (transform_x(x) - t))
 
     scheme_kwargs = {
-        "N": int(1e3),
-        "k": 1e-3,
         "theta": 1 / 2,
         "conditions": (Periodic(m=0, period=-1),),
     }
 
+    T = 1
+
     from functools import partial
 
-    analytical = partial(analytical, scheme_kwargs["N"] * scheme_kwargs["k"])
+    analytical = partial(analytical, T)
 
     refine_and_plot(
-        cls=KdVTheta,
-        scheme_kwargs=scheme_kwargs,
-        f=f,
+        solver=make_solver(KdVTheta, f=f, T=T, c=1, **scheme_kwargs),
         analytical=analytical,
         param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
     )

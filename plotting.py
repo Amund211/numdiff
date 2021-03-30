@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from refine import calculate_relative_l2_error, make_solver, refine_mesh
+from refine import calculate_relative_l2_error, refine_mesh
 
 
 def solve_and_plot(scheme, f, analytic=None, transform_x=None):
@@ -35,16 +35,14 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
 
 
 def refine_and_plot(
-    cls,
-    scheme_kwargs,
-    f,
+    solver,
     analytical,
     param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
     calculate_distance=calculate_relative_l2_error,
 ):
     """Perform refinement and plot the error in a log-log plot"""
     amt_points, distances = refine_mesh(
-        solver=make_solver(cls, f, **scheme_kwargs),
+        solver=solver,
         param_range=param_range,
         analytical=analytical,
         calculate_distance=calculate_distance,
