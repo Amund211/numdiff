@@ -33,4 +33,4 @@ def L2(f, x):
 
 def relative_L2_error(u, U, x):
     """Calculate the relative continuous L2 norm of u - U on the grid x"""
-    return l2(lambda x: u(x) - U(x), x) / l2(u, x)
+    return L2(lambda x: u(x) - U(x), x) / L2(u, x)
