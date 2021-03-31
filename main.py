@@ -19,10 +19,10 @@ from refinement_utilities import (
 )
 
 
-def poisson_1D_UMR(f, conditions, analytical, calculate_distance, plot_kwargs):
+def poisson_1D_UMR(f, conditions, analytical, calculate_distance, M_range, plot_kwargs):
     amt_points, distances = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
-        param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
+        param_range=M_range,
         analytical=analytical,
         calculate_distance=calculate_distance,
     )
@@ -34,7 +34,9 @@ def poisson_1D_UMR(f, conditions, analytical, calculate_distance, plot_kwargs):
     plt.grid()
 
 
-def poisson_1D_AMR(f, conditions, analytical, select_refinement, order, plot_kwargs):
+def poisson_1D_AMR(
+    f, conditions, analytical, select_refinement, order, M_range, plot_kwargs
+):
     amt_points, distances = refine_mesh(
         solver=make_amr_poisson_solver(
             f=f,
@@ -43,7 +45,7 @@ def poisson_1D_AMR(f, conditions, analytical, select_refinement, order, plot_kwa
             select_refinement=select_refinement,
             order=order,
         ),
-        param_range=np.unique(np.logspace(1, 3, num=10, dtype=np.int32)),
+        param_range=M_range,
         analytical=analytical,
         calculate_distance=make_calculate_relative_L2_error(),
     )
@@ -119,11 +121,14 @@ if __name__ == "__main__":
                     + alpha
                 )
 
+            M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+
             poisson_1D_UMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
+                M_range=M_range,
                 plot_kwargs={"label": "$e^r_{l_2}$"},
             )
             poisson_1D_UMR(
@@ -131,13 +136,13 @@ if __name__ == "__main__":
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
+                M_range=M_range,
                 plot_kwargs={"label": "$e^r_{L_2}$"},
             )
 
-            x = np.logspace(0, 3)
             plt.plot(
-                x,
-                3 * np.divide(1, x ** 2),
+                M_range,
+                5 * np.divide(1, (M_range + 1) ** 2),
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
@@ -170,11 +175,14 @@ if __name__ == "__main__":
                     + alpha
                 )
 
+            M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+
             poisson_1D_UMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
+                M_range=M_range,
                 plot_kwargs={"label": "$e^r_{l_2}$"},
             )
             poisson_1D_UMR(
@@ -182,13 +190,14 @@ if __name__ == "__main__":
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
+                M_range=M_range,
                 plot_kwargs={"label": "$e^r_{L_2}$"},
             )
 
             x = np.logspace(0, 3)
             plt.plot(
-                x,
-                10 * np.divide(1, x ** 2),
+                M_range,
+                10 * np.divide(1, (M_range + 1) ** 2),
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
@@ -218,12 +227,15 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
+            M_range = np.unique(np.logspace(1, 3, num=10, dtype=np.int32))
+
             poisson_1D_AMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 select_refinement=select_max,
                 order=2,
+                M_range=M_range,
                 plot_kwargs={"label": "2nd order method"},
             )
             poisson_1D_AMR(
@@ -232,19 +244,19 @@ if __name__ == "__main__":
                 analytical=u,
                 select_refinement=select_max,
                 order=1,
+                M_range=M_range,
                 plot_kwargs={"label": "1st order method"},
             )
 
-            x = np.logspace(1, 3)
             plt.plot(
-                x,
-                10000 * np.divide(1, x ** 2),
+                M_range,
+                10000 * np.divide(1, (M_range + 1) ** 2),
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
             plt.plot(
-                x,
-                1000 * np.divide(1, x),
+                M_range,
+                1000 * np.divide(1, M_range + 1),
                 linestyle="dashed",
                 label=r"$O\left(h\right)$",
             )
@@ -276,12 +288,15 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
+            M_range = np.unique(np.logspace(1, 3, num=10, dtype=np.int32))
+
             poisson_1D_AMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 select_refinement=select_max,
                 order=2,
+                M_range=M_range,
                 plot_kwargs={"label": "AMR"},
             )
             poisson_1D_UMR(
@@ -289,13 +304,13 @@ if __name__ == "__main__":
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
+                M_range=M_range,
                 plot_kwargs={"label": "UMR"},
             )
 
-            x = np.logspace(1, 3)
             plt.plot(
-                x,
-                100 * np.divide(1, x ** 2),
+                M_range,
+                10000 * np.divide(1, (M_range + 1) ** 2),
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
