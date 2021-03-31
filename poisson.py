@@ -164,22 +164,29 @@ def poisson_4_point(f, x, conditions):
     return x, U
 
 
-def amr(f, u, conditions, amt_points_target, select_refinement=select_max, order=2):
-    x = np.array((0, 0.5, 1), dtype=np.float64)
-    to_refine = np.array((), dtype=np.int32)
+def amr(f, u, conditions, M, select_refinement=select_max, order=2):
+    """Adaptively refine the mesh until there are M internal nodes"""
+    assert M > 0, "M must be a positive integer"
+
+    x = np.array((0, 1), dtype=np.float64)
+    to_refine = np.array((0,), dtype=np.int32)
 
     if order == 1:
         poisson_solver = poisson_3_point
     elif order == 2:
+        assert M != 2, "M=2 does not work on a diadic grid with the four point formula"
         poisson_solver = poisson_4_point
     else:
         raise ValueError("Only orders 1 and 2 are supported")
 
-    while x.shape[0] < amt_points_target:
+    calculate_derivatives = calculate_poisson_derivatives(f)
+
+    while x.shape[0] - 2 < M:
         x = refine_after(x, to_refine)
         x, U = poisson_solver(f, x, conditions)
-        interpolated = interpolate(x, U, calculate_poisson_derivatives(f))
-        err = integrate(lambda x: (u(x) - interpolated(x)) ** 2, x[:-1], x[1:])
-        to_refine = select_refinement(err)
+        if x.shape[0] - 2 < M:
+            interpolated = interpolate(x, U, calculate_derivatives)
+            err = integrate(lambda x: (u(x) - interpolated(x)) ** 2, x[:-1], x[1:])
+            to_refine = select_refinement(err, M - (x.shape[0] - 2))
 
     return x, U

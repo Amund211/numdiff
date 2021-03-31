@@ -49,7 +49,7 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
             f=f,
             u=u,
             conditions=conditions,
-            amt_points_target=param,
+            M=param,
             select_refinement=select_refinement,
             order=order,
         )

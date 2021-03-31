@@ -225,7 +225,7 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
-            M_range = np.unique(np.logspace(1, 3, num=10, dtype=np.int32))
+            M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
             poisson_1D_AMR(
                 f=f,
@@ -233,7 +233,7 @@ if __name__ == "__main__":
                 analytical=u,
                 select_refinement=select_max,
                 order=2,
-                M_range=M_range,
+                M_range=M_range[M_range != 2],
                 plot_kwargs={"label": "2nd order method"},
             )
             poisson_1D_AMR(
@@ -286,7 +286,7 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
-            M_range = np.unique(np.logspace(1, 3, num=30, dtype=np.int32))
+            M_range = np.unique(np.logspace(0, 3, num=30, dtype=np.int32))
 
             poisson_1D_AMR(
                 f=f,
@@ -294,7 +294,7 @@ if __name__ == "__main__":
                 analytical=u,
                 select_refinement=select_max,
                 order=2,
-                M_range=M_range,
+                M_range=M_range[M_range != 2],
                 plot_kwargs={"label": r"AMR max, $\alpha=0.7$"},
             )
             poisson_1D_AMR(
@@ -303,7 +303,7 @@ if __name__ == "__main__":
                 analytical=u,
                 select_refinement=select_avg,
                 order=2,
-                M_range=M_range,
+                M_range=M_range[M_range != 2],
                 plot_kwargs={"label": r"AMR avg, $\alpha=1$"},
             )
             poisson_1D_UMR(

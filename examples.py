@@ -53,7 +53,7 @@ def test_poisson():
 
     # The target for the mesh size
     # The amr method may exceed this number
-    M_target = 100
+    M = 100
     alpha = 0
     sigma = 1
     beta = 0
@@ -79,13 +79,13 @@ def test_poisson():
         f=f,
         u=u,
         conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
-        amt_points_target=M_target,
+        M=M,
     )
     # plt.plot(x_adaptive, U_adaptive, label="$U_{adaptive}$")
 
     x_uniform, U_uniform = poisson(
         f=f,
-        M=x_adaptive.shape[0],  # Use the same amount of point for a fair comparison
+        M=M,
         conditions=(Dirichlet(condition=alpha, m=0), Dirichlet(condition=beta, m=-1)),
         maxiter=1e6,
         explain_solution=True,
