@@ -17,9 +17,7 @@ from refinement_utilities import (
 )
 
 
-def poisson_1D_UMR(
-    f, conditions, analytical, calculate_distance, plot_kwargs={"label": r"$\|U-u\|$"}
-):
+def poisson_1D_UMR(f, conditions, analytical, calculate_distance, plot_kwargs):
     amt_points, distances = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
         param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
