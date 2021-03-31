@@ -170,7 +170,7 @@ if __name__ == "__main__":
 
             plt.suptitle("Poisson's equation - Uniform mesh refinement")
             plt.title("Dirichlet - Neumann")
-            plt.xlabel("Internal points $M$")
+            plt.xlabel("Internal nodes $M$")
             plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
@@ -225,7 +225,7 @@ if __name__ == "__main__":
 
             plt.suptitle("Poisson's equation - Uniform mesh refinement")
             plt.title("Dirichlet - Dirichlet")
-            plt.xlabel("Internal points $M$")
+            plt.xlabel("Internal nodes $M$")
             plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
@@ -281,7 +281,7 @@ if __name__ == "__main__":
             plt.title(
                 r"$u\left(x\right) = \exp{-\frac{1}{\epsilon} \left(x - \frac12\right)}$"
             )
-            plt.xlabel("Internal points $M$")
+            plt.xlabel("Internal nodes $M$")
             plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
@@ -341,7 +341,7 @@ if __name__ == "__main__":
             )
 
             plt.suptitle("Poisson's equation")
-            plt.xlabel("Internal points $M$")
+            plt.xlabel("Internal nodes $M$")
             plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
