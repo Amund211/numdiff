@@ -61,17 +61,22 @@ if __name__ == "__main__":
         tasks = sys.argv[1:]
     else:
         print(f"Available tasks: {' '.join(available_tasks)}")
+        print("Use 'all' to run all tasks")
         tasks = (
             input("What tasks do you want to run? (space separated): ")
             .lower()
             .split(" ")
         )
 
+    if len(tasks) == 1 and tasks[0] == "all":
+        tasks = available_tasks
+
     for task in tasks:
         if task not in available_tasks:
             print(f"Did not recognize task '{task}', skipping...", file=sys.stdout)
             continue
 
+        print(f"Running task {task}")
         if task == "1a":
             alpha = 0
             sigma = 1
