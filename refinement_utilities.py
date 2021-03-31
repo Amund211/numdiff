@@ -39,7 +39,7 @@ def make_poisson_solver(f, conditions):
     return solver
 
 
-def make_amr_poisson_solver(f, u, conditions, select_refinement):
+def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
     """
     Create a solver function for solving Poisson's equation for use in `refine_mesh`
     """
@@ -51,6 +51,7 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement):
             conditions=conditions,
             amt_points_target=param,
             select_refinement=select_refinement,
+            order=order,
         )
         return x, U
 

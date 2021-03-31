@@ -74,9 +74,47 @@ def poisson(f, M, conditions, maxiter=1e6, explain_solution=True):
     return x, U
 
 
+def poisson_3_point(f, x, conditions):
+    """Solve Poisson's equation with a first order method on the mesh x"""
+    assert len(conditions) == 2
+    assert not isinstance(conditions[0], Neumann) or not isinstance(
+        conditions[1], Neumann
+    ), "The problem is ill posed"
+
+    length = x.shape[0]
+    A = scipy.sparse.lil_matrix((length, length), dtype=np.float64)
+
+    # Populate the matrix with the three point formula
+    for i in range(1, length - 1):
+        hip1 = x[i + 1] - x[i]
+        hi = x[i] - x[i - 1]
+        A[i, i - 1 : i + 2] = (1 / hi, -(1 / hip1 + 1 / hi), 1 / hip1)
+        A[i, i - 1 : i + 2] *= 2 / (hip1 + hi)
+
+    f = f(x)
+
+    steps = x[1:] - x[:-1]
+    for condition in conditions:
+        vector = condition.get_vector(length=length, h=steps[condition.m])
+        context = np.nonzero(vector)
+        indicies = np.arange(np.min(context), np.max(context))
+        assert has_uniform_steps(
+            x, indicies
+        ), "Step sizes for boundary conditions must be uniform"
+
+        A[condition.m, :] = vector
+        f[condition.m] = condition.get_scalar()
+
+    sparse = scipy.sparse.csc_matrix(A)
+
+    U = scipy.sparse.linalg.spsolve(sparse, f)
+
+    return x, U
+
+
 def poisson_4_point(f, x, conditions):
     """
-    Solve Poisson's equation on the mesh x
+    Solve Poisson's equation with a second order method on the mesh x
 
     Uses the method for arbitrary mesh sizes described in:
     Liu Jianchun, Gary A. Pope, Kamy Sepehrnoori,
@@ -126,13 +164,20 @@ def poisson_4_point(f, x, conditions):
     return x, U
 
 
-def amr(f, u, conditions, amt_points_target, select_refinement=select_max):
+def amr(f, u, conditions, amt_points_target, select_refinement=select_max, order=2):
     x = np.array((0, 0.5, 1), dtype=np.float64)
     to_refine = np.array((), dtype=np.int32)
 
+    if order == 1:
+        poisson_solver = poisson_3_point
+    elif order == 2:
+        poisson_solver = poisson_4_point
+    else:
+        raise ValueError("Only orders 1 and 2 are supported")
+
     while x.shape[0] < amt_points_target:
         x = refine_after(x, to_refine)
-        x, U = poisson_4_point(f, x, conditions)
+        x, U = poisson_solver(f, x, conditions)
         interpolated = interpolate(x, U, calculate_poisson_derivatives(f))
         err = integrate(lambda x: (u(x) - interpolated(x)) ** 2, x[:-1], x[1:])
         to_refine = select_refinement(err)
