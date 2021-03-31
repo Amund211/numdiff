@@ -282,7 +282,7 @@ if __name__ == "__main__":
                 r"$u\left(x\right) = \exp{-\frac{1}{\epsilon} \left(x - \frac12\right)}$"
             )
             plt.xlabel("Internal points $M$")
-            plt.ylabel(r"Relative L2 error $\frac{\|U-u\|}{\|u\|}$")
+            plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
             plt.show()
@@ -342,7 +342,7 @@ if __name__ == "__main__":
 
             plt.suptitle("Poisson's equation")
             plt.xlabel("Internal points $M$")
-            plt.ylabel(r"Relative L2 error $\frac{\|U-u\|}{\|u\|}$")
+            plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
             plt.show()
@@ -433,7 +433,7 @@ if __name__ == "__main__":
                 f"Comparison with reference solution with $M^* = {M_star}$ at $t = {T}$"
             )
             plt.xlabel("Internal nodes $M$")
-            plt.ylabel(r"Relative l2 error $\frac{\|U-u\|}{\|u\|}$")
+            plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
             plt.show()
