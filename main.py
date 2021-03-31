@@ -37,7 +37,23 @@ def poisson_1D_UMR(
 if __name__ == "__main__":
     import sys
 
-    plt.rcParams.update({"text.usetex": True})
+    # Plot params
+    fontsize = 16
+    plt.rcParams.update(
+        {
+            "text.usetex": True,
+            "axes.titlesize": fontsize,
+            "axes.labelsize": fontsize,
+            "ytick.labelsize": fontsize,
+            "xtick.labelsize": fontsize,
+            "lines.linewidth": 2,
+            "lines.markersize": 7,
+            "legend.fontsize": fontsize,
+            "legend.handlelength": 1.5,
+            "figure.figsize": (10, 6),
+            "figure.titlesize": 20,
+        }
+    )
 
     available_tasks = ("1a", "1b")
 
