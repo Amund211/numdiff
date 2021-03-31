@@ -246,17 +246,12 @@ if __name__ == "__main__":
                 plot_kwargs={"label": "1st order method"},
             )
 
+            # Both methods seem to have order 2
             plt.plot(
                 M_range,
                 10000 * np.divide(1, (M_range + 1) ** 2),
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
-            )
-            plt.plot(
-                M_range,
-                1000 * np.divide(1, M_range + 1),
-                linestyle="dashed",
-                label=r"$O\left(h\right)$",
             )
 
             plt.suptitle("Poisson's equation - Adaptive mesh refinement")
