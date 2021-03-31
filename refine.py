@@ -19,8 +19,8 @@ def ensure_uniform_steps(indicies, err, max_refinement):
         missing = np.append(missing, amt_intervals - 1)
 
     # Make sure that max_refinement indicies isn't exceeded
-    if indicies.shape[0] + len(missing) > max_refinement:
-        amount_to_refine = max_refinement - len(missing)
+    if indicies.shape[0] + missing.shape[0] > max_refinement:
+        amount_to_refine = max_refinement - missing.shape[0]
         largest_indicies = np.argpartition(err[indicies], -amount_to_refine)[
             -amount_to_refine:
         ]
