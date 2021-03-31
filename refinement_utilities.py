@@ -58,7 +58,7 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
     return solver
 
 
-def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, **kwargs):
+def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwargs={}):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
 
@@ -79,25 +79,25 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, **kwargs):
 
     def solver(param):
         if refine_space:
-            M = kwargs["M"] = param
+            M = scheme_kwargs["M"] = param
             if r is not None:
                 # Keep a constant r = k/h^2
-                kwargs["N"] = int((M + 1) ** 2 / r)
+                scheme_kwargs["N"] = int((M + 1) ** 2 / r)
             elif c is not None:
                 # Keep a constant c = k/h
-                kwargs["N"] = int((M + 1) / c)
+                scheme_kwargs["N"] = int((M + 1) / c)
         else:
-            kwargs["N"] = param
+            scheme_kwargs["N"] = param
 
-        kwargs["k"] = T / kwargs["N"]
+        scheme_kwargs["k"] = T / scheme_kwargs["N"]
 
-        scheme = cls(**kwargs)
+        scheme = cls(**scheme_kwargs)
         x_axis, solution = scheme.solve(f)
         return (
             x_axis,
             solution[:, -1],
             # ndof = (M + 2 gridpoints - # boundary conditions) * N
-            (kwargs["M"] + 2 - scheme.free_indicies.shape[0]) * kwargs["N"],
+            (scheme.M + 2 - scheme.free_indicies.shape[0]) * scheme.N,
         )
 
     return solver
