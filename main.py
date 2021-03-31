@@ -9,9 +9,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from refine import refine_mesh
+from refine import refine_mesh, select_max
 from refinement_utilities import (
     calculate_relative_l2_error,
+    make_amr_poisson_solver,
+    make_calculate_relative_L2_error,
     make_calculate_relative_L2_error_poisson,
     make_poisson_solver,
 )
@@ -23,6 +25,27 @@ def poisson_1D_UMR(f, conditions, analytical, calculate_distance, plot_kwargs):
         param_range=np.unique(np.logspace(0, 3, num=50, dtype=np.int32)),
         analytical=analytical,
         calculate_distance=calculate_distance,
+    )
+
+    # Subtract 2 from amt_points bc we have two boundary conditions
+    plt.loglog(amt_points - 2, distances, **plot_kwargs)
+
+    plt.legend()
+    plt.grid()
+
+
+def poisson_1D_AMR(f, conditions, analytical, select_refinement, order, plot_kwargs):
+    amt_points, distances = refine_mesh(
+        solver=make_amr_poisson_solver(
+            f=f,
+            u=analytical,
+            conditions=conditions,
+            select_refinement=select_refinement,
+            order=order,
+        ),
+        param_range=np.unique(np.logspace(1, 3, num=10, dtype=np.int32)),
+        analytical=analytical,
+        calculate_distance=make_calculate_relative_L2_error(),
     )
 
     # Subtract 2 from amt_points bc we have two boundary conditions
@@ -53,7 +76,7 @@ if __name__ == "__main__":
         }
     )
 
-    available_tasks = ("1a", "1b")
+    available_tasks = ("1a", "1b", "1d1", "1d2")
 
     if len(sys.argv) > 1:
         tasks = sys.argv[1:]
@@ -174,6 +197,112 @@ if __name__ == "__main__":
             plt.title("Dirichlet - Dirichlet")
             plt.xlabel("Internal points $M$")
             plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+            plt.legend()
+
+            plt.show()
+        elif task == "1d1":
+            # Manufactured solution
+            eps = 1 / 1000
+
+            def u(x):
+                return np.exp(-1 / eps * np.square(x - 1 / 2))
+
+            def f(x):
+                return u(x) * (4 * x ** 2 - 4 * x - 2 * eps + 1) / eps ** 2
+
+            alpha = u(0)
+            beta = u(1)
+
+            conditions = (
+                Dirichlet(condition=alpha, m=0),
+                Dirichlet(condition=beta, m=-1),
+            )
+
+            poisson_1D_AMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                select_refinement=select_max,
+                order=2,
+                plot_kwargs={"label": "2nd order method"},
+            )
+            poisson_1D_AMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                select_refinement=select_max,
+                order=1,
+                plot_kwargs={"label": "1st order method"},
+            )
+
+            x = np.logspace(1, 3)
+            plt.plot(
+                x,
+                10000 * np.divide(1, x ** 2),
+                linestyle="dashed",
+                label=r"$O\left(h^2\right)$",
+            )
+            plt.plot(
+                x,
+                1000 * np.divide(1, x),
+                linestyle="dashed",
+                label=r"$O\left(h\right)$",
+            )
+
+            plt.suptitle("Poisson's equation - Adaptive mesh refinement")
+            plt.title(
+                r"$u\left(x\right) = \exp{-\frac{1}{\epsilon} \left(x - \frac12\right)}$"
+            )
+            plt.xlabel("Internal points $M$")
+            plt.ylabel(r"Relative L2 error $\frac{\|U-u\|}{\|u\|}$")
+            plt.legend()
+
+            plt.show()
+        elif task == "1d2":
+            # Manufactured solution
+            eps = 1 / 1000
+
+            def u(x):
+                return np.exp(-1 / eps * np.square(x - 1 / 2))
+
+            def f(x):
+                return u(x) * (4 * x ** 2 - 4 * x - 2 * eps + 1) / eps ** 2
+
+            alpha = u(0)
+            beta = u(1)
+
+            conditions = (
+                Dirichlet(condition=alpha, m=0),
+                Dirichlet(condition=beta, m=-1),
+            )
+
+            poisson_1D_AMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                select_refinement=select_max,
+                order=2,
+                plot_kwargs={"label": "AMR"},
+            )
+            poisson_1D_UMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                calculate_distance=calculate_relative_l2_error,
+                plot_kwargs={"label": "UMR"},
+            )
+
+            x = np.logspace(1, 3)
+            plt.plot(
+                x,
+                100 * np.divide(1, x ** 2),
+                linestyle="dashed",
+                label=r"$O\left(h^2\right)$",
+            )
+
+            plt.suptitle("Poisson's equation")
+            plt.xlabel("Internal points $M$")
+            plt.ylabel(r"Relative L2 error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
             plt.show()
