@@ -26,6 +26,14 @@ def select_max(err, alpha=0.7):
     return ensure_uniform_steps(to_refine, err.shape[0])
 
 
+def select_avg(err, alpha=1.0):
+    """Select indicies to refine where the error exceeds `alpha` * avg(err)"""
+    avg_err = np.average(err)
+    to_refine = np.flatnonzero(err >= alpha * avg_err)
+
+    return ensure_uniform_steps(to_refine, err.shape[0])
+
+
 def refine_mesh(solver, param_range, analytical, calculate_distance):
     """
     Solve a numerical scheme for a range of parameters and return the error for each
