@@ -21,7 +21,7 @@ def ensure_uniform_steps(indicies, amt_intervals):
 def select_max(err, alpha=0.7):
     """Select indicies to refine where the error exceeds `alpha` * max(err)"""
     max_err = np.max(err)
-    to_refine = np.flatnonzero(err > 0.7 * max_err)
+    to_refine = np.flatnonzero(err >= alpha * max_err)
 
     return ensure_uniform_steps(to_refine, err.shape[0])
 
