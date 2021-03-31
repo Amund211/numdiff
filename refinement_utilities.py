@@ -34,7 +34,7 @@ def make_poisson_solver(f, conditions):
 
     def solver(param):
         x, U = poisson(f=f, conditions=conditions, M=param)
-        return x, U
+        return x, U, param
 
     return solver
 
@@ -53,7 +53,7 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
             select_refinement=select_refinement,
             order=order,
         )
-        return x, U
+        return x, U, param
 
     return solver
 
@@ -93,6 +93,11 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, **kwargs):
 
         scheme = cls(**kwargs)
         x_axis, solution = scheme.solve(f)
-        return x_axis, solution[:, -1]
+        return (
+            x_axis,
+            solution[:, -1],
+            # ndof = (M + 2 gridpoints - # boundary conditions) * N
+            (kwargs["M"] + 2 - scheme.free_indicies.shape[0]) * kwargs["N"],
+        )
 
     return solver

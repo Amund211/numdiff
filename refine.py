@@ -42,10 +42,10 @@ def refine_mesh(solver, param_range, analytical, calculate_distance):
     value returned by the solver (function or values at gridpoints)
     """
     distances = np.empty(param_range.shape, dtype=np.float64)
-    amt_points = np.empty(param_range.shape, dtype=np.int32)
+    ndofs = np.empty(param_range.shape, dtype=np.int32)
     for i, param in enumerate(param_range):
-        x, numerical = solver(param)
+        x, numerical, ndof = solver(param)
         distances[i] = calculate_distance(x, analytical, numerical)
-        amt_points[i] = x.shape[0]
+        ndofs[i] = ndof
 
-    return amt_points, distances
+    return ndofs, distances

@@ -20,15 +20,14 @@ from refinement_utilities import (
 
 
 def poisson_1D_UMR(f, conditions, analytical, calculate_distance, M_range, plot_kwargs):
-    amt_points, distances = refine_mesh(
+    ndofs, distances = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
         param_range=M_range,
         analytical=analytical,
         calculate_distance=calculate_distance,
     )
 
-    # Subtract 2 from amt_points bc we have two boundary conditions
-    plt.loglog(amt_points - 2, distances, **plot_kwargs)
+    plt.loglog(ndofs, distances, **plot_kwargs)
 
     plt.legend()
     plt.grid()
@@ -37,7 +36,7 @@ def poisson_1D_UMR(f, conditions, analytical, calculate_distance, M_range, plot_
 def poisson_1D_AMR(
     f, conditions, analytical, select_refinement, order, M_range, plot_kwargs
 ):
-    amt_points, distances = refine_mesh(
+    ndofs, distances = refine_mesh(
         solver=make_amr_poisson_solver(
             f=f,
             u=analytical,
@@ -50,8 +49,7 @@ def poisson_1D_AMR(
         calculate_distance=make_calculate_relative_L2_error(),
     )
 
-    # Subtract 2 from amt_points bc we have two boundary conditions
-    plt.loglog(amt_points - 2, distances, **plot_kwargs)
+    plt.loglog(ndofs, distances, **plot_kwargs)
 
     plt.legend()
     plt.grid()

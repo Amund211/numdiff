@@ -265,15 +265,14 @@ def refine_KdV_theta():
 
     analytical = partial(analytical, T)
 
-    amt_points, distances = refine_mesh(
+    ndofs, distances = refine_mesh(
         solver=make_scheme_solver(KdVTheta, f=f, T=T, c=1, **scheme_kwargs),
         param_range=np.unique(np.logspace(1, 3, num=50, dtype=np.int32)),
         analytical=analytical,
         calculate_distance=calculate_relative_l2_error,
     )
 
-    # Subtract 2 from amt_points bc we have one boundary condition
-    plt.loglog(amt_points - 1, distances, label=r"$\|U-u\|_{l_2}$")
+    plt.loglog(ndofs, distances, label=r"$\|U-u\|_{l_2}$")
 
     plt.legend()
     plt.grid()
