@@ -437,7 +437,6 @@ if __name__ == "__main__":
             plt.legend()
 
             plt.show()
-            pass
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
