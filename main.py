@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from conditions import Dirichlet, Neumann
-from refine import refine_mesh, select_max
+from refine import refine_mesh, select_avg, select_max
 from refinement_utilities import (
     calculate_relative_l2_error,
     make_amr_poisson_solver,
@@ -288,7 +288,7 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
-            M_range = np.unique(np.logspace(1, 3, num=10, dtype=np.int32))
+            M_range = np.unique(np.logspace(1, 3, num=30, dtype=np.int32))
 
             poisson_1D_AMR(
                 f=f,
@@ -297,7 +297,16 @@ if __name__ == "__main__":
                 select_refinement=select_max,
                 order=2,
                 M_range=M_range,
-                plot_kwargs={"label": "AMR"},
+                plot_kwargs={"label": r"AMR max, $\alpha=0.7$"},
+            )
+            poisson_1D_AMR(
+                f=f,
+                conditions=conditions,
+                analytical=u,
+                select_refinement=select_avg,
+                order=2,
+                M_range=M_range,
+                plot_kwargs={"label": r"AMR avg, $\alpha=1$"},
             )
             poisson_1D_UMR(
                 f=f,
