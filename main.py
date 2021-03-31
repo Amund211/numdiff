@@ -82,14 +82,14 @@ if __name__ == "__main__":
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
-                plot_kwargs={"label": r"$\|U-u\|_{l_2}$"},
+                plot_kwargs={"label": "$e^r_{l_2}$"},
             )
             poisson_1D_UMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
-                plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
+                plot_kwargs={"label": "$e^r_{L_2}$"},
             )
 
             x = np.logspace(0, 3)
@@ -99,6 +99,12 @@ if __name__ == "__main__":
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
+
+            plt.suptitle("Poisson's equation - Uniform mesh refinement")
+            plt.title("Dirichlet - Neumann")
+            plt.xlabel("Internal points $M$")
+            plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+            plt.legend()
 
             plt.show()
         elif task == "1b":
@@ -127,14 +133,14 @@ if __name__ == "__main__":
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=calculate_relative_l2_error,
-                plot_kwargs={"label": r"$\|U-u\|_{l_2}$"},
+                plot_kwargs={"label": "$e^r_{l_2}$"},
             )
             poisson_1D_UMR(
                 f=f,
                 conditions=conditions,
                 analytical=u,
                 calculate_distance=make_calculate_relative_L2_error_poisson(f),
-                plot_kwargs={"label": r"$\|U-u\|_{L_2}$"},
+                plot_kwargs={"label": "$e^r_{L_2}$"},
             )
 
             x = np.logspace(0, 3)
@@ -144,6 +150,11 @@ if __name__ == "__main__":
                 linestyle="dashed",
                 label=r"$O\left(h^2\right)$",
             )
+
+            plt.suptitle("Poisson's equation - Uniform mesh refinement")
+            plt.title("Dirichlet - Dirichlet")
+            plt.xlabel("Internal points $M$")
+            plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
             plt.legend()
 
             plt.show()
