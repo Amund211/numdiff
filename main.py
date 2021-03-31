@@ -323,6 +323,9 @@ if __name__ == "__main__":
             plt.legend()
 
             plt.show()
+        elif task == "1d3":
+            # Maybe include a concrete example comparing AMR with UMR for some small M?
+            pass
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
