@@ -5,6 +5,8 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_1.pdf
 https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 """
 
+from functools import partial
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import interp1d
@@ -99,7 +101,7 @@ if __name__ == "__main__":
         }
     )
 
-    available_tasks = ("1a", "1b", "1d1", "1d2", "2a")
+    available_tasks = ("1a", "1b", "1d1", "1d2", "2a", "2b1")
 
     if len(sys.argv) > 1:
         tasks = sys.argv[1:]
@@ -437,6 +439,86 @@ if __name__ == "__main__":
             plt.legend()
 
             plt.show()
+        elif task.startswith("2b"):
+            T = 0.05
+            N = 10 ** 4
+            M = 10 ** 4
+
+            def u(x, t):
+                return np.exp(-t * np.pi ** 2) * np.cos(np.pi * x)
+
+            analytical = partial(u, t=T)
+
+            def f(x):
+                return u(x, 0)
+                return np.cos(np.pi * x)
+
+            conditions = (Neumann(condition=0, m=0), Neumann(condition=0, m=-1))
+
+            scheme_kwargs = {
+                "conditions": conditions,
+                "N": N,
+                "M": M,
+            }
+
+            if task == "2b1":
+                N_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+
+                # Backward Euler
+                ndofs, distances = refine_mesh(
+                    solver=make_scheme_solver(
+                        cls=HeatTheta,
+                        f=f,
+                        T=T,
+                        refine_space=False,
+                        scheme_kwargs={"theta": 1, **scheme_kwargs},
+                    ),
+                    param_range=N_range,
+                    analytical=analytical,
+                    calculate_distance=calculate_relative_l2_error,
+                )
+                plt.loglog(ndofs / M, distances, label="BE")
+
+                # Crank Nicholson
+                ndofs, distances = refine_mesh(
+                    solver=make_scheme_solver(
+                        cls=HeatTheta,
+                        f=f,
+                        T=T,
+                        refine_space=False,
+                        scheme_kwargs={"theta": 1 / 2, **scheme_kwargs},
+                    ),
+                    param_range=N_range,
+                    analytical=analytical,
+                    calculate_distance=calculate_relative_l2_error,
+                )
+                plt.loglog(ndofs / M, distances, label="CN")
+
+                # O(h)
+                plt.plot(
+                    N_range,
+                    3e-1 * np.divide(1, N_range),
+                    linestyle="dashed",
+                    label=r"$O\left(h\right)$",
+                )
+
+                # O(h^2)
+                plt.plot(
+                    N_range,
+                    5e-2 * np.divide(1, N_range ** 2),
+                    linestyle="dashed",
+                    label=r"$O\left(h^2\right)$",
+                )
+
+                plt.grid()
+
+                plt.suptitle("The heat equation")
+                plt.title(f"Backwards Euler vs Crank Nicholson with $M={M}$")
+                plt.xlabel("Time steps $N$")
+                plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
+                plt.legend()
+
+                plt.show()
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
