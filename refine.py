@@ -45,18 +45,22 @@ def select_avg(err, max_refinement, alpha=1.0):
     return ensure_uniform_steps(to_refine, err, max_refinement)
 
 
-def refine_mesh(solver, param_range, analytical, calculate_distance):
+def refine_mesh(solver, param_range, analytical, calculate_distances):
     """
     Solve a numerical scheme for a range of parameters and return the error for each
 
-    `calculate_distance` should take the grid, the analytical function and the
-    value returned by the solver (function or values at gridpoints)
+    Each function in `calculate_distances` should take the grid, the analytical
+    function, and the values at gridpoints
     """
-    distances = np.empty(param_range.shape, dtype=np.float64)
+    distances_list = [None] * len(calculate_distances)
+    for i in range(len(distances_list)):
+        distances_list[i] = np.empty(param_range.shape, dtype=np.float64)
+
     ndofs = np.empty(param_range.shape, dtype=np.int32)
     for i, param in enumerate(param_range):
         x, numerical, ndof = solver(param)
-        distances[i] = calculate_distance(x, analytical, numerical)
+        for distances, calculate_distance in zip(distances_list, calculate_distances):
+            distances[i] = calculate_distance(x, analytical, numerical)
         ndofs[i] = ndof
 
-    return ndofs, distances
+    return ndofs, distances_list

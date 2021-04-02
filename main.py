@@ -25,15 +25,18 @@ from refinement_utilities import (
 from schemes import ThetaMethod
 
 
-def poisson_1D_UMR(f, conditions, analytical, calculate_distance, M_range, plot_kwargs):
-    ndofs, distances = refine_mesh(
+def poisson_1D_UMR(
+    f, conditions, analytical, calculate_distances, M_range, plot_kwargs_list
+):
+    ndofs, distances_list = refine_mesh(
         solver=make_poisson_solver(f=f, conditions=conditions),
         param_range=M_range,
         analytical=analytical,
-        calculate_distance=calculate_distance,
+        calculate_distances=calculate_distances,
     )
 
-    plt.loglog(ndofs, distances, **plot_kwargs)
+    for distances, plot_kwargs in zip(distances_list, plot_kwargs_list):
+        plt.loglog(ndofs, distances, **plot_kwargs)
 
     plt.legend()
     plt.grid()
@@ -42,7 +45,7 @@ def poisson_1D_UMR(f, conditions, analytical, calculate_distance, M_range, plot_
 def poisson_1D_AMR(
     f, conditions, analytical, select_refinement, order, M_range, plot_kwargs
 ):
-    ndofs, distances = refine_mesh(
+    ndofs, (distances,) = refine_mesh(
         solver=make_amr_poisson_solver(
             f=f,
             u=analytical,
@@ -52,7 +55,7 @@ def poisson_1D_AMR(
         ),
         param_range=M_range,
         analytical=analytical,
-        calculate_distance=make_calculate_relative_L2_error(),
+        calculate_distances=(make_calculate_relative_L2_error(),),
     )
 
     plt.loglog(ndofs, distances, **plot_kwargs)
@@ -150,17 +153,12 @@ if __name__ == "__main__":
                 f=f,
                 conditions=conditions,
                 analytical=u,
-                calculate_distance=calculate_relative_l2_error,
+                calculate_distances=(
+                    calculate_relative_l2_error,
+                    make_calculate_relative_L2_error_poisson(f),
+                ),
                 M_range=M_range,
-                plot_kwargs={"label": "$e^r_{l_2}$"},
-            )
-            poisson_1D_UMR(
-                f=f,
-                conditions=conditions,
-                analytical=u,
-                calculate_distance=make_calculate_relative_L2_error_poisson(f),
-                M_range=M_range,
-                plot_kwargs={"label": "$e^r_{L_2}$"},
+                plot_kwargs_list=({"label": "$e^r_{l_2}$"}, {"label": "$e^r_{L_2}$"}),
             )
 
             plt.plot(
@@ -204,17 +202,12 @@ if __name__ == "__main__":
                 f=f,
                 conditions=conditions,
                 analytical=u,
-                calculate_distance=calculate_relative_l2_error,
+                calculate_distances=(
+                    calculate_relative_l2_error,
+                    make_calculate_relative_L2_error_poisson(f),
+                ),
                 M_range=M_range,
-                plot_kwargs={"label": "$e^r_{l_2}$"},
-            )
-            poisson_1D_UMR(
-                f=f,
-                conditions=conditions,
-                analytical=u,
-                calculate_distance=make_calculate_relative_L2_error_poisson(f),
-                M_range=M_range,
-                plot_kwargs={"label": "$e^r_{L_2}$"},
+                plot_kwargs_list=({"label": "$e^r_{l_2}$"}, {"label": "$e^r_{L_2}$"}),
             )
 
             x = np.logspace(0, 3)
@@ -281,7 +274,9 @@ if __name__ == "__main__":
 
             plt.suptitle("Poisson's equation - Adaptive mesh refinement")
             plt.title(
-                r"$u\left(x\right) = \exp{-\frac{1}{\epsilon} \left(x - \frac12\right)}$"
+                r"$u\left(x\right) = "
+                r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)},"
+                fr"\epsilon = {eps:.2e}$"
             )
             plt.xlabel("Internal nodes $M$")
             plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
@@ -330,9 +325,9 @@ if __name__ == "__main__":
                 f=f,
                 conditions=conditions,
                 analytical=u,
-                calculate_distance=calculate_relative_l2_error,
+                calculate_distances=(calculate_relative_l2_error,),
                 M_range=M_range,
-                plot_kwargs={"label": "UMR"},
+                plot_kwargs_list=({"label": "UMR"},),
             )
 
             plt.plot(
@@ -389,24 +384,24 @@ if __name__ == "__main__":
             U_star = interp1d(x, solution[:, -1], kind="nearest")
 
             # 1st order
-            ndofs, distances = refine_mesh(
+            ndofs, (distances,) = refine_mesh(
                 solver=make_scheme_solver(
                     cls=HeatTheta, f=f, T=T, scheme_kwargs=scheme_kwargs_1st_order
                 ),
                 param_range=M_range,
                 analytical=U_star,
-                calculate_distance=calculate_relative_l2_error,
+                calculate_distances=(calculate_relative_l2_error,),
             )
             plt.loglog(ndofs / N, distances, label="1st order")
 
             # 2nd order
-            ndofs, distances = refine_mesh(
+            ndofs, (distances,) = refine_mesh(
                 solver=make_scheme_solver(
                     cls=HeatTheta, f=f, T=T, scheme_kwargs=scheme_kwargs
                 ),
                 param_range=M_range,
                 analytical=U_star,
-                calculate_distance=calculate_relative_l2_error,
+                calculate_distances=(calculate_relative_l2_error,),
             )
             plt.loglog(ndofs / N, distances, label="2nd order")
 
@@ -465,7 +460,7 @@ if __name__ == "__main__":
                 N_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
 
                 # Backward Euler
-                ndofs, distances = refine_mesh(
+                ndofs, (distances,) = refine_mesh(
                     solver=make_scheme_solver(
                         cls=HeatTheta,
                         f=f,
@@ -475,12 +470,12 @@ if __name__ == "__main__":
                     ),
                     param_range=N_range,
                     analytical=analytical,
-                    calculate_distance=calculate_relative_l2_error,
+                    calculate_distances=(calculate_relative_l2_error,),
                 )
                 plt.loglog(ndofs / M, distances, label="BE")
 
                 # Crank Nicholson
-                ndofs, distances = refine_mesh(
+                ndofs, (distances,) = refine_mesh(
                     solver=make_scheme_solver(
                         cls=HeatTheta,
                         f=f,
@@ -490,7 +485,7 @@ if __name__ == "__main__":
                     ),
                     param_range=N_range,
                     analytical=analytical,
-                    calculate_distance=calculate_relative_l2_error,
+                    calculate_distances=(calculate_relative_l2_error,),
                 )
                 plt.loglog(ndofs / M, distances, label="CN")
 
