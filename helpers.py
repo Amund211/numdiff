@@ -4,14 +4,14 @@ import scipy.sparse
 from integrate import composite
 
 
-def central_difference(N, power=2):
+def central_difference(N, power=2, format="lil"):
     if power == 1:
         return scipy.sparse.diags(
-            (-1, 0, 1), (-1, 0, 1), shape=(N, N), format="lil", dtype=np.float64
+            (-1, 0, 1), (-1, 0, 1), shape=(N, N), format=format, dtype=np.float64
         )
     elif power == 2:
         return scipy.sparse.diags(
-            (1, -2, 1), (-1, 0, 1), shape=(N, N), format="lil", dtype=np.float64
+            (1, -2, 1), (-1, 0, 1), shape=(N, N), format=format, dtype=np.float64
         )
 
 

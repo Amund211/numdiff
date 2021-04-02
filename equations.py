@@ -80,7 +80,7 @@ class HeatEquation(Equation):
         return np.array((0, self.M + 1), dtype=np.int64)
 
     def operator(self):
-        return central_difference(self.M + 2, power=2) / self.h ** 2
+        return central_difference(self.M + 2, power=2, format="csc") / self.h ** 2
 
 
 class InviscidBurgers(Equation):

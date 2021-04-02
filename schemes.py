@@ -65,13 +65,14 @@ class Scheme:
             self.free_indicies
         ), f"Must have exactly  {len(self.free_indicies)} boundary conditions"
 
-        A = self.matrix()
+        # Convert to lil before setting the boundary condition rows
+        A = self.matrix().tolil()
 
         for condition, index in zip(self.conditions, self.free_indicies):
             eqn = condition.get_vector(length=self.M + 2, h=self.h)
             A[index, :] = eqn
 
-        return scipy.sparse.csc_matrix(A)
+        return A.tocsc()
 
     @cache
     def get_solver(self):
@@ -113,7 +114,7 @@ class Euler(Scheme):
 
     def matrix(self):
         # Euler is explicit, so no need to solve a system => identity
-        return sparse_eye(self.M + 2)
+        return sparse_eye(self.M + 2, format="lil")
 
 
 class ThetaMethod(Scheme):
@@ -139,7 +140,11 @@ class ThetaMethod(Scheme):
         return rhs
 
     def matrix(self):
-        return sparse_eye(self.M + 2) - self.theta * self.k * self.operator()
+        # csc has fast matrix addition
+        return (
+            sparse_eye(self.M + 2, format="csc")
+            - self.theta * self.k * self.operator().tocsc()
+        )
 
 
 class RK4(Scheme):
@@ -169,4 +174,4 @@ class RK4(Scheme):
         return rhs
 
     def matrix(self):
-        return sparse_eye(self.M + 2)
+        return sparse_eye(self.M + 2, format="lil")
