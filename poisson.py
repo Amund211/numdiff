@@ -88,8 +88,10 @@ def poisson_3_point(f, x, conditions):
     for i in range(1, length - 1):
         hip1 = x[i + 1] - x[i]
         hi = x[i] - x[i - 1]
-        A[i, i - 1 : i + 2] = (1 / hi, -(1 / hip1 + 1 / hi), 1 / hip1)
-        A[i, i - 1 : i + 2] *= 2 / (hip1 + hi)
+        factor = 2 / (hip1 + hi)
+        a = factor / hi
+        b = factor / hip1
+        A[i, i - 1 : i + 2] = (a, -(a + b), b)
 
     f = f(x)
 
