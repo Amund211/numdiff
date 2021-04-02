@@ -2,6 +2,7 @@ from functools import cache
 
 import numpy as np
 import scipy.sparse.linalg
+from scipy.sparse import eye as sparse_eye
 
 
 class Scheme:
@@ -112,7 +113,7 @@ class Euler(Scheme):
 
     def matrix(self):
         # Euler is explicit, so no need to solve a system => identity
-        return np.eye(self.M + 2)
+        return sparse_eye(self.M + 2)
 
 
 class ThetaMethod(Scheme):
@@ -138,7 +139,7 @@ class ThetaMethod(Scheme):
         return rhs
 
     def matrix(self):
-        return np.eye(self.M + 2) - self.theta * self.k * self.operator()
+        return sparse_eye(self.M + 2) - self.theta * self.k * self.operator()
 
 
 class RK4(Scheme):
@@ -168,4 +169,4 @@ class RK4(Scheme):
         return rhs
 
     def matrix(self):
-        return np.eye(self.M + 2)
+        return sparse_eye(self.M + 2)
