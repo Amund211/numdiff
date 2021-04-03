@@ -55,7 +55,7 @@ def poisson_1D_AMR(
         ),
         param_range=M_range,
         analytical=analytical,
-        calculate_distances=(make_calculate_relative_L2_error(),),
+        calculate_distances=(make_calculate_relative_L2_error_poisson(f),),
     )
 
     plt.loglog(ndofs, distances, **plot_kwargs)
