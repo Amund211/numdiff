@@ -147,7 +147,7 @@ if __name__ == "__main__":
                     + alpha
                 )
 
-            M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+            M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
             poisson_1D_UMR(
                 f=f,
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                     + alpha
                 )
 
-            M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+            M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
             poisson_1D_UMR(
                 f=f,
@@ -301,7 +301,7 @@ if __name__ == "__main__":
                 Dirichlet(condition=beta, m=-1),
             )
 
-            M_range = np.unique(np.logspace(0, 3, num=30, dtype=np.int32))
+            M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
             poisson_1D_AMR(
                 f=f,
@@ -457,7 +457,7 @@ if __name__ == "__main__":
             }
 
             if task == "2b1":
-                N_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+                N_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
                 # Backward Euler
                 ndofs, (distances,) = refine_mesh(
