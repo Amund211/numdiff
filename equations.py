@@ -48,6 +48,7 @@ class Equation:
             np.isin(self.x_indicies, self.restricted_indicies, invert=True)
         ]
 
+    @cache
     def operator(self):
         """A matrix representing the discretized operator L_h"""
         raise NotImplementedError
@@ -84,6 +85,7 @@ class HeatEquation(Equation):
     def restricted_indicies(self):
         return np.array((0, self.length - 1), dtype=np.int64)
 
+    @cache
     def operator(self):
         return central_difference(self.length, power=2, format="csc") / self.h ** 2
 
@@ -123,6 +125,7 @@ class PeriodicKdV(Equation):
     def restricted_indicies(self):
         return np.array((), dtype=np.int64)
 
+    @cache
     def operator(self):
         # Since the equation is on [-1, 1] we introduce a shift in x: 2 * (x-1/2) to
         # solve it on [0, 1] instead. By solving this alternate diff. eqn we introduce a
