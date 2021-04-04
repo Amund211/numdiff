@@ -13,6 +13,8 @@ class Equation:
     If the operator isn't linear you can override `.get_operator()`
     """
 
+    periodic = False
+
     def __init__(self, *, M, conditions=(), **kwargs):
         self.M = M
         self.conditions = conditions
@@ -23,11 +25,11 @@ class Equation:
     @cached_property
     def length(self):
         """The length of the solution"""
-        return self.M + 2
+        return self.M if self.periodic else self.M + 2
 
     @cached_property
     def h(self):
-        return 1 / (self.length - 1)
+        return 1 / (self.length - 1 if not self.periodic else self.length)
 
     @cached_property
     def x_indicies(self):
@@ -115,18 +117,20 @@ class InviscidBurgers2(InviscidBurgers):
 class PeriodicKdV(Equation):
     """Linearized Korteweg-deVries with periodic boundary condition with period 2"""
 
+    periodic = True
+
     @cached_property
     def restricted_indicies(self):
-        return np.array((self.length - 1,), dtype=np.int64)
+        return np.array((), dtype=np.int64)
 
     def operator(self):
         # Since the equation is on [-1, 1] we introduce a shift in x: 2 * (x-1/2) to
         # solve it on [0, 1] instead. By solving this alternate diff. eqn we introduce a
         # factor 2 for each power of the derivative, so we divide the operator by 2**p.
 
-        d3 = np.zeros((self.length - 1,))
+        d3 = np.zeros((self.length,))
         d3[0:7] = np.array((-1, 0, 3, 0, -3, 0, 1)) / (8 * self.h ** 3) / 2 ** 3
-        d1 = np.zeros((self.length - 1,))
+        d1 = np.zeros((self.length,))
         d1[0:7] = np.array((0, 0, -1, 0, 1, 0, 0)) / (2 * self.h) / 2
 
         single_operator = -d3 - (1 + np.pi ** 2) * d1
@@ -134,6 +138,6 @@ class PeriodicKdV(Equation):
 
         operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
         for i in range(self.length):
-            operator[i, :-1] = np.roll(zero_indexed, i)
+            operator[i, :] = np.roll(zero_indexed, i)
 
         return operator

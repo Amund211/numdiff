@@ -91,7 +91,8 @@ class Scheme:
         """
 
         sol = np.empty((self.length, self.N + 1), dtype=np.float64)
-        x_axis = np.linspace(0, 1, self.length)
+        x_axis = self.x_indicies * self.h
+
         sol[:, 0] = f(x_axis)
 
         for n in range(1, self.N + 1):
@@ -99,7 +100,10 @@ class Scheme:
 
             sol[:, n] = U
 
-        return x_axis, sol
+        if self.periodic:
+            return np.append(x_axis, 1), np.row_stack((sol, sol[0]))
+        else:
+            return x_axis, sol
 
 
 class Euler(Scheme):

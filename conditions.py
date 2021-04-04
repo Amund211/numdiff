@@ -77,17 +77,3 @@ class Neumann(Condition):
             eqn[self.m + 1] = 1 / h
             eqn[self.m - 1] = -1 / h
         return eqn
-
-
-@dataclass(frozen=True)
-class Periodic(Condition):
-    period: int
-
-    def get_vector(self, length, **kwargs):
-        eqn = np.zeros(length)
-        eqn[self.m] = 1
-        eqn[self.m + self.period] = -1
-        return eqn
-
-    def get_scalar(self, t=None):
-        return 0

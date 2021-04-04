@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from conditions import Dirichlet, Neumann, Periodic
+from conditions import Dirichlet, Neumann
 from equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
 from plotting import solve_and_plot
 from poisson import amr, poisson
@@ -235,10 +235,9 @@ def test_KdV():
         return np.sin(np.pi * (transform_x(x) - t))
 
     scheme = KdVTheta(
-        M=M - 1,
+        M=M,
         N=N,
         k=k,
-        conditions=(Periodic(m=0, period=M),),
         theta=1 / 2,  # 1/2 => CN
     )
 
@@ -257,7 +256,7 @@ def refine_KdV_theta():
     def analytical(t, x):
         return np.sin(np.pi * (transform_x(x) - t))
 
-    scheme_kwargs = {"theta": 1 / 2, "conditions": (Periodic(m=0, period=-1),)}
+    scheme_kwargs = {"theta": 1 / 2}
 
     T = 1
 
