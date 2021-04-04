@@ -69,7 +69,7 @@ class Scheme:
         A = self.matrix().tolil()
 
         for condition, index in zip(self.conditions, self.restricted_indicies):
-            eqn = condition.get_vector(length=self.M + 2, h=self.h)
+            eqn = condition.get_vector(length=self.length, h=self.h)
             A[index, :] = eqn
 
         return A.tocsc()
@@ -90,8 +90,8 @@ class Scheme:
         Solve the time evolution equation
         """
 
-        sol = np.empty((self.M + 2, self.N + 1), dtype=np.float64)
-        x_axis = np.linspace(0, 1, self.M + 2)
+        sol = np.empty((self.length, self.N + 1), dtype=np.float64)
+        x_axis = np.linspace(0, 1, self.length)
         sol[:, 0] = f(x_axis)
 
         for n in range(1, self.N + 1):
@@ -104,7 +104,7 @@ class Scheme:
 
 class Euler(Scheme):
     def rhs(self, context, n):
-        rhs = np.empty((self.M + 2,), dtype=np.float64)
+        rhs = np.empty((self.length,), dtype=np.float64)
         rhs[self.restricted_indicies] = 0
 
         rhs[self.free_indicies] = context[
@@ -114,7 +114,7 @@ class Euler(Scheme):
 
     def matrix(self):
         # Euler is explicit, so no need to solve a system => identity
-        return sparse_eye(self.M + 2, format="lil")
+        return sparse_eye(self.length, format="lil")
 
 
 class ThetaMethod(Scheme):
@@ -130,7 +130,7 @@ class ThetaMethod(Scheme):
         super().__init__(**kwargs)
 
     def rhs(self, context, n):
-        rhs = np.empty((self.M + 2,), dtype=np.float64)
+        rhs = np.empty((self.length,), dtype=np.float64)
         rhs[self.restricted_indicies] = 0
 
         rhs[self.free_indicies] = context[self.free_indicies, n - 1] + (
@@ -142,14 +142,14 @@ class ThetaMethod(Scheme):
     def matrix(self):
         # csc has fast matrix addition
         return (
-            sparse_eye(self.M + 2, format="csc")
+            sparse_eye(self.length, format="csc")
             - self.theta * self.k * self.operator().tocsc()
         )
 
 
 class RK4(Scheme):
     def rhs(self, context, n):
-        rhs = np.empty((self.M + 2,), dtype=np.float64)
+        rhs = np.empty((self.length,), dtype=np.float64)
         rhs[self.restricted_indicies] = 0
 
         k_1 = self.apply_operator(n, context[:, n - 1], restrict=False)
@@ -174,4 +174,4 @@ class RK4(Scheme):
         return rhs
 
     def matrix(self):
-        return sparse_eye(self.M + 2, format="lil")
+        return sparse_eye(self.length, format="lil")
