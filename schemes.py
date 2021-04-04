@@ -53,7 +53,7 @@ class Scheme:
 
     def get_constrained_rhs(self, context, n):
         b = self.rhs(context, n)
-        for condition, index in zip(self.conditions, self.free_indicies):
+        for condition, index in zip(self.conditions, self.restricted_indicies):
             scalar = condition.get_scalar(n * self.k)
             b[index] = scalar
 
@@ -62,13 +62,13 @@ class Scheme:
     @cache
     def get_constrained_matrix(self):
         assert len(self.conditions) == len(
-            self.free_indicies
-        ), f"Must have exactly  {len(self.free_indicies)} boundary conditions"
+            self.restricted_indicies
+        ), f"Must have exactly  {len(self.restricted_indicies)} boundary conditions"
 
         # Convert to lil before setting the boundary condition rows
         A = self.matrix().tolil()
 
-        for condition, index in zip(self.conditions, self.free_indicies):
+        for condition, index in zip(self.conditions, self.restricted_indicies):
             eqn = condition.get_vector(length=self.M + 2, h=self.h)
             A[index, :] = eqn
 
@@ -105,10 +105,10 @@ class Scheme:
 class Euler(Scheme):
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
-        rhs[self.free_indicies] = 0
+        rhs[self.restricted_indicies] = 0
 
-        rhs[self.restricted_x_indicies] = context[
-            self.restricted_x_indicies, n - 1
+        rhs[self.free_indicies] = context[
+            self.free_indicies, n - 1
         ] + self.k * self.apply_operator(n, context[:, n - 1])
         return rhs
 
@@ -131,9 +131,9 @@ class ThetaMethod(Scheme):
 
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
-        rhs[self.free_indicies] = 0
+        rhs[self.restricted_indicies] = 0
 
-        rhs[self.restricted_x_indicies] = context[self.restricted_x_indicies, n - 1] + (
+        rhs[self.free_indicies] = context[self.free_indicies, n - 1] + (
             1 - self.theta
         ) * self.k * self.apply_operator(n, context[:, n - 1])
 
@@ -150,7 +150,7 @@ class ThetaMethod(Scheme):
 class RK4(Scheme):
     def rhs(self, context, n):
         rhs = np.empty((self.M + 2,), dtype=np.float64)
-        rhs[self.free_indicies] = 0
+        rhs[self.restricted_indicies] = 0
 
         k_1 = self.apply_operator(n, context[:, n - 1], restrict=False)
         k_2 = self.apply_operator(
@@ -167,8 +167,8 @@ class RK4(Scheme):
             n + self.k, context[:, n - 1] + self.k * k_3, restrict=False
         )
 
-        rhs[self.restricted_x_indicies] = context[
-            self.restricted_x_indicies, n - 1
+        rhs[self.free_indicies] = context[
+            self.free_indicies, n - 1
         ] + self.k / 6 * self.restrict(k_1 + 2 * k_2 + 2 * k_3 + k_4)
 
         return rhs

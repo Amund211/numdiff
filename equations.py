@@ -25,24 +25,20 @@ class Equation:
         return 1 / (self.M + 1)
 
     @cached_property
-    def free_indicies(self):
-        """
-        np.array of indicies that are not calculated by the scheme
-        These are free to be used as conditions
-        """
-
+    def restricted_indicies(self):
+        """np.array of indicies that are restricted by the boundary conditions"""
         raise NotImplementedError
 
     @cached_property
-    def restricted_x_indicies(self):
-        """Get the x axis indicies where this method has all its needed context"""
-
-        unrestricted = np.arange(0, self.M + 2)
-        return unrestricted[np.isin(unrestricted, self.free_indicies, invert=True)]
+    def free_indicies(self):
+        """np.array of indicies where the discretized equation is applied"""
+        all_indicies = np.arange(0, self.M + 2)
+        return all_indicies[
+            np.isin(all_indicies, self.restricted_indicies, invert=True)
+        ]
 
     def operator(self):
         """A matrix representing the discretized operator L_h"""
-
         raise NotImplementedError
 
     @cache
@@ -55,11 +51,10 @@ class Equation:
 
     def apply_operator(self, n, v, restrict=True):
         """Apply the discretized operator in x to the vector v"""
-
         res = self.get_operator()(v)
 
         if restrict:
-            return res[self.restricted_x_indicies]
+            return res[self.free_indicies]
         else:
             # Assumes independent conditions
             for condition in self.conditions:
@@ -69,14 +64,13 @@ class Equation:
             return res
 
     def restrict(self, v):
-        """Restrict a vector to self.restricted_x_indicies"""
-
-        return v[self.restricted_x_indicies]
+        """Restrict a vector to self.free_indicies"""
+        return v[self.free_indicies]
 
 
 class HeatEquation(Equation):
     @cached_property
-    def free_indicies(self):
+    def restricted_indicies(self):
         return np.array((0, self.M + 1), dtype=np.int64)
 
     def operator(self):
@@ -85,14 +79,14 @@ class HeatEquation(Equation):
 
 class InviscidBurgers(Equation):
     @cached_property
-    def free_indicies(self):
+    def restricted_indicies(self):
         return np.array((0, self.M + 1), dtype=np.int64)
 
     @cache
     def get_operator(self):
         def operator(v):
             res = np.empty((self.M + 2,), dtype=np.float64)
-            res[self.restricted_x_indicies] = -v[1:-1] / (2 * self.h) * (v[2:] - v[:-2])
+            res[self.free_indicies] = -v[1:-1] / (2 * self.h) * (v[2:] - v[:-2])
             return res
 
         return operator
@@ -103,7 +97,7 @@ class InviscidBurgers2(InviscidBurgers):
     def get_operator(self):
         def operator(v):
             res = np.empty((self.M + 2,), dtype=np.float64)
-            res[self.restricted_x_indicies] = -(v[2:] ** 2 - v[:-2] ** 2) / (4 * self.h)
+            res[self.free_indicies] = -(v[2:] ** 2 - v[:-2] ** 2) / (4 * self.h)
             return res
 
         return operator
@@ -113,7 +107,7 @@ class PeriodicKdV(Equation):
     """Linearized Korteweg-deVries with periodic boundary condition with period 2"""
 
     @cached_property
-    def free_indicies(self):
+    def restricted_indicies(self):
         return np.array([self.M + 1], dtype=np.int64)
 
     def operator(self):

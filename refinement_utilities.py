@@ -97,7 +97,7 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
             x_axis,
             solution[:, -1],
             # ndof = (M + 2 gridpoints - # boundary conditions) * N
-            (scheme.M + 2 - scheme.free_indicies.shape[0]) * scheme.N,
+            (scheme.M + 2 - scheme.restricted_indicies.shape[0]) * scheme.N,
         )
 
     return solver
