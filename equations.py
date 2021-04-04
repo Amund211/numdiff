@@ -25,6 +25,11 @@ class Equation:
         return 1 / (self.M + 1)
 
     @cached_property
+    def x_indicies(self):
+        """The x indicies that will be solved for x = i * h"""
+        return np.arange(0, self.M + 2)
+
+    @cached_property
     def restricted_indicies(self):
         """np.array of indicies that are restricted by the boundary conditions"""
         raise NotImplementedError
@@ -32,9 +37,8 @@ class Equation:
     @cached_property
     def free_indicies(self):
         """np.array of indicies where the discretized equation is applied"""
-        all_indicies = np.arange(0, self.M + 2)
-        return all_indicies[
-            np.isin(all_indicies, self.restricted_indicies, invert=True)
+        return self.x_indicies[
+            np.isin(self.x_indicies, self.restricted_indicies, invert=True)
         ]
 
     def operator(self):
