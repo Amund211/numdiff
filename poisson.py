@@ -169,6 +169,7 @@ def poisson_4_point(f, x, conditions):
 def amr(f, u, conditions, M, select_refinement=select_max, order=2):
     """Adaptively refine the mesh until there are M internal nodes"""
     assert M > 0, "M must be a positive integer"
+    assert M != 2, "M=2 is not supported for AMR"
 
     x = np.array((0, 1), dtype=np.float64)
     to_refine = np.array((0,), dtype=np.int32)
@@ -176,7 +177,6 @@ def amr(f, u, conditions, M, select_refinement=select_max, order=2):
     if order == 1:
         poisson_solver = poisson_3_point
     elif order == 2:
-        assert M != 2, "M=2 does not work on a diadic grid with the four point formula"
         poisson_solver = poisson_4_point
     else:
         raise ValueError("Only orders 1 and 2 are supported")
