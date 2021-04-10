@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 from conditions import Dirichlet, Neumann
 from refine import refine_mesh, select_avg, select_max
 from refinement_utilities import (
