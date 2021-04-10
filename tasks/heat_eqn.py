@@ -183,6 +183,9 @@ def _task_2b(default_params, refinement, param_range, get_x_axis):
         get_x_axis(ndofs=ndofs, M=M, N=N), distances_list[1], label="CN $e^r_{L_2}$"
     )
 
+    # Both ndofs should be the same, because they use the same solver
+    return ndofs
+
 
 # Standard parameters for task 2b
 TASK_2B_PARAMS = {
@@ -190,6 +193,33 @@ TASK_2B_PARAMS = {
     "N": 10 ** 4,
     "M": 10 ** 4,
 }
+
+
+def task_2bh():
+    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+
+    _task_2b(
+        default_params=TASK_2B_PARAMS,
+        refinement={"refine_space": True},
+        param_range=M_range,
+        get_x_axis=lambda ndofs, M, N: ndofs / N,
+    )
+
+    # O(h^2)
+    plt.plot(
+        M_range,
+        9.5e-1 * np.divide(1, (M_range + 1) ** 2),
+        linestyle="dashed",
+        label=r"$O\left(h^2\right)$",
+    )
+
+    plt.grid()
+
+    plt.suptitle("The heat equation - $h$-refinement")
+    plt.title(f"Backwards Euler vs Crank Nicholson with $N={TASK_2B_PARAMS['N']}$")
+    plt.xlabel("Internal nodes $M$")
+    plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
 
 
 def task_2bk():
@@ -223,5 +253,77 @@ def task_2bk():
     plt.suptitle("The heat equation - $k$-refinement")
     plt.title(f"Backwards Euler vs Crank Nicholson with $M={TASK_2B_PARAMS['M']}$")
     plt.xlabel("Time steps $N$")
+    plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
+
+
+def task_2bc():
+    M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    c = 1
+
+    ndofs = _task_2b(
+        default_params=TASK_2B_PARAMS,
+        refinement={"c": c},
+        param_range=M_range,
+        get_x_axis=lambda ndofs, M, N: ndofs,
+    )
+
+    ndofs = ndofs.astype(np.float64)
+
+    # O(ndofs^(-1))
+    plt.plot(
+        ndofs,
+        1e0 * np.divide(1, ndofs),
+        linestyle="dashed",
+        label=r"$O\left(N_{dof}^{-1}\right)$",
+    )
+
+    # O(ndofs^(-1/2))
+    plt.plot(
+        ndofs,
+        3e-1 * np.divide(1, ndofs ** (1 / 2)),
+        linestyle="dashed",
+        label=r"$O\left(N_{dof}^{-\frac12}\right)$",
+    )
+
+    plt.grid()
+
+    plt.suptitle(
+        fr"The heat equation - refinement with constant $c=\frac{{k}}{{h}}={c}$"
+    )
+    plt.title("Backwards Euler vs Crank Nicholson")
+    plt.xlabel("Degrees of freedom $N_{dof} = MN$")
+    plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
+
+
+def task_2br():
+    M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+    r = 1
+
+    ndofs = _task_2b(
+        default_params=TASK_2B_PARAMS,
+        refinement={"r": r},
+        param_range=M_range,
+        get_x_axis=lambda ndofs, M, N: ndofs,
+    )
+
+    ndofs = ndofs.astype(np.float64)
+
+    # O(ndofs^(-2/3))
+    plt.plot(
+        ndofs,
+        1e0 * np.divide(1, ndofs ** (2 / 3)),
+        linestyle="dashed",
+        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+    )
+
+    plt.grid()
+
+    plt.suptitle(
+        fr"The heat equation - refinement with constant $r=\frac{{k}}{{h^2}}={r}$"
+    )
+    plt.title("Backwards Euler vs Crank Nicholson")
+    plt.xlabel("Degrees of freedom $N_{dof} = MN$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()

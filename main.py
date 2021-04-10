@@ -7,7 +7,7 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 
 import matplotlib.pyplot as plt
 
-from tasks.heat_eqn import task_2a, task_2bk
+from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.poisson_1D import task_1a, task_1b, task_1d1, task_1d2
 from tasks.task import run_task
 
@@ -32,7 +32,7 @@ if __name__ == "__main__":
         }
     )
 
-    available_tasks = ("1a", "1b", "1d1", "1d2", "2a", "2bk")
+    available_tasks = ("1a", "1b", "1d1", "1d2", "2a", "2bh", "2bk", "2bc", "2br")
 
     if len(sys.argv) > 1:
         tasks = sys.argv[1:]
@@ -67,8 +67,14 @@ if __name__ == "__main__":
             pass
         elif task == "2a":
             run_task(task_2a, "2a_bc_order.pdf", save=True, show=True)
+        elif task == "2bh":
+            run_task(task_2bh, "2b_h_refinement.pdf", save=True, show=False)
         elif task == "2bk":
             run_task(task_2bk, "2b_k_refinement.pdf", save=True, show=False)
+        elif task == "2bc":
+            run_task(task_2bc, "2b_c_refinement.pdf", save=True, show=False)
+        elif task == "2br":
+            run_task(task_2br, "2b_r_refinement.pdf", save=True, show=False)
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
