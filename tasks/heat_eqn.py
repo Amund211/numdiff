@@ -258,7 +258,8 @@ def task_2bk():
 
 
 def task_2bc():
-    M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
     c = 1
 
     ndofs = _task_2b(
@@ -298,7 +299,8 @@ def task_2bc():
 
 
 def task_2br():
-    M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+    M_range = np.unique(np.logspace(0, 2.5, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
     r = 1
 
     ndofs = _task_2b(
