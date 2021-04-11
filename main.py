@@ -79,7 +79,7 @@ if __name__ == "__main__":
             # Maybe include a concrete example comparing AMR with UMR for some small M?
             pass
         elif task == "2a":
-            run_task(task_2a, "2a_bc_order.pdf", save=True, show=True)
+            run_task(task_2a, "2a_bc_order.pdf", save=True, show=False)
         elif task == "2bh":
             run_task(task_2bh, "2b_h_refinement.pdf", save=True, show=False)
         elif task == "2bk":
