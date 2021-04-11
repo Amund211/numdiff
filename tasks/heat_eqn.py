@@ -35,9 +35,10 @@ class HeatTheta(ThetaMethod, HeatEquation):
 
 
 def task_2a():
-    max_power = 14  # M = 2^max_power - 1 will be used as a reference solution
+    max_power = 13  # M = 2^max_power - 1 will be used as a reference solution
+    # max_power = 16  # M = 2^max_power - 1 will be used as a reference solution
     T = 0.05
-    N = int(1e4)
+    N = int(2e4)
     theta = 1 / 2
 
     k = T / N
@@ -71,6 +72,9 @@ def task_2a():
     # Substitute for the analytical solution
     U_star = interp1d(x, solution[:, -1], kind="nearest")
 
+    # Free the memory
+    del solution
+
     # 1st order
     ndofs, (distances,) = refine_mesh(
         solver=make_scheme_solver(
@@ -94,7 +98,7 @@ def task_2a():
     # O(h)
     plt.plot(
         M_range,
-        np.divide(1, M_range + 1),
+        np.divide(1, M_range.astype(np.float64) + 1),
         linestyle="dashed",
         label=r"$O\left(h\right)$",
     )
@@ -102,7 +106,7 @@ def task_2a():
     # O(h^2)
     plt.plot(
         M_range,
-        5 * np.divide(1, (M_range + 1) ** 2),
+        5 * np.divide(1, (M_range.astype(np.float64) + 1) ** 2),
         linestyle="dashed",
         label=r"$O\left(h^2\right)$",
     )
@@ -110,7 +114,9 @@ def task_2a():
     plt.grid()
 
     plt.suptitle("The heat equation - discretization of the boundary conditions")
-    plt.title(f"Comparison with reference solution with $M^* = {M_star}$ at $t = {T}$")
+    plt.title(
+        f"Comparison with reference solution with $M^* = {M_star}$ at $t = {T}$. $N = {N}$"
+    )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
