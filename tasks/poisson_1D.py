@@ -24,9 +24,6 @@ def poisson_1D_UMR(
     for distances, plot_kwargs in zip(distances_list, plot_kwargs_list):
         plt.loglog(ndofs, distances, **plot_kwargs)
 
-    plt.legend()
-    plt.grid()
-
 
 def poisson_1D_AMR(
     f, conditions, analytical, select_refinement, order, M_range, plot_kwargs
@@ -45,9 +42,6 @@ def poisson_1D_AMR(
     )
 
     plt.loglog(ndofs, distances, **plot_kwargs)
-
-    plt.legend()
-    plt.grid()
 
 
 def task_1a():
@@ -97,6 +91,7 @@ def task_1a():
     plt.title("Dirichlet - Neumann")
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+    plt.grid()
     plt.legend()
 
 
@@ -147,6 +142,7 @@ def task_1b():
     plt.title("Dirichlet - Dirichlet")
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
+    plt.grid()
     plt.legend()
 
 
@@ -206,6 +202,7 @@ def task_1d1():
     )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.grid()
     plt.legend()
 
 
@@ -267,4 +264,5 @@ def task_1d2():
     plt.suptitle("Poisson's equation")
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.grid()
     plt.legend()
