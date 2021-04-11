@@ -72,6 +72,7 @@ def task_1a():
         )
 
     M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
 
     poisson_1D_UMR(
         f=f,
@@ -87,7 +88,7 @@ def task_1a():
 
     plt.plot(
         M_range,
-        5 * np.divide(1, (M_range + 1) ** 2),
+        5 * np.divide(1, (M_range.astype(np.float64) + 1) ** 2),
         linestyle="dashed",
         label=r"$O\left(h^2\right)$",
     )
@@ -121,6 +122,7 @@ def task_1b():
         )
 
     M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
 
     poisson_1D_UMR(
         f=f,
@@ -136,7 +138,7 @@ def task_1b():
 
     plt.plot(
         M_range,
-        10 * np.divide(1, (M_range + 1) ** 2),
+        10 * np.divide(1, (M_range.astype(np.float64) + 1) ** 2),
         linestyle="dashed",
         label=r"$O\left(h^2\right)$",
     )
@@ -167,6 +169,7 @@ def task_1d1():
     )
 
     M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
 
     poisson_1D_AMR(
         f=f,
@@ -190,7 +193,7 @@ def task_1d1():
     # Both methods seem to have order 2
     plt.plot(
         M_range,
-        10000 * np.divide(1, (M_range + 1) ** 2),
+        1e4 * np.divide(1, (M_range.astype(np.float64) + 1) ** 2),
         linestyle="dashed",
         label=r"$O\left(h^2\right)$",
     )
@@ -225,6 +228,7 @@ def task_1d2():
     )
 
     M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
 
     poisson_1D_AMR(
         f=f,
@@ -255,7 +259,7 @@ def task_1d2():
 
     plt.plot(
         M_range,
-        10000 * np.divide(1, (M_range + 1) ** 2),
+        1e4 * np.divide(1, (M_range.astype(np.float64) + 1) ** 2),
         linestyle="dashed",
         label=r"$O\left(h^2\right)$",
     )
