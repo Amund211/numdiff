@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from equations import PeriodicKdV
+from helpers import l2
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import ThetaMethod
-from helpers import l2
 
 
 class KdVTheta(ThetaMethod, PeriodicKdV):
@@ -90,10 +90,10 @@ def task_4c():
     M = 10 ** 3
     k = T / N
 
-    t_axis = np.arange(N+1) * k
+    t_axis = np.arange(N + 1) * k
 
     # Crank Nicolson
-    cn = KdVTheta(k=k, N=N, M=M, theta=1/2)
+    cn = KdVTheta(k=k, N=N, M=M, theta=1 / 2)
     x_axis, sol = cn.solve(f)
 
     # Ignore duplicate boundary value returned by solve
