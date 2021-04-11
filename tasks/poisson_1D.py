@@ -248,7 +248,7 @@ def task_1d2():
         f=f,
         conditions=conditions,
         analytical=u,
-        calculate_distances=(calculate_relative_l2_error,),
+        calculate_distances=(make_calculate_relative_L2_error_poisson(f),),
         M_range=M_range,
         plot_kwargs_list=({"label": "UMR"},),
     )
