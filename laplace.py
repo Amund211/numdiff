@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import linalg
+import scipy.sparse.linalg
 
 
 def analytical(Mx, My):
@@ -28,12 +28,12 @@ def laplace(Mx, My):
     f = np.zeros(Mx * My)
     h = 1 / (Mx + 1)
     k = 1 / (My + 1)
-    A = (
-        np.diag(-4 * np.ones(M))
-        + np.diag(np.ones(M - 1), k=1)
-        + np.diag(np.ones(M - My), k=My)
-        + np.diag(np.ones(M - My), k=-My)
-        + np.diag(np.ones(M - 1), k=-1)
+    A = scipy.sparse.diags(
+        (-1, -1, 4, -1, -1),
+        (-My, -1, 0, 1, My),
+        shape=(M, M),
+        format="lil",
+        dtype=np.float64,
     )
     i = 1
     for j in range(M + 1):
@@ -43,7 +43,6 @@ def laplace(Mx, My):
         if j % My == 0 and j != 0:
             f[j - 1] = np.sin(2 * np.pi * i * h)
             i += 1
-    A = -A
-    U = linalg.solve(A, f)
+    U = scipy.sparse.linalg.spsolve(scipy.sparse.csc_matrix(A), f)
 
     return U
