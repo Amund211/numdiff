@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.kdv import task_4b, task_4c
+from tasks.laplace_2D import task_3bx
 from tasks.poisson_1D import task_1a, task_1b, task_1d1, task_1d2
 from tasks.task import run_task
 
@@ -43,6 +44,7 @@ if __name__ == "__main__":
         "2bk",
         "2bc",
         "2br",
+        "3bx",
         "4b",
         "4c",
     )
@@ -88,6 +90,8 @@ if __name__ == "__main__":
             run_task(task_2bc, "2b_c_refinement.pdf", save=True, show=False)
         elif task == "2br":
             run_task(task_2br, "2b_r_refinement.pdf", save=True, show=False)
+        elif task == "3bx":
+            run_task(task_3bx, "3b_x_refinement.pdf", save=True, show=False)
         elif task == "4b":
             run_task(task_4b, "4b_methods.pdf", save=True, show=False)
         elif task == "4c":
