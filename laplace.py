@@ -11,12 +11,13 @@ import numpy as np
 import scipy.sparse.linalg
 
 
-def analytical(X, Y):
+def analytical(meshgrid):
     """
     Calculate the analytical solution as returned by `laplace`
 
     X and Y should be a meshgrid with indexing ij
     """
+    X, Y = meshgrid
     meshed_result = (
         (1 / (np.sinh(2 * np.pi))) * np.sin(2 * np.pi * X) * np.sinh(2 * np.pi * Y)
     )
