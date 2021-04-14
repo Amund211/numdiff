@@ -2,11 +2,6 @@ import numpy as np
 from scipy import linalg
 
 
-def d_norm(x):
-    l = 1 / np.sqrt(len(x))
-    return l * linalg.norm(x)
-
-
 def analytical(Mx, My):
     h = 1 / (Mx + 1)
     k = 1 / (My + 1)

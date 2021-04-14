@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from laplace import Laplace, analytical, d_norm
+from helpers import relative_l2_error
+from laplace import Laplace, analytical
 
 
 def task_3bx():
@@ -10,7 +11,7 @@ def task_3bx():
     for i, m in enumerate(M):
         U = Laplace(m, m)
         u, X = analytical(m, m)
-        error[i] = d_norm(u - U) / d_norm(u)
+        error[i] = relative_l2_error(u, U)
 
     plt.plot(M ** 2, error)
     plt.yscale("log")
