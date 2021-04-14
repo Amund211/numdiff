@@ -11,25 +11,16 @@ import numpy as np
 import scipy.sparse.linalg
 
 
-def analytical(Mx, My):
-    h = 1 / (Mx + 1)
-    k = 1 / (My + 1)
-    u = np.zeros(Mx * My)
-    j = 1
-    l = 1
-    X = np.zeros((Mx * My, 2))
-    for i in range(Mx * My):
-        x = l * h
-        y = j * k
-        X[i] = [x, y]
-        u[i] = (
-            (1 / (np.sinh(2 * np.pi))) * np.sin(2 * np.pi * x) * np.sinh(2 * np.pi * y)
-        )
-        if j % My == 0:
-            j = 0
-            l += 1
-        j += 1
-    return u, X
+def analytical(X, Y):
+    """
+    Calculate the analytical solution as returned by `laplace`
+
+    X and Y should be a meshgrid with indexing ij
+    """
+    meshed_result = (
+        (1 / (np.sinh(2 * np.pi))) * np.sin(2 * np.pi * X) * np.sinh(2 * np.pi * Y)
+    )
+    return meshed_result.reshape(-1)
 
 
 def laplace(Mx, My):
@@ -54,4 +45,8 @@ def laplace(Mx, My):
             i += 1
     U = scipy.sparse.linalg.spsolve(scipy.sparse.csc_matrix(A), f)
 
-    return U
+    X, Y = np.meshgrid(
+        h * np.arange(1, Mx + 1), k * np.arange(1, My + 1), indexing="ij"
+    )
+
+    return (X, Y), U

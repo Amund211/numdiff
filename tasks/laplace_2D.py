@@ -9,8 +9,8 @@ def task_3bx():
     M = np.array([5, 10, 30, 50, 100])
     error = np.zeros(len(M))
     for i, m in enumerate(M):
-        U = laplace(m, m)
-        u, X = analytical(m, m)
+        (X, Y), U = laplace(m, m)
+        u = analytical(X, Y)
         error[i] = relative_l2_error(u, U)
 
     plt.plot(M ** 2, error)
