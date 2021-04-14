@@ -29,8 +29,11 @@ def laplace(Mx, My):
     f = np.zeros(Mx * My)
     h = 1 / (Mx + 1)
     k = 1 / (My + 1)
+    hm2 = h ** -2
+    km2 = k ** -2
+
     A = scipy.sparse.diags(
-        (-1, -1, 4, -1, -1),
+        (-hm2, -km2, 2 * (hm2 + km2), -km2, -hm2),
         (-My, -1, 0, 1, My),
         shape=(M, M),
         format="lil",
@@ -42,7 +45,7 @@ def laplace(Mx, My):
             A[j - 1, j] = 0
             A[j, j - 1] = 0
         if j % My == 0 and j != 0:
-            f[j - 1] = np.sin(2 * np.pi * i * h)
+            f[j - 1] = km2 * np.sin(2 * np.pi * i * h)
             i += 1
     U = scipy.sparse.linalg.spsolve(scipy.sparse.csc_matrix(A), f)
 
