@@ -1,5 +1,6 @@
 from helpers import relative_l2_error, relative_L2_error
 from interpolate import calculate_poisson_derivatives, interpolate
+from laplace import laplace
 from poisson import amr, poisson
 
 
@@ -99,5 +100,18 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
             # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)
             scheme.free_indicies.shape[0] * scheme.N,
         )
+
+    return solver
+
+
+def make_laplace_solver(Mx=None, My=None):
+    """
+    Create a solver function for solving Laplace's equation for use in `refine_mesh`
+    """
+
+    def solver(param):
+        M = (localMx := Mx or param) * (localMy := My or param)
+        meshgrid, U = laplace(Mx=localMx, My=localMy)
+        return meshgrid, U, M
 
     return solver
