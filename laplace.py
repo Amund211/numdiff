@@ -23,7 +23,7 @@ def analytical(Mx, My):
     return u, X
 
 
-def Laplace(Mx, My):
+def laplace(Mx, My):
     M = Mx * My
     f = np.zeros(Mx * My)
     h = 1 / (Mx + 1)
