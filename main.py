@@ -7,6 +7,7 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 
 import matplotlib.pyplot as plt
 
+from tasks.fem_poisson import task_5b_avg, task_5b_max, task_5b_refinement
 from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.kdv import task_4b, task_4c
 from tasks.laplace_2D import task_3bx, task_3by
@@ -48,6 +49,9 @@ if __name__ == "__main__":
         "3by",
         "4b",
         "4c",
+        "5b_refinement",
+        "5b_avg",
+        "5b_max",
     )
 
     if len(sys.argv) > 1:
@@ -99,6 +103,12 @@ if __name__ == "__main__":
             run_task(task_4b, "4b_methods.pdf", save=True, show=False)
         elif task == "4c":
             run_task(task_4c, "4c_norm.pdf", save=True, show=False)
+        elif task == "5b_refinement":
+            run_task(task_5b_refinement, "5b_refinement.pdf", save=True, show=False)
+        elif task == "5b_avg":
+            run_task(task_5b_avg, "5b_AFEM_avg.pdf", save=True, show=False)
+        elif task == "5b_max":
+            run_task(task_5b_max, "5b_AFEM_max.pdf", save=True, show=False)
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"

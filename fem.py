@@ -75,7 +75,6 @@ def FEM_error_plot(N_array, a, b, f, d0, d1, u):
     plt.yscale("log")
     plt.xscale("log")
     plt.grid()
-    plt.show()
 
 
 # In[ ]:
