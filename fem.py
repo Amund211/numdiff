@@ -3,6 +3,7 @@ import numpy as np
 from scipy import linalg
 from scipy.interpolate import CubicSpline
 import scipy.sparse.linalg
+from integrate import integrate
 
 
 def d_norm(x):
@@ -22,11 +23,8 @@ def c_norm(x, y, a, b):
     return np.sqrt(I)
 
 
-deg = 20
-
-
-def FEM(X, a, b, g, d1, d2, deg=10):
-    N = len(X)
+def FEM(x, a, b, g, d1, d2, deg=10):
+    N = len(x)
     h = (b - a) / N
 
     A = scipy.sparse.diags(
@@ -37,19 +35,9 @@ def FEM(X, a, b, g, d1, d2, deg=10):
         dtype=np.float64,
     )
 
-    A[0, 0] = 1 / h
-    A[-1, -1] = 1 / h
-
-    x, y = np.polynomial.legendre.leggauss(deg)
     f = np.zeros(N)
-    for i in range(N - 1):
-        ai = X[i]
-        bi = X[i + 1]
-        f[i] = (
-            (bi - ai)
-            / 2
-            * (sum(y[j] * g((bi - ai) / 2 * x[j] + (ai + bi) / 2) for j in range(deg)))
-        )
+
+    f[1:-1] = integrate(g, x[1:-1], x[2:], deg=deg)
 
     u = np.zeros(N)
     u[0] = d1
@@ -62,7 +50,10 @@ def FEM(X, a, b, g, d1, d2, deg=10):
     u_bar = scipy.sparse.linalg.spsolve(A.tocsc(), f)
     u[1:-1] = u_bar
 
-    return X, u
+    return x, u
+
+
+deg = 20
 
 
 def FEM_error_plot(N_array, a, b, f, d0, d1, u):
