@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from fem import AFEM, FEM_error_plot
+from fem import AFEM
+from refine import refine_mesh
+from refinement_utilities import calculate_relative_L2_error_FEM, make_FEM_solver
 
 
 def f(x):
@@ -21,7 +23,35 @@ d2 = 1
 def task_5b_refinement():
     N_array = np.power(2, np.arange(3, 12), dtype=np.int32)
 
-    FEM_error_plot(N_array, a, b, f, d1, d2, u)
+    ndofs, (distances,) = refine_mesh(
+        solver=make_FEM_solver(
+            a=a,
+            b=b,
+            f=f,
+            d1=d1,
+            d2=d2,
+            deg=10,
+        ),
+        param_range=N_array,
+        analytical=u,
+        calculate_distances=(calculate_relative_L2_error_FEM,),
+    )
+
+    plt.loglog(ndofs, distances, label="$e^r_{L_2}$")
+
+    plt.plot(
+        ndofs,
+        np.divide(1, (ndofs.astype(np.float64) + 1) ** 2),
+        linestyle="dashed",
+        label=r"$O\left(h^2\right)$",
+    )
+
+    plt.suptitle("Poisson's equation FEM")
+    plt.title(fr"$u\left( x \right) = x^2, x \in \left[ {a}, {b} \right] $")
+    plt.xlabel("Degrees of freedom $N-1$")
+    plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.grid()
+    plt.legend()
 
 
 def task_5b_avg():

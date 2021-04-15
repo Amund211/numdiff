@@ -1,3 +1,6 @@
+from scipy.interpolate import interp1d
+
+from fem import FEM
 from helpers import relative_l2_error, relative_L2_error
 from interpolate import calculate_poisson_derivatives, interpolate
 from laplace import laplace
@@ -7,6 +10,14 @@ from poisson import amr, poisson
 def calculate_relative_l2_error(x, analytical, numerical):
     """Helper to calculate discrete e^r_l2"""
     return relative_l2_error(analytical(x), numerical)
+
+
+def calculate_relative_L2_error_FEM(x, analytical, numerical):
+    """Helper to calculate continuous e^r_L2 for FEM solutions"""
+    # Linear interpolation of the weights is the same as the weighted sum
+    # of the basis functions
+    interpolated = interp1d(x, numerical, kind="linear")
+    return relative_L2_error(analytical, interpolated, x)
 
 
 def make_calculate_relative_L2_error(bc_type=None):
@@ -113,5 +124,17 @@ def make_laplace_solver(Mx=None, My=None):
         M = (localMx := Mx or param) * (localMy := My or param)
         meshgrid, U = laplace(Mx=localMx, My=localMy)
         return meshgrid, U, M
+
+    return solver
+
+
+def make_FEM_solver(a, b, f, d1, d2, deg=10):
+    """
+    Create a solver function for solving Poisson's equation with FEM
+    """
+
+    def solver(param):
+        x, U = FEM(N=param, a=a, b=b, g=f, d1=d1, d2=d2, deg=deg)
+        return x, U, param - 1
 
     return solver
