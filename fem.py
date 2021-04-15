@@ -4,6 +4,7 @@ from scipy import linalg
 from scipy.interpolate import CubicSpline
 from scipy.sparse import csc_matrix
 from scipy.sparse.linalg import spsolve
+import scipy.sparse.linalg
 
 
 def d_norm(x):
@@ -30,14 +31,12 @@ def FEM(X, a, b, g, d1, d2, deg=10):
     N = len(X)
     h = (b - a) / N
 
-    A = (
-        1
-        / h
-        * (
-            np.diag((2) * np.ones(N))
-            + np.diag(-np.ones(N - 1), k=-1)
-            + np.diag(-np.ones(N - 1), k=1)
-        )
+    A = scipy.sparse.diags(
+        (-1 / h, 2 / h, -1 / h),
+        (-1, 0, 1),
+        shape=(N, N),
+        format="lil",
+        dtype=np.float64,
     )
     A[0, 0] = 1 / h
     A[-1, -1] = 1 / h
