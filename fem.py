@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.sparse.linalg
 from scipy import linalg
 from scipy.interpolate import CubicSpline
-import scipy.sparse.linalg
+
 from integrate import integrate
 
 
@@ -23,23 +24,24 @@ def c_norm(x, y, a, b):
     return np.sqrt(I)
 
 
-def FEM(x, a, b, g, d1, d2, deg=10):
-    N = len(x)
+def FEM(N, a, b, g, d1, d2, deg=10):
+    amt_points = N + 1
     h = (b - a) / N
+    x = np.linspace(a, b, amt_points)
 
     A = scipy.sparse.diags(
         (-1 / h, 2 / h, -1 / h),
         (-1, 0, 1),
-        shape=(N, N),
+        shape=(amt_points, amt_points),
         format="lil",
         dtype=np.float64,
     )
 
-    f = np.zeros(N)
+    f = np.zeros(amt_points)
 
     f[1:-1] = integrate(g, x[1:-1], x[2:], deg=deg)
 
-    u = np.zeros(N)
+    u = np.zeros(amt_points)
     u[0] = d1
     u[-1] = d2
 
@@ -58,10 +60,9 @@ deg = 20
 
 def FEM_error_plot(N_array, a, b, f, d0, d1, u):
     error = np.zeros(len(N_array))
-    for i, n in enumerate(N_array):
-        X = np.linspace(a, b, n)
-        X, U = FEM(X, a, b, f, d0, d1, deg)
-        error[i] = c_norm(X, u(X) - U, a, b) / (c_norm(X, u(X), a, b))
+    for i, N in enumerate(N_array):
+        x, U = FEM(N, a, b, f, d0, d1, deg)
+        error[i] = c_norm(x, u(x) - U, a, b) / (c_norm(x, u(x), a, b))
     plt.plot(N_array, error)
     plt.yscale("log")
     plt.xscale("log")
