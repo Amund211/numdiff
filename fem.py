@@ -2,8 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import linalg
 from scipy.interpolate import CubicSpline
-from scipy.sparse import csc_matrix
-from scipy.sparse.linalg import spsolve
 import scipy.sparse.linalg
 
 
@@ -38,8 +36,10 @@ def FEM(X, a, b, g, d1, d2, deg=10):
         format="lil",
         dtype=np.float64,
     )
+
     A[0, 0] = 1 / h
     A[-1, -1] = 1 / h
+
     x, y = np.polynomial.legendre.leggauss(deg)
     f = np.zeros(N)
     for i in range(N - 1):
@@ -50,18 +50,19 @@ def FEM(X, a, b, g, d1, d2, deg=10):
             / 2
             * (sum(y[j] * g((bi - ai) / 2 * x[j] + (ai + bi) / 2) for j in range(deg)))
         )
+
     u = np.zeros(N)
     u[0] = d1
     u[-1] = d2
-    f = f - np.dot(A, u)
-    A = A[1:-1, 1:-1]
-    A = csc_matrix(A)
-    f = f[1:-1]
-    U = spsolve(A, f)
-    U = np.append(np.array(d1), U)
-    U = np.append(U, d2)
 
-    return X, U
+    f = f - A.tocsr().dot(u)
+
+    A = A[1:-1, 1:-1]
+    f = f[1:-1]
+    u_bar = scipy.sparse.linalg.spsolve(A.tocsc(), f)
+    u[1:-1] = u_bar
+
+    return X, u
 
 
 def FEM_error_plot(N_array, a, b, f, d0, d1, u):
