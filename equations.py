@@ -144,3 +144,43 @@ class PeriodicKdV(Equation):
             operator[i, :] = np.roll(zero_indexed, i)
 
         return operator
+
+
+class PeriodicAdvectionDiffusion(Equation):
+    """
+    The advection-diffusion equation with periodic boundary condition with period 1
+    """
+
+    periodic = True
+
+    def __init__(self, *, c, d, **kwargs):
+        self.c = c
+        self.d = d
+
+        assert self.c > 0, "c must be positive"
+        assert self.d > 0, "d must be positive"
+
+        super().__init__(**kwargs)
+
+    @cached_property
+    def restricted_indicies(self):
+        return np.array((), dtype=np.int64)
+
+    @cache
+    def operator(self):
+        # The first derivative finite difference
+        d1 = np.zeros((self.length,))
+        d1[:3] = np.array((-1, 0, 1)) / (2 * self.h)
+
+        # The second derivative finite difference
+        d2 = np.zeros((self.length,))
+        d2[:3] = np.array((1, -2, 1)) / self.h ** 2
+
+        single_operator = self.c * d1 + self.d * d2
+        zero_indexed = np.roll(single_operator, -1)
+
+        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
+        for i in range(self.length):
+            operator[i, :] = np.roll(zero_indexed, i)
+
+        return operator
