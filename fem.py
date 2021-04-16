@@ -1,27 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse.linalg
 from scipy import linalg
 from scipy.interpolate import CubicSpline
 
 from integrate import integrate
-
-
-def d_norm(x):
-    """The discerete l_2-norm for a vector x"""
-    l = 1 / np.sqrt(len(x))
-    return l * linalg.norm(x)
-
-
-def c_norm(x, y, a, b):
-    """The continuous L_2-norm for a function (represented as a vector y)"""
-    X, Y = np.polynomial.legendre.leggauss(10)
-    # shifting X:
-    for i in range(10):
-        X[i] = (b - a) / 2 * X[i] + (b + a) / 2
-    U = (CubicSpline(x, y)(X)) ** 2
-    I = (b - a) / 2 * (sum(Y[j] * U[j] for j in range(10)))
-    return np.sqrt(I)
 
 
 def phi_up(i, x, x_axis):
@@ -70,21 +52,21 @@ def FEM(N, a, b, g, d1, d2, deg=10):
     return x_axis, u
 
 
-deg = 20
+def d_norm(x):
+    """The discerete l_2-norm for a vector x"""
+    l = 1 / np.sqrt(len(x))
+    return l * linalg.norm(x)
 
 
-def FEM_error_plot(N_array, a, b, f, d0, d1, u):
-    error = np.zeros(len(N_array))
-    for i, N in enumerate(N_array):
-        x, U = FEM(N, a, b, f, d0, d1, deg)
-        error[i] = c_norm(x, u(x) - U, a, b) / (c_norm(x, u(x), a, b))
-    plt.plot(N_array, error)
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.grid()
-
-
-# In[ ]:
+def c_norm(x, y, a, b):
+    """The continuous L_2-norm for a function (represented as a vector y)"""
+    X, Y = np.polynomial.legendre.leggauss(10)
+    # shifting X:
+    for i in range(10):
+        X[i] = (b - a) / 2 * X[i] + (b + a) / 2
+    U = (CubicSpline(x, y)(X)) ** 2
+    I = (b - a) / 2 * (sum(Y[j] * U[j] for j in range(10)))
+    return np.sqrt(I)
 
 
 def error_norm(u, Uc, a, b):
@@ -96,6 +78,9 @@ def error_norm(u, Uc, a, b):
         x[i] = (b - a) / 2 * x[i] + (b + a) / 2
     I = (b - a) / 2 * (sum(Y[j] * I[j] for j in range(10)))
     return np.sqrt(I)
+
+
+deg = 20
 
 
 def AFEM(N, f, u, a, b, d1, d2, alpha, estimate="averaging"):
