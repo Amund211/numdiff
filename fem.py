@@ -24,10 +24,20 @@ def c_norm(x, y, a, b):
     return np.sqrt(I)
 
 
+def phi_up(i, x, x_axis):
+    """The first part of the basis function for our function space"""
+    return (x - x_axis[i - 1]) / (x_axis[i] - x_axis[i - 1])
+
+
+def phi_down(i, x, x_axis):
+    """The second part of the basis function for our function space"""
+    return (x_axis[i + 1] - x) / (x_axis[i + 1] - x_axis[i])
+
+
 def FEM(N, a, b, g, d1, d2, deg=10):
     amt_points = N + 1
     h = (b - a) / N
-    x = np.linspace(a, b, amt_points)
+    x_axis = np.linspace(a, b, amt_points)
 
     A = scipy.sparse.diags(
         (-1 / h, 2 / h, -1 / h),
@@ -39,7 +49,12 @@ def FEM(N, a, b, g, d1, d2, deg=10):
 
     f = np.zeros(amt_points)
 
-    f[1:-1] = integrate(g, x[1:-1], x[2:], deg=deg)
+    for i in range(1, N - 1):
+        f[i] = integrate(
+            lambda x: phi_up(i, x, x_axis) * g(x), x_axis[i - 1], x_axis[i], deg=deg
+        ) + integrate(
+            lambda x: phi_down(i, x, x_axis) * g(x), x_axis[i], x_axis[i + 1], deg=deg
+        )
 
     u = np.zeros(amt_points)
     u[0] = d1
@@ -52,7 +67,7 @@ def FEM(N, a, b, g, d1, d2, deg=10):
     u_bar = scipy.sparse.linalg.spsolve(A.tocsc(), f)
     u[1:-1] = u_bar
 
-    return x, u
+    return x_axis, u
 
 
 deg = 20
