@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from tasks.advection_diffusion import (
     task_6b_asymptotic,
     task_6b_refinement,
+    task_6d_4th_order_M,
     task_6d_4th_order_ndof,
 )
 from tasks.fem_poisson import task_5b_avg, task_5b_max, task_5b_refinement
@@ -68,6 +69,7 @@ if __name__ == "__main__":
         "6b_refinement",
         "6b_asymptotic",
         "6d_4th_order_ndof",
+        "6d_4th_order_M",
     )
 
     if len(sys.argv) > 1:
@@ -133,6 +135,8 @@ if __name__ == "__main__":
             run_task(
                 task_6d_4th_order_ndof, "6d_4th_order_ndof.pdf", save=True, show=False
             )
+        elif task == "6d_4th_order_M":
+            run_task(task_6d_4th_order_M, "6d_4th_order_M.pdf", save=True, show=False)
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
