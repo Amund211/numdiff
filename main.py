@@ -13,10 +13,18 @@ from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.kdv import task_4b, task_4c
 from tasks.laplace_2D import task_3bx, task_3by
 from tasks.poisson_1D import task_1a, task_1b, task_1d1, task_1d2
-from tasks.task import run_task
+from tasks.task import IMAGES_FOLDER, run_task
 
 if __name__ == "__main__":
+    import os.path
     import sys
+
+    if not os.path.isdir(IMAGES_FOLDER):
+        print(
+            f"Images folder missing. Creating directory '{os.path.abspath(IMAGES_FOLDER)}'",
+            file=sys.stderr,
+        )
+        os.mkdir(IMAGES_FOLDER)
 
     # Plot params
     fontsize = 16

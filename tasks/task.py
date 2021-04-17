@@ -1,4 +1,8 @@
+import os.path
+
 import matplotlib.pyplot as plt
+
+IMAGES_FOLDER = "images"
 
 
 def run_task(task, filename, save, show):
@@ -6,6 +10,6 @@ def run_task(task, filename, save, show):
     plt.clf()
     task()
     if save:
-        plt.savefig(f"images/{filename}")
+        plt.savefig(os.path.join(IMAGES_FOLDER, filename))
     if show:
         plt.show()
