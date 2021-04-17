@@ -95,10 +95,10 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
             M = scheme_kwargs["M"] = param
             if r is not None:
                 # Keep a constant r = k/h^2
-                scheme_kwargs["N"] = int((M + 1) ** 2 / r)
+                scheme_kwargs["N"] = int(T * (M + 1) ** 2 / r)
             elif c is not None:
                 # Keep a constant c = k/h
-                scheme_kwargs["N"] = int((M + 1) / c)
+                scheme_kwargs["N"] = int(T * (M + 1) / c)
         else:
             scheme_kwargs["N"] = param
 
