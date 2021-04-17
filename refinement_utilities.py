@@ -1,3 +1,5 @@
+from math import ceil
+
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -97,10 +99,10 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
 
             if r is not None:
                 # Keep a constant r = k/h^2
-                scheme_kwargs["N"] = int(T / (r * h ** 2))
+                scheme_kwargs["N"] = ceil(T / (r * h ** 2))
             elif c is not None:
                 # Keep a constant c = k/h
-                scheme_kwargs["N"] = int(T / (c * h))
+                scheme_kwargs["N"] = ceil(T / (c * h))
         else:
             scheme_kwargs["N"] = param
 

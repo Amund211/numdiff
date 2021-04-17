@@ -1,4 +1,5 @@
 from functools import partial
+from math import ceil
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,7 +75,7 @@ def task_6b_asymptotic():
     c = 20
     d = 1
 
-    N = int(T * M ** 2 / r)
+    N = ceil(T * M ** 2 / r)
     k = T / N
 
     class Scheme(ThetaMethod, PeriodicAdvectionDiffusion):
