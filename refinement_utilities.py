@@ -73,7 +73,9 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
     return solver
 
 
-def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwargs={}):
+def make_scheme_solver(
+    cls, f, T, refine_space=True, r=None, c=None, ndof="both", scheme_kwargs={}
+):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
 
@@ -99,7 +101,7 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
 
             if r is not None:
                 # Keep a constant r = k/h^2
-                scheme_kwargs["N"] = ceil(T / (r * h ** 2))
+                scheme_kwargs["N"] = ceil(T / (r * h ** 3))
             elif c is not None:
                 # Keep a constant c = k/h
                 scheme_kwargs["N"] = ceil(T / (c * h))
@@ -111,21 +113,31 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
         scheme = cls(**scheme_kwargs)
         x_axis, solution = scheme.solve(f)
 
-        # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)
-        ndof = scheme.free_indicies.shape[0] * scheme.N
+        if ndof == "both":
+            # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)
+            chosen_ndof = scheme.free_indicies.shape[0] * scheme.N
+        elif ndof == "x":
+            chosen_ndof = scheme.free_indicies.shape[0]
+        elif ndof == "t":
+            chosen_ndof = scheme.N
+        else:
+            raise ValueError(
+                f"'{ndof}' is not a valid value for 'ndof'. Must be one of "
+                "('x', 't', 'both')"
+            )
 
         if scheme.periodic:
             # Append the last element
             return (
                 np.append(x_axis, 1),
                 np.append(solution[:, -1], solution[0, -1]),
-                ndof,
+                chosen_ndof,
             )
 
         return (
             x_axis,
             solution[:, -1],
-            ndof,
+            chosen_ndof,
         )
 
     return solver
