@@ -11,7 +11,7 @@ from schemes import ThetaMethod
 
 def task_6b_refinement():
     M_range = np.unique(np.logspace(np.log10(3), 2, num=10, dtype=np.int32))
-    M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
