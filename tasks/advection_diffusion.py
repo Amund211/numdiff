@@ -98,8 +98,9 @@ def task_6b_asymptotic():
 
     scheme = Scheme(**scheme_kwargs)
     x, solution = scheme.solve(f)
+    x = np.append(x, 1)
 
-    plt.plot(x, solution[:, -1], label="Numerical")
+    plt.plot(x, np.append(solution[:, -1], solution[0, -1]), label="Numerical")
     plt.plot(x, u(x, T), label="Analytical")
 
     plt.suptitle("Periodic advection diffusion")

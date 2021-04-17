@@ -241,8 +241,7 @@ def test_KdV():
         theta=1 / 2,  # 1/2 => CN
     )
 
-    solution = solve_and_plot(scheme, f, analytic, transform_x)
-    assert np.allclose(solution[0, :], solution[M, :]), "Solution must be periodic"
+    solve_and_plot(scheme, f, analytic, transform_x)
     plt.show()
 
 

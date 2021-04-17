@@ -96,10 +96,6 @@ def task_4c():
     cn = KdVTheta(k=k, N=N, M=M, theta=1 / 2)
     x_axis, sol = cn.solve(f)
 
-    # Ignore duplicate boundary value returned by solve
-    x_axis = x_axis[:-1]
-    sol = sol[:-1, :]
-
     plt.plot(t_axis, l2(sol, axis=0), label="Numerical (CN)")
 
     plt.plot(t_axis, [l2(u(t, x_axis)) for t in t_axis], label="Analytical")

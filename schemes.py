@@ -100,10 +100,7 @@ class Scheme:
 
             sol[:, n] = U
 
-        if self.periodic:
-            return np.append(x_axis, 1), np.row_stack((sol, sol[0]))
-        else:
-            return x_axis, sol
+        return x_axis, sol
 
 
 class Euler(Scheme):

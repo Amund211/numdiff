@@ -1,3 +1,4 @@
+import numpy as np
 from scipy.interpolate import interp1d
 
 from fem import FEM
@@ -105,11 +106,22 @@ def make_scheme_solver(cls, f, T, refine_space=True, r=None, c=None, scheme_kwar
 
         scheme = cls(**scheme_kwargs)
         x_axis, solution = scheme.solve(f)
+
+        # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)
+        ndof = scheme.free_indicies.shape[0] * scheme.N
+
+        if scheme.periodic:
+            # Append the last element
+            return (
+                np.append(x_axis, 1),
+                np.append(solution[:, -1], solution[0, -1]),
+                ndof,
+            )
+
         return (
             x_axis,
             solution[:, -1],
-            # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)
-            scheme.free_indicies.shape[0] * scheme.N,
+            ndof,
         )
 
     return solver
