@@ -7,7 +7,11 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 
 import matplotlib.pyplot as plt
 
-from tasks.advection_diffusion import task_6b_asymptotic, task_6b_refinement
+from tasks.advection_diffusion import (
+    task_6b_asymptotic,
+    task_6b_refinement,
+    task_6d_4th_order_ndof,
+)
 from tasks.fem_poisson import task_5b_avg, task_5b_max, task_5b_refinement
 from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.kdv import task_4b, task_4c
@@ -63,6 +67,7 @@ if __name__ == "__main__":
         "5b_max",
         "6b_refinement",
         "6b_asymptotic",
+        "6d_4th_order_ndof",
     )
 
     if len(sys.argv) > 1:
@@ -124,6 +129,10 @@ if __name__ == "__main__":
             run_task(task_6b_refinement, "6b_refinement.pdf", save=True, show=False)
         elif task == "6b_asymptotic":
             run_task(task_6b_asymptotic, "6b_asymptotic.pdf", save=True, show=False)
+        elif task == "6d_4th_order_ndof":
+            run_task(
+                task_6d_4th_order_ndof, "6d_4th_order_ndof.pdf", save=True, show=False
+            )
         else:
             raise ValueError(
                 f"Task '{task}' present in `available_tasks`, but not implemented"
