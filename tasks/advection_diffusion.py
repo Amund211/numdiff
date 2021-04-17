@@ -74,7 +74,7 @@ def task_6b_asymptotic():
     c = 20
     d = 1
 
-    N = int(T * (M + 1) ** 2 / r)
+    N = int(T * M ** 2 / r)
     k = T / N
 
     class Scheme(ThetaMethod, PeriodicAdvectionDiffusion):
