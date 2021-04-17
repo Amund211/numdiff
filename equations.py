@@ -184,3 +184,30 @@ class PeriodicAdvectionDiffusion(Equation):
             operator[i, :] = np.roll(zero_indexed, i)
 
         return operator
+
+
+class PeriodicAdvectionDiffusion4thOrder(PeriodicAdvectionDiffusion):
+    """
+    The advection-diffusion equation with periodic boundary condition with period 1
+
+    Both the first and second derivative have order 4
+    """
+
+    @cache
+    def operator(self):
+        # The first derivative finite difference
+        d1 = np.zeros((self.length,))
+        d1[:5] = np.array((1, -8, 0, 8, -1)) / (12 * self.h)
+
+        # The second derivative finite difference
+        d2 = np.zeros((self.length,))
+        d2[:5] = np.array((-1, 16, -30, 16, -1)) / (12 * self.h ** 2)
+
+        single_operator = self.c * d1 + self.d * d2
+        zero_indexed = np.roll(single_operator, -2)
+
+        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
+        for i in range(self.length):
+            operator[i, :] = np.roll(zero_indexed, i)
+
+        return operator
