@@ -174,7 +174,8 @@ def task_6d_4th_order_ndof():
 
 
 def task_6d_4th_order_M():
-    N = 10**3; M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
+    N = 10 ** 3
+    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
     # N = 10**5; M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
 
     theta = 1 / 2
