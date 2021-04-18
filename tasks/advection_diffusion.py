@@ -38,27 +38,32 @@ def task_6b_refinement():
     }
 
     # 2nd order
-    ndofs, (distances,) = refine_mesh(
+    x_ndofs, (distances,) = refine_mesh(
         solver=make_scheme_solver(
-            cls=Scheme, f=f, T=T, r=r, scheme_kwargs=scheme_kwargs
+            cls=Scheme,
+            f=f,
+            T=T,
+            r=r,
+            scheme_kwargs=scheme_kwargs,
+            ndof="x",
         ),
         param_range=M_range,
         analytical=partial(u, t=T),
         calculate_distances=(calculate_relative_l2_error,),
     )
-    plt.loglog(ndofs, distances, label="$e^r_{l_2}$")
+    plt.loglog(x_ndofs, distances, label="$e^r_{l_2}$")
 
-    # O(ndofs^(-2/3))
+    # O(h^2))
     plt.plot(
-        ndofs,
-        1.5e2 * np.divide(1, ndofs.astype(np.float64) ** (2 / 3)),
+        x_ndofs,
+        1.2e2 * np.divide(1, x_ndofs.astype(np.float64) ** 2),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+        label=r"$O\left(h^2\right)$",
     )
 
     plt.suptitle("Periodic advection diffusion")
     plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
-    plt.xlabel("Degrees of freedom $N_{dof} = MN$")
+    plt.xlabel("Internal nodes in $x$-direction $M \propto \sqrt[3]{N_{dof}}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()
@@ -193,9 +198,7 @@ def task_6d_4th_order_M():
     }
 
     ndofs, (distances,) = refine_mesh(
-        solver=make_scheme_solver(
-            cls=Scheme, f=f, T=T, scheme_kwargs=scheme_kwargs
-        ),
+        solver=make_scheme_solver(cls=Scheme, f=f, T=T, scheme_kwargs=scheme_kwargs),
         param_range=M_range,
         analytical=partial(u, t=T),
         calculate_distances=(calculate_relative_l2_error,),
