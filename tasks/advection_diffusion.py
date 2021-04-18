@@ -154,7 +154,7 @@ def task_6d_4th_order_ndof():
         ndofs,
         1.5e2 * np.divide(1, ndofs.astype(np.float64) ** (4 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-1}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac43}\right)$",
     )
 
     plt.suptitle("Periodic advection diffusion - 4th order spacial discretization")
