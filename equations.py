@@ -146,13 +146,7 @@ class PeriodicKdV(Equation):
         return operator
 
 
-class PeriodicAdvectionDiffusion(Equation):
-    """
-    The advection-diffusion equation with periodic boundary condition with period 1
-    """
-
-    periodic = True
-
+class _AdvectionDiffusionBase(Equation):
     def __init__(self, *, c, d, **kwargs):
         self.c = c
         self.d = d
@@ -161,6 +155,16 @@ class PeriodicAdvectionDiffusion(Equation):
         assert self.d > 0, "d must be positive"
 
         super().__init__(**kwargs)
+
+
+class PeriodicAdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
+    """
+    The advection-diffusion equation with periodic boundary condition with period 1
+
+    Both the first and second derivative have order 2
+    """
+
+    periodic = True
 
     @cached_property
     def restricted_indicies(self):
@@ -186,12 +190,18 @@ class PeriodicAdvectionDiffusion(Equation):
         return operator
 
 
-class PeriodicAdvectionDiffusion4thOrder(PeriodicAdvectionDiffusion):
+class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
     """
     The advection-diffusion equation with periodic boundary condition with period 1
 
     Both the first and second derivative have order 4
     """
+
+    periodic = True
+
+    @cached_property
+    def restricted_indicies(self):
+        return np.array((), dtype=np.int64)
 
     @cache
     def operator(self):

@@ -4,7 +4,10 @@ from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 
-from equations import PeriodicAdvectionDiffusion, PeriodicAdvectionDiffusion4thOrder
+from equations import (
+    PeriodicAdvectionDiffusion2ndOrder,
+    PeriodicAdvectionDiffusion4thOrder,
+)
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import ThetaMethod
@@ -21,7 +24,7 @@ def task_6b_refinement():
     c = 20
     d = 1
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
         pass
 
     def f(x):
@@ -83,7 +86,7 @@ def task_6b_asymptotic():
     N = ceil(T * M ** 2 / r)
     k = T / N
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
         pass
 
     def f(x):
