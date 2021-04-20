@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 
 
@@ -45,9 +47,11 @@ def select_avg(err, max_refinement, alpha=1.0):
     return ensure_uniform_steps(to_refine, err, max_refinement)
 
 
-def refine_mesh(solver, param_range, analytical, calculate_distances):
+def refine_mesh(solver, param_range, analytical, calculate_distances, timeit=False):
     """
     Solve a numerical scheme for a range of parameters and return the error for each
+
+    If `timeit` is True, additionaly return the runtime for each solution
 
     Each function in `calculate_distances` should take the grid, the analytical
     function, and the values at gridpoints
@@ -57,10 +61,21 @@ def refine_mesh(solver, param_range, analytical, calculate_distances):
         distances_list[i] = np.empty(param_range.shape, dtype=np.float64)
 
     ndofs = np.empty(param_range.shape, dtype=np.int32)
+    if timeit:
+        runtime = np.empty(param_range.shape, dtype=np.float64)
+
     for i, param in enumerate(param_range):
+        before = time.perf_counter()
         x, numerical, ndof = solver(param)
+        after = time.perf_counter()
+
         for distances, calculate_distance in zip(distances_list, calculate_distances):
             distances[i] = calculate_distance(x, analytical, numerical)
         ndofs[i] = ndof
+        if timeit:
+            runtime[i] = after - before
+
+    if timeit:
+        return ndofs, distances_list, runtime
 
     return ndofs, distances_list
