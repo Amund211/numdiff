@@ -65,9 +65,11 @@ def refine_mesh(solver, param_range, analytical, calculate_distances, timeit=Fal
         runtime = np.empty(param_range.shape, dtype=np.float64)
 
     for i, param in enumerate(param_range):
+        print(f"Solving with param={param}", end="")
         before = time.perf_counter()
         x, numerical, ndof = solver(param)
         after = time.perf_counter()
+        print(f" took {after - before:.2f}")
 
         for distances, calculate_distance in zip(distances_list, calculate_distances):
             distances[i] = calculate_distance(x, analytical, numerical)
