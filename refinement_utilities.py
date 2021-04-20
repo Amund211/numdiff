@@ -101,7 +101,7 @@ def make_scheme_solver(
 
             if r is not None:
                 # Keep a constant r = k/h^2
-                scheme_kwargs["N"] = ceil(T / (r * h ** 3))
+                scheme_kwargs["N"] = ceil(T / (r * h ** 2))
             elif c is not None:
                 # Keep a constant c = k/h
                 scheme_kwargs["N"] = ceil(T / (c * h))
