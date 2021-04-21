@@ -7,6 +7,7 @@ import numpy as np
 from conditions import Neumann
 from equations import (
     AdvectionDiffusion2ndOrder,
+    PeriodicAdvectionDiffusion1stOrder,
     PeriodicAdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion4thOrder,
 )
@@ -289,6 +290,63 @@ def task_6d_2nd_order_aperiodic():
     plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
     plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
     plt.xlabel("Internal nodes in $x$-direction $M \propto \sqrt[3]{N_{dof}}$")
+    plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
+    plt.grid()
+
+
+def task_6d_1st_order():
+    """
+    This task is currently unused, as we opted to investigate a method which was first
+    order in both time and space. That method ended up being unstable.
+    """
+    M_range = np.unique(np.logspace(np.log10(3), 4, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(3), 5, num=50, dtype=np.int32))
+
+    theta = 1 / 2
+    c_refinement = 1
+
+    T = 0.01
+    c = 20
+    d = 1
+
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion1stOrder):
+        pass
+
+    def f(x):
+        return np.sin(4 * np.pi * x)
+
+    def u(x, t):
+        return np.exp(-d * (4 * np.pi) ** 2 * t) * np.sin(4 * np.pi * (x + c * t))
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (),
+        "c": c,
+        "d": d,
+    }
+
+    ndofs, (distances,) = refine_mesh(
+        solver=make_scheme_solver(
+            cls=Scheme, f=f, T=T, c=c_refinement, scheme_kwargs=scheme_kwargs
+        ),
+        param_range=M_range,
+        analytical=partial(u, t=T),
+        calculate_distances=(calculate_relative_l2_error,),
+    )
+    plt.loglog(ndofs, distances, label="$e^r_{l_2}$")
+
+    # O(ndofs^(-1/2))
+    plt.plot(
+        ndofs,
+        4e0 * np.divide(1, ndofs.astype(np.float64) ** (1 / 2)),
+        linestyle="dashed",
+        label=r"$O\left(N_{dof}^{-\frac12}\right)$",
+    )
+
+    plt.suptitle("Periodic advection diffusion - 1st order spacial discretization")
+    plt.title(fr"Refinement with constant $c=\frac{{k}}{{h}}={c_refinement}$")
+    plt.xlabel("Degrees of freedom $N_{dof} = MN$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()
