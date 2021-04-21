@@ -157,6 +157,38 @@ class _AdvectionDiffusionBase(Equation):
         super().__init__(**kwargs)
 
 
+class PeriodicAdvectionDiffusion1stOrder(_AdvectionDiffusionBase):
+    """
+    The advection-diffusion equation with periodic boundary condition with period 1
+
+    Both the first and second derivative have order 1 (forward difference)
+    """
+
+    periodic = True
+
+    @cached_property
+    def restricted_indicies(self):
+        return np.array((), dtype=np.int64)
+
+    @cache
+    def operator(self):
+        # The first forward difference
+        d1 = np.zeros((self.length,))
+        d1[:2] = np.array((-1, 1)) / self.h
+
+        # The second forward difference
+        d2 = np.zeros((self.length,))
+        d2[:3] = np.array((1, -2, 1)) / self.h ** 2
+
+        zero_indexed = self.c * d1 + self.d * d2
+
+        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
+        for i in range(self.length):
+            operator[i, :] = np.roll(zero_indexed, i)
+
+        return operator
+
+
 class PeriodicAdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
     """
     The advection-diffusion equation with periodic boundary condition with period 1
