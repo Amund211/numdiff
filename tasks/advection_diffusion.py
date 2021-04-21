@@ -4,7 +4,9 @@ from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 
+from conditions import Neumann
 from equations import (
+    AdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion4thOrder,
 )
@@ -220,6 +222,73 @@ def task_6d_4th_order_M():
     plt.suptitle("Periodic advection diffusion - 4th order spacial discretization")
     plt.title(fr"$h$-refinement with $N={N}$")
     plt.xlabel("Internal nodes in $x$-direction $M$")
+    plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
+    plt.grid()
+
+
+def task_6d_2nd_order_aperiodic():
+    M_range = np.unique(np.logspace(np.log10(3), 2, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
+
+    theta = 1 / 2
+    r = 1
+
+    T = 0.01
+    c = 20
+    d = 1
+
+    a = (-c + np.sqrt(c ** 2 - 4 * d)) / (2 * d)
+    b = (-c - np.sqrt(c ** 2 - 4 * d)) / (2 * d)
+
+    class Scheme(ThetaMethod, AdvectionDiffusion2ndOrder):
+        pass
+
+    def u(x, t):
+        return np.exp(-t) * (np.exp(a * x) + np.exp(b * x))
+
+    def f(x):
+        return u(x, 0)
+
+    def ux(x, t):
+        return np.exp(-t) * (a * np.exp(a * x) + b * np.exp(b * x))
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (
+            Neumann(condition=lambda t: ux(0, t), m=0),
+            Neumann(condition=lambda t: ux(1, t), m=-1),
+        ),
+        "c": c,
+        "d": d,
+    }
+
+    x_ndofs, (distances,) = refine_mesh(
+        solver=make_scheme_solver(
+            cls=Scheme,
+            f=f,
+            T=T,
+            r=r,
+            scheme_kwargs=scheme_kwargs,
+            ndof="x",
+        ),
+        param_range=M_range,
+        analytical=partial(u, t=T),
+        calculate_distances=(calculate_relative_l2_error,),
+    )
+    plt.loglog(x_ndofs, distances, label="$e^r_{l_2}$")
+
+    # O(h^2))
+    plt.plot(
+        x_ndofs,
+        2e1 * np.divide(1, x_ndofs.astype(np.float64) ** 2),
+        linestyle="dashed",
+        label=r"$O\left(h^2\right)$",
+    )
+
+    plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
+    plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
+    plt.xlabel("Internal nodes in $x$-direction $M \propto \sqrt[3]{N_{dof}}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()
