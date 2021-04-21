@@ -221,3 +221,24 @@ class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
             operator[i, :] = np.roll(zero_indexed, i)
 
         return operator
+
+
+class AdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
+    """
+    The advection-diffusion equation
+
+    Both the first and second derivative have order 2
+    """
+
+    @cached_property
+    def restricted_indicies(self):
+        return np.array((0, self.length - 1), dtype=np.int64)
+
+    @cache
+    def operator(self):
+        return (
+            self.c * central_difference(self.length, power=1, format="dok") / self.h
+            + self.d
+            * central_difference(self.length, power=2, format="dok")
+            / self.h ** 2
+        )
