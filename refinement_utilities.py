@@ -3,7 +3,7 @@ from math import ceil
 import numpy as np
 from scipy.interpolate import interp1d
 
-from fem import FEM
+from fem import FEM_uniform
 from helpers import relative_l2_error, relative_L2_error
 from interpolate import calculate_poisson_derivatives, interpolate
 from laplace import laplace
@@ -162,7 +162,7 @@ def make_FEM_solver(a, b, f, d1, d2, deg=10):
     """
 
     def solver(param):
-        x, U = FEM(N=param, a=a, b=b, g=f, d1=d1, d2=d2, deg=deg)
+        x, U = FEM_uniform(N=param, a=a, b=b, g=f, d1=d1, d2=d2, deg=deg)
         return x, U, param - 1
 
     return solver

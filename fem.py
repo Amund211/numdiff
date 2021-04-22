@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.sparse.linalg
-from scipy import linalg
 from scipy.interpolate import CubicSpline
 
 from integrate import integrate
@@ -16,14 +15,16 @@ def phi_down(i, x, x_axis):
     return (x_axis[i + 1] - x) / (x_axis[i + 1] - x_axis[i])
 
 
-def FEM(N, a, b, g, d1, d2, deg=10):
-    """Solve poissons equation with the FEM on a uniform grid of N + 1 points"""
-    amt_points = N + 1
-    h = (b - a) / N
-    x_axis = np.linspace(a, b, amt_points)
+def FEM(x_axis, g, d1, d2, deg):
+    """Solve poissons equation with the FEM the grid `x_axis`"""
+    amt_points = x_axis.shape[0]
+    N = amt_points - 1
+    h_inv = 1 / (x_axis[1:] - x_axis[:-1])
+
+    main_diag = np.append(h_inv, 0) + np.append(0, h_inv)
 
     A = scipy.sparse.diags(
-        (-1 / h, 2 / h, -1 / h),
+        (-h_inv, main_diag, -h_inv),
         (-1, 0, 1),
         shape=(amt_points, amt_points),
         format="lil",
@@ -53,10 +54,10 @@ def FEM(N, a, b, g, d1, d2, deg=10):
     return x_axis, u
 
 
-def d_norm(x):
-    """The discerete l_2-norm for a vector x"""
-    l = 1 / np.sqrt(len(x))
-    return l * linalg.norm(x)
+def FEM_uniform(N, a, b, g, d1, d2, deg=10):
+    """Solve poissons equation with the FEM on a uniform grid of N intervals"""
+    x = np.linspace(a, b, N + 1)
+    return FEM(x, g, d1, d2, deg=deg)
 
 
 def c_norm(x, y, a, b):
@@ -81,12 +82,8 @@ def error_norm(u, Uc, a, b):
     return np.sqrt(I)
 
 
-deg = 20
-
-
-def AFEM(N, f, u, a, b, d1, d2, alpha, estimate="averaging"):
-    X = np.linspace(a, b, N)
-    X, U = FEM(X, a, b, f, d1, d2, deg=10)
+def AFEM(N, f, u, a, b, d1, d2, alpha, estimate="averaging", deg=10):
+    X, U = FEM_uniform(N, a, b, f, d1, d2, deg=deg)
     # plt.plot(X,U,color='green')
     errors = 10 * np.ones(len(X) - 1)
 
@@ -118,42 +115,6 @@ def AFEM(N, f, u, a, b, d1, d2, alpha, estimate="averaging"):
             X = np.insert(X, 1, (X[1] + X[0]) / 2)
 
         """Solving the system with respect to the new grid"""
-        X, U = FEM_non_uniform(X, f, a, b, d1, d2)
+        X, U = FEM(X, f, d1, d2, deg=deg)
         errors = np.ones(len(X) - 1)
-    return X, U
-
-
-def FEM_non_uniform(X, g, alpha, beta, d1, d2):
-    N = len(X)
-    h = np.zeros(N - 1)
-    h2 = np.zeros(N)
-    """The grid elements:"""
-    for i in range(0, N - 1):
-        h[i] = 1 / (X[i + 1] - X[i])
-    for i in range(1, N - 1):
-        h2[i] = h[i] + h[i - 1]
-    h2[0] = h[0]
-    h2[-1] = h[-1]
-    A = np.diag(h2) + np.diag(-h, k=-1) + np.diag(-h, k=1)
-    f = np.zeros(N)
-    x, y = np.polynomial.legendre.leggauss(deg)
-    for i in range(N - 1):
-        ai = X[i]
-        bi = X[i + 1]
-        f[i] = (
-            (bi - ai)
-            / 2
-            * (sum(y[j] * g((bi - ai) / 2 * x[j] + (ai + bi) / 2) for j in range(deg)))
-        )
-    u = np.zeros(N)
-    u[0] = d1
-    u[-1] = d2
-    f = f - np.dot(A, u)
-    A = A[1:-1, 1:-1]
-    A = csc_matrix(A)
-    f = f[1:-1]
-    U = spsolve(A, f)
-    U = np.append(np.array(d1), U)
-    U = np.append(U, d2)
-    # plt.plot(X,U,color='aqua')
     return X, U
