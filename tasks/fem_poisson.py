@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from fem import AFEM
-from refine import refine_mesh
+from refine import refine_mesh, simple_select_avg, simple_select_max
 from refinement_utilities import calculate_relative_L2_error_FEM, make_FEM_solver
 
 
@@ -56,10 +56,10 @@ def task_5b_refinement():
 
 def task_5b_avg():
     N = 20
-    alpha1 = 1
-    estimate1 = "averaging"
 
-    X1, U1 = AFEM(N, f, u, a, b, d1, d2, alpha1, estimate1)
+    X1, U1 = AFEM(
+        N, f, u, a, b, d1, d2, tol=1e-2, deg=10, select_refinement=simple_select_avg
+    )
     plt.plot(X1, u(X1), ".", color="hotpink")
     plt.plot(X1, U1, color="aqua")
     plt.grid()
@@ -68,9 +68,9 @@ def task_5b_avg():
 
 def task_5b_max():
     N = 20
-    alpha2 = 0.7
-    estimate2 = "maximum"
-    X2, U2 = AFEM(N, f, u, a, b, d1, d2, alpha2, estimate2)
+    X2, U2 = AFEM(
+        N, f, u, a, b, d1, d2, tol=1e-2, deg=10, select_refinement=simple_select_max
+    )
     plt.plot(X2, u(X2), ".", color="hotpink")
     plt.plot(X2, U2, color="aqua")
     plt.title(len(X2))

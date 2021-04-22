@@ -1,8 +1,9 @@
 import numpy as np
 import scipy.sparse.linalg
-from scipy.interpolate import CubicSpline
+from scipy.interpolate import interp1d
 
-from integrate import integrate
+from integrate import composite, integrate
+from refine import refine_after
 
 
 def phi_up(i, x, x_axis):
@@ -60,61 +61,25 @@ def FEM_uniform(N, a, b, g, d1, d2, deg=10):
     return FEM(x, g, d1, d2, deg=deg)
 
 
-def c_norm(x, y, a, b):
-    """The continuous L_2-norm for a function (represented as a vector y)"""
-    X, Y = np.polynomial.legendre.leggauss(10)
-    # shifting X:
-    for i in range(10):
-        X[i] = (b - a) / 2 * X[i] + (b + a) / 2
-    U = (CubicSpline(x, y)(X)) ** 2
-    I = (b - a) / 2 * (sum(Y[j] * U[j] for j in range(10)))
-    return np.sqrt(I)
+def AFEM(N, f, u, a, b, d1, d2, tol, deg, select_refinement):
+    """Adaptively refine the mesh until the global error is < tol"""
+    x = np.linspace(a, b, N + 1, dtype=np.float64)
+    to_refine = np.array((), dtype=np.int32)
+    global_error = float("inf")
 
+    while global_error >= tol:
+        x = refine_after(x, to_refine)
+        x, U = FEM(x, f, d1, d2, deg=deg)
 
-def error_norm(u, Uc, a, b):
-    X = np.linspace(a, b, 10)
-    I = (u(X) - Uc(X)) ** 2
-    x, Y = np.polynomial.legendre.leggauss(10)
-    # shifting X:
-    for i in range(10):
-        x[i] = (b - a) / 2 * x[i] + (b + a) / 2
-    I = (b - a) / 2 * (sum(Y[j] * I[j] for j in range(10)))
-    return np.sqrt(I)
+        # Linear interpolation of the weights is the same as the weighted sum
+        # of the basis functions
+        interpolated = interp1d(x, U, kind="linear")
+        # The square error on each interval
+        err = integrate(lambda x: (u(x) - interpolated(x)) ** 2, x[:-1], x[1:])
 
+        to_refine = select_refinement(np.sqrt(err))
 
-def AFEM(N, f, u, a, b, d1, d2, alpha, estimate="averaging", deg=10):
-    X, U = FEM_uniform(N, a, b, f, d1, d2, deg=deg)
-    # plt.plot(X,U,color='green')
-    errors = 10 * np.ones(len(X) - 1)
+        # e^r_{L_2}
+        global_error = np.sqrt(np.sum(err) / composite(lambda x: u(x) ** 2, x))
 
-    for j in range(5):
-        if estimate == "averaging":
-            """Averaging error estimate:"""
-            E = alpha * c_norm(X, u(X) - U, a, b) / N
-        if estimate == "maximum":
-            maximum = (np.absolute(u(X) - U)).max()
-            E = alpha * maximum
-
-        Uc = CubicSpline(X, U)
-
-        """Error on each grid-interval:"""
-        for i in range(len(X) - 1):
-            errors[i] = error_norm(u, Uc, X[i], X[i + 1])
-
-        if np.sum(errors) < len(errors) * E:
-            return X, U
-
-        """Adding grid-points where it is necessary:"""
-        k = 0
-        for i, e in enumerate(errors):
-            if e >= E:
-                X = np.insert(X, i + 1 + k, (X[i + 1 + k] + X[i + k]) / 2)
-                k += 1
-        """Making sure that the first two grid elements are of same length"""
-        if np.abs((X[1] - X[0]) - (X[2] - X[1])) >= 1e-5:
-            X = np.insert(X, 1, (X[1] + X[0]) / 2)
-
-        """Solving the system with respect to the new grid"""
-        X, U = FEM(X, f, d1, d2, deg=deg)
-        errors = np.ones(len(X) - 1)
-    return X, U
+    return x, U
