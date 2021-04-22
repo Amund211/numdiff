@@ -32,6 +32,18 @@ def ensure_uniform_steps(indicies, err, max_refinement):
     return np.append(indicies, missing)
 
 
+def simple_select_max(err, alpha=0.7):
+    """Select indicies to refine where the error exceeds `alpha` * max(err)"""
+    max_err = np.max(err)
+    return np.flatnonzero(err >= alpha * max_err)
+
+
+def simple_select_avg(err, alpha=1.0):
+    """Select indicies to refine where the error exceeds `alpha` * avg(err)"""
+    avg_err = np.average(err)
+    return np.flatnonzero(err >= alpha * avg_err)
+
+
 def select_max(err, max_refinement, alpha=0.7):
     """Select indicies to refine where the error exceeds `alpha` * max(err)"""
     max_err = np.max(err)
