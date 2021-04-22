@@ -66,3 +66,27 @@ def _generate_task_5(f, u, a, b, u_text, deg=10, tol=1e-2):
 task_5b_refinement, task_5b_avg, task_5b_max = _generate_task_5(
     f=lambda x: -2, u=lambda x: x ** 2, a=0, b=1, u_text="x^2"
 )
+
+task_5c_refinement, task_5c_avg, task_5c_max = _generate_task_5(
+    f=lambda x: -(40000 * x ** 2 - 200) * np.exp(-100 * x ** 2),
+    u=lambda x: np.exp(-100 * x ** 2),
+    a=-1,
+    b=1,
+    u_text=r"\exp{\left(-100 x^2\right)}",
+)
+
+task_5d_refinement, task_5d_avg, task_5d_max = _generate_task_5(
+    f=lambda x: -(4000000 * x ** 2 - 2000) * np.exp(-1000 * x ** 2),
+    u=lambda x: np.exp(-1000 * x ** 2),
+    a=-1,
+    b=1,
+    u_text=r"\exp{\left(-1000 x^2\right)}",
+)
+
+task_5e_refinement, task_5e_avg, task_5e_max = _generate_task_5(
+    f=lambda x: 2 / 9 * x ** (-4 / 3),
+    u=lambda x: x ** (2 / 3),
+    a=0,
+    b=1,
+    u_text=r"x^{\frac23}",
+)

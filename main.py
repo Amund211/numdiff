@@ -14,7 +14,20 @@ from tasks.advection_diffusion import (
     task_6d_4th_order_M,
     task_6d_4th_order_ndof,
 )
-from tasks.fem_poisson import task_5b_avg, task_5b_max, task_5b_refinement
+from tasks.fem_poisson import (
+    task_5b_avg,
+    task_5b_max,
+    task_5b_refinement,
+    task_5c_avg,
+    task_5c_max,
+    task_5c_refinement,
+    task_5d_avg,
+    task_5d_max,
+    task_5d_refinement,
+    task_5e_avg,
+    task_5e_max,
+    task_5e_refinement,
+)
 from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
 from tasks.kdv import task_4b, task_4c
 from tasks.laplace_2D import task_3bx, task_3by
@@ -67,6 +80,15 @@ if __name__ == "__main__":
         "5b_refinement",
         "5b_avg",
         "5b_max",
+        "5c_refinement",
+        "5c_avg",
+        "5c_max",
+        "5d_refinement",
+        "5d_avg",
+        "5d_max",
+        "5e_refinement",
+        "5e_avg",
+        "5e_max",
         "6b_refinement",
         "6b_asymptotic",
         "6d_4th_order_ndof",
@@ -136,6 +158,24 @@ if __name__ == "__main__":
             run_task(task_5b_avg, "5b_AFEM_avg.pdf", save=True, show=False)
         elif task == "5b_max":
             run_task(task_5b_max, "5b_AFEM_max.pdf", save=True, show=False)
+        elif task == "5c_refinement":
+            run_task(task_5c_refinement, "5c_refinement.pdf", save=True, show=False)
+        elif task == "5c_avg":
+            run_task(task_5c_avg, "5c_AFEM_avg.pdf", save=True, show=False)
+        elif task == "5c_max":
+            run_task(task_5c_max, "5c_AFEM_max.pdf", save=True, show=False)
+        elif task == "5d_refinement":
+            run_task(task_5d_refinement, "5d_refinement.pdf", save=True, show=False)
+        elif task == "5d_avg":
+            run_task(task_5d_avg, "5d_AFEM_avg.pdf", save=True, show=False)
+        elif task == "5d_max":
+            run_task(task_5d_max, "5d_AFEM_max.pdf", save=True, show=False)
+        elif task == "5e_refinement":
+            run_task(task_5e_refinement, "5e_refinement.pdf", save=True, show=False)
+        elif task == "5e_avg":
+            run_task(task_5e_avg, "5e_AFEM_avg.pdf", save=True, show=False)
+        elif task == "5e_max":
+            run_task(task_5e_max, "5e_AFEM_max.pdf", save=True, show=False)
         elif task == "6b_refinement":
             run_task(task_6b_refinement, "6b_refinement.pdf", save=True, show=False)
         elif task == "6b_asymptotic":
