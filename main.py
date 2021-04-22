@@ -75,18 +75,25 @@ if __name__ == "__main__":
     )
 
     if len(sys.argv) > 1:
-        tasks = sys.argv[1:]
+        requested_tasks = sys.argv[1:]
     else:
         print(f"Available tasks: {' '.join(available_tasks)}")
-        print("Use 'all' to run all tasks")
-        tasks = (
+        print("Type 'all' to run all tasks. Type a prefix to run all tasks that match.")
+        requested_tasks = (
             input("What tasks do you want to run? (space separated): ")
             .lower()
             .split(" ")
         )
 
-    if len(tasks) == 1 and tasks[0] == "all":
+    if len(requested_tasks) == 1 and requested_tasks[0] == "all":
         tasks = available_tasks
+    else:
+        tasks = filter(
+            lambda task: any(
+                task.startswith(requested_task) for requested_task in requested_tasks
+            ),
+            available_tasks,
+        )
 
     for task in tasks:
         if task not in available_tasks:
