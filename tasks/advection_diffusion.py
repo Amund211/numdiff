@@ -69,7 +69,7 @@ def task_6b_refinement():
 
     plt.suptitle("Periodic advection diffusion")
     plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
-    plt.xlabel("Internal nodes in $x$-direction $M \propto \sqrt[3]{N_{dof}}$")
+    plt.xlabel(r"Internal nodes in $x$-direction $M \propto \sqrt[3]{{ N_{{dof}} }}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()
@@ -289,7 +289,7 @@ def task_6d_2nd_order_aperiodic():
 
     plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
     plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
-    plt.xlabel("Internal nodes in $x$-direction $M \propto \sqrt[3]{N_{dof}}$")
+    plt.xlabel(r"Internal nodes in $x$-direction $M \propto \sqrt[3]{{ N_{{dof}} }}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()
