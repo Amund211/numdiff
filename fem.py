@@ -17,6 +17,7 @@ def phi_down(i, x, x_axis):
 
 
 def FEM(N, a, b, g, d1, d2, deg=10):
+    """Solve poissons equation with the FEM on a uniform grid of N + 1 points"""
     amt_points = N + 1
     h = (b - a) / N
     x_axis = np.linspace(a, b, amt_points)
