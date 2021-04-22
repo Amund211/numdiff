@@ -48,13 +48,21 @@ def _generate_task_5(f, u, a, b, u_text, deg=10, tol=1e-2):
     def task_5_AFEM(select_refinement):
         N = 20
 
-        X1, U1 = AFEM(
+        x, U = AFEM(
             N, f, u, a, b, d1, d2, tol=tol, deg=deg, select_refinement=select_refinement
         )
-        plt.plot(X1, u(X1), ".", color="hotpink")
-        plt.plot(X1, U1, color="aqua")
+
+        fine_x = np.linspace(x[0], x[-1], max(x.shape[0], 1000))
+
+        plt.plot(fine_x, u(fine_x), linestyle="dashed", label="Analytical solution")
+        plt.plot(x, U, label=f"AFEM solution with ${x.shape[0]}$ points")
+
+        plt.suptitle("Poisson's equation AFEM")
+        plt.title(fr"$u\left( x \right) = {u_text}, x \in \left[ {a}, {b} \right]$")
+        plt.xlabel("$x$")
+        plt.ylabel("$y$")
         plt.grid()
-        plt.title(len(X1))
+        plt.legend()
 
     return (
         task_5_refinement,
