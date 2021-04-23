@@ -34,7 +34,7 @@ from tasks.heat_eqn import (
     task_2br,
 )
 from tasks.kdv import task_4b, task_4c
-from tasks.laplace_2D import task_3bx, task_3by
+from tasks.laplace_2D import task_3_solution, task_3bx, task_3by
 from tasks.poisson_1D import task_1_solution, task_1a, task_1b, task_1d1, task_1d2
 from tasks.task import IMAGES_FOLDER, run_task
 
@@ -80,6 +80,7 @@ if __name__ == "__main__":
         "2bc",
         "2br",
         "2c",
+        "3_solution",
         "3bx",
         "3by",
         "4b",
@@ -153,6 +154,8 @@ if __name__ == "__main__":
             run_task(task_2br, "2b_r_refinement.pdf", save=True, show=False)
         elif task == "2c":
             run_task(task_2c, "2c_burgers_breaking.pdf", save=True, show=False)
+        elif task == "3_solution":
+            run_task(task_3_solution, "3_solution.pdf", save=True, show=False)
         elif task == "3bx":
             run_task(task_3bx, "3b_x_refinement.pdf", save=True, show=False)
         elif task == "3by":

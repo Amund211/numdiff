@@ -1,9 +1,26 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from laplace import analytical
+from laplace import analytical, laplace
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_laplace_solver
+
+
+def task_3_solution():
+    M = 100
+
+    (x, y), U = laplace(M, M)
+    U = U.reshape((M, M))
+
+    plt.suptitle(f"Laplace's equation - numerical solution with $M_x = M_y = {M}$")
+
+    c = plt.pcolormesh(x, y, U, cmap="hot")
+    plt.colorbar(c, ax=plt.gca())
+    plt.title(
+        r"$u_{xx} + u_{yy} = 0, \> u(x, 1) = \sin{\left( 2 \pi x\right)}, u(0, y) = u(x, 0) = u(1, y) = 0$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("$y$")
 
 
 def task_3bx():
