@@ -26,6 +26,43 @@ def u(t, x):
     return np.sin(np.pi * (transform_x(x) - t))
 
 
+def task_4_solution():
+    M = 1000
+    N = 2000
+
+    T = 2
+    theta = 1 / 2
+
+    k = T / N
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (),
+        "N": N,
+        "k": k,
+        "M": M,
+    }
+
+    scheme = KdVTheta(**scheme_kwargs)
+    x, solution = scheme.solve(f)
+
+    t, x = np.meshgrid(np.linspace(0, T, N + 1), np.append(x, 1))
+
+    c = plt.pcolormesh(
+        x, t, np.row_stack((solution, solution[0])), cmap="hot", shading="nearest"
+    )
+    plt.colorbar(c, ax=plt.gca())
+
+    plt.suptitle(
+        f"Linearized Korteweg-deVries - numerical solution with $M={M}, N={N}$"
+    )
+    plt.title(
+        r"$u_t + \left(1 + \pi^2\right) u_x + u_{xxx} = 0, u(x, 0) = \sin{\left( \pi x\right)}, u(x, t) = u(x+2, t)$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("Time $t$")
+
+
 def task_4b():
     T = 1
     N = 10 ** 4
