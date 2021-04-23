@@ -14,7 +14,7 @@ def task_3_solution():
 
     plt.suptitle(f"Laplace's equation - numerical solution with $M_x = M_y = {M}$")
 
-    c = plt.pcolormesh(x, y, U, cmap="hot")
+    c = plt.pcolormesh(x, y, U, cmap="hot", shading="nearest")
     plt.colorbar(c, ax=plt.gca())
     plt.title(
         r"$u_{xx} + u_{yy} = 0, \> u(x, 1) = \sin{\left( 2 \pi x\right)}, u(0, y) = u(x, 0) = u(1, y) = 0$"

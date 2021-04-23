@@ -61,10 +61,10 @@ def task_2_solution():
 
     t, x = np.meshgrid(np.linspace(0, T, N + 1), x)
 
-    c = plt.pcolormesh(x, t, solution, cmap="hot")
+    c = plt.pcolormesh(x, t, solution, cmap="hot", shading="nearest")
     plt.colorbar(c, ax=plt.gca())
 
-    plt.suptitle(f"The heat equation - solution with $M={M}, N={N}$")
+    plt.suptitle(f"The heat equation - numerical solution with $M={M}, N={N}$")
     plt.title(
         r"$u_t = u_{xx}, u(x, 0) = 2 \pi x + \sin{\left( 2 \pi x\right)}, u_x(0, t) = u_x(1, t) = 0$"
     )
