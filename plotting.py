@@ -1,3 +1,5 @@
+from itertools import chain
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,9 +14,9 @@ def solve_and_plot(scheme, f, analytic=None, transform_x=None):
     plot_x_axis = transform_x(x_axis) if callable(transform_x) else x_axis
 
     step_size = max(scheme.N // 10, 1)
-    for i in range(0, (scheme.N + 1) // step_size):
-        n = i * step_size
-        color = f"C{i % 10}"
+    for i in chain(range(0, (scheme.N + 1) // step_size), ((scheme.N) / step_size,)):
+        n = int(i * step_size)
+        color = f"C{int(i) % 10}"
 
         if scheme.periodic:
             plt.plot(
