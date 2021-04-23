@@ -79,7 +79,7 @@ def _generate_task_5(f, u, a, b, u_text, deg=10, tol=1e-2):
         plt.subplot(121)
         plt.plot(fine_x, analytical, linestyle="dashed", label="Analytical solution")
         plt.plot(x_avg, U_avg, label="AFEM solution")
-        plt.title(fr"Select avg with $\alpha = {alpha_avg}$ ${x_avg.shape[0]}$ points")
+        plt.title(fr"Select avg with $\alpha = {alpha_avg}$, ${x_avg.shape[0]}$ points")
         plt.xlabel("$x$")
         plt.ylabel("$y$")
         plt.grid()
@@ -88,9 +88,7 @@ def _generate_task_5(f, u, a, b, u_text, deg=10, tol=1e-2):
         plt.subplot(122)
         plt.plot(fine_x, analytical, linestyle="dashed", label="Analytical solution")
         plt.plot(x_max, U_max, label="AFEM solution")
-        plt.title(
-            fr"Select max with $\alpha = {alpha_max}$ - ${x_max.shape[0]}$ points"
-        )
+        plt.title(fr"Select max with $\alpha = {alpha_max}$, ${x_max.shape[0]}$ points")
         plt.xlabel("$x$")
         plt.ylabel("$y$")
         plt.grid()
