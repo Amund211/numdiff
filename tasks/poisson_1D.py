@@ -49,10 +49,10 @@ def task_1_solution():
     M = 1000
 
     alpha = 0
-    beta = 0
+    sigma = 0
     conditions = (
         Dirichlet(condition=alpha, m=0),
-        Dirichlet(condition=beta, m=-1),
+        Neumann(condition=sigma, m=-1),
     )
 
     def f(x):
@@ -60,11 +60,11 @@ def task_1_solution():
 
     def u(x):
         # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
-        # Here: solved for left dirichlet and right dirichlet
+        # Here: solved for left dirichlet and right neumann
         return (
             (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
             + x ** 3 / 6
-            + (beta - 1 / 6) * x
+            + (sigma - 1 / 2) * x
             + alpha
         )
 
@@ -75,7 +75,9 @@ def task_1_solution():
     plt.plot(x, u(x), linestyle="dashed", label="Analytical")
 
     plt.suptitle(f"Poisson's equation - Analytical vs numerical with $M={M}$")
-    plt.title(r"$u_{xx} = f(x) = \cos{\left( 2 \pi x \right)} + x$")
+    plt.title(
+        fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u(0, t) = {alpha}, u_x(1, t) = {sigma}$"
+    )
     plt.xlabel("$x$")
     plt.ylabel("$y$")
     plt.grid()
