@@ -14,6 +14,7 @@ from tasks.advection_diffusion import (
     task_6d_4th_order_M,
     task_6d_4th_order_ndof,
 )
+from tasks.burgers import task_2c
 from tasks.fem_poisson import (
     task_5b_afem,
     task_5b_refinement,
@@ -69,6 +70,7 @@ if __name__ == "__main__":
         "2bk",
         "2bc",
         "2br",
+        "2c",
         "3bx",
         "3by",
         "4b",
@@ -136,6 +138,8 @@ if __name__ == "__main__":
             run_task(task_2bc, "2b_c_refinement.pdf", save=True, show=False)
         elif task == "2br":
             run_task(task_2br, "2b_r_refinement.pdf", save=True, show=False)
+        elif task == "2c":
+            run_task(task_2c, "2c_burgers_breaking.pdf", save=True, show=False)
         elif task == "3bx":
             run_task(task_3bx, "3b_x_refinement.pdf", save=True, show=False)
         elif task == "3by":
