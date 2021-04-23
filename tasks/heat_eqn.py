@@ -34,6 +34,44 @@ class HeatTheta(ThetaMethod, HeatEquation):
             raise ValueError(f"Invalid value for theta {self.theta}")
 
 
+def task_2_solution():
+    M = 100
+    N = M + 1
+
+    T = 0.2
+    theta = 1 / 2
+
+    k = T / N
+
+    def f(x):
+        return 2 * np.pi * x + np.sin(2 * np.pi * x)
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (Neumann(condition=0, m=0), Neumann(condition=0, m=-1)),
+        "N": N,
+        "k": k,
+        "M": M,
+    }
+
+    scheme = HeatTheta(
+        **scheme_kwargs,
+    )
+    x, solution = scheme.solve(f)
+
+    t, x = np.meshgrid(np.linspace(0, T, N + 1), x)
+
+    c = plt.pcolormesh(x, t, solution, cmap="hot")
+    plt.colorbar(c, ax=plt.gca())
+
+    plt.suptitle(f"The heat equation - solution with $M={M}, N={N}$")
+    plt.title(
+        r"$u_t = u_{xx}, u(x, 0) = 2 \pi x + \sin{\left( 2 \pi x\right)}, u_x(0, t) = u_x(1, t) = 0$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("Time $t$")
+
+
 def task_2a():
     max_power = 13  # M = 2^max_power - 1 will be used as a reference solution
     # max_power = 16  # M = 2^max_power - 1 will be used as a reference solution

@@ -25,10 +25,17 @@ from tasks.fem_poisson import (
     task_5e_afem,
     task_5e_refinement,
 )
-from tasks.heat_eqn import task_2a, task_2bc, task_2bh, task_2bk, task_2br
+from tasks.heat_eqn import (
+    task_2_solution,
+    task_2a,
+    task_2bc,
+    task_2bh,
+    task_2bk,
+    task_2br,
+)
 from tasks.kdv import task_4b, task_4c
 from tasks.laplace_2D import task_3bx, task_3by
-from tasks.poisson_1D import task_1a, task_1b, task_1d1, task_1d2
+from tasks.poisson_1D import task_1_solution, task_1a, task_1b, task_1d1, task_1d2
 from tasks.task import IMAGES_FOLDER, run_task
 
 if __name__ == "__main__":
@@ -61,10 +68,12 @@ if __name__ == "__main__":
     )
 
     available_tasks = (
+        "1_solution",
         "1a",
         "1b",
         "1d1",
         "1d2",
+        "2_solution",
         "2a",
         "2bh",
         "2bk",
@@ -117,7 +126,9 @@ if __name__ == "__main__":
             continue
 
         print(f"Running task {task}")
-        if task == "1a":
+        if task == "1_solution":
+            run_task(task_1_solution, "1_solution.pdf", save=True, show=False)
+        elif task == "1a":
             run_task(task_1a, "1a_dirichlet_neumann.pdf", save=True, show=False)
         elif task == "1b":
             run_task(task_1b, "1b_dirichlet_dirichlet.pdf", save=True, show=False)
@@ -128,6 +139,8 @@ if __name__ == "__main__":
         elif task == "1d3":
             # Maybe include a concrete example comparing AMR with UMR for some small M?
             pass
+        elif task == "2_solution":
+            run_task(task_2_solution, "2_solution.pdf", save=True, show=False)
         elif task == "2a":
             run_task(task_2a, "2a_bc_order.pdf", save=True, show=False)
         elif task == "2bh":
