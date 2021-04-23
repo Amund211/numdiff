@@ -260,7 +260,9 @@ def task_2bh():
     plt.grid()
 
     plt.suptitle("The heat equation - $h$-refinement")
-    plt.title(f"Backwards Euler vs Crank Nicholson with $N={TASK_2B_PARAMS['N']}$")
+    plt.title(
+        f"Backwards Euler vs Crank Nicholson with $N={TASK_2B_PARAMS['N']}$ at $t = {TASK_2B_PARAMS['T']}$"
+    )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -295,7 +297,9 @@ def task_2bk():
     plt.grid()
 
     plt.suptitle("The heat equation - $k$-refinement")
-    plt.title(f"Backwards Euler vs Crank Nicholson with $M={TASK_2B_PARAMS['M']}$")
+    plt.title(
+        f"Backwards Euler vs Crank Nicholson with $M={TASK_2B_PARAMS['M']}$ at $t = {TASK_2B_PARAMS['T']}$"
+    )
     plt.xlabel("Time steps $N$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -336,7 +340,7 @@ def task_2bc():
     plt.suptitle(
         fr"The heat equation - refinement with constant $c=\frac{{k}}{{h}}={c}$"
     )
-    plt.title("Backwards Euler vs Crank Nicholson")
+    plt.title(f"Backwards Euler vs Crank Nicholson at $t = {TASK_2B_PARAMS['T']}$")
     plt.xlabel("Degrees of freedom $N_{dof} = MN$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -369,7 +373,7 @@ def task_2br():
     plt.suptitle(
         fr"The heat equation - refinement with constant $r=\frac{{k}}{{h^2}}={r}$"
     )
-    plt.title("Backwards Euler vs Crank Nicholson")
+    plt.title(f"Backwards Euler vs Crank Nicholson at $t = {TASK_2B_PARAMS['T']}$")
     plt.xlabel("Degrees of freedom $N_{dof} = MN$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
