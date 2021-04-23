@@ -16,6 +16,56 @@ from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import ThetaMethod
 
 
+def task_6_solution():
+    M = 100
+    N = 200
+    T = 0.01
+    theta = 1 / 2
+
+    k = T / N
+
+    c = 20
+    d = 1
+
+    def f(x):
+        return np.sin(4 * np.pi * x)
+
+    def u(x, t):
+        return np.exp(-d * (4 * np.pi) ** 2 * t) * np.sin(4 * np.pi * (x + c * t))
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (),
+        "c": c,
+        "d": d,
+        "N": N,
+        "k": k,
+        "M": M,
+    }
+
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
+        pass
+
+    scheme = Scheme(**scheme_kwargs)
+    x, solution = scheme.solve(f)
+
+    t, x = np.meshgrid(np.linspace(0, T, N + 1), np.append(x, 1))
+
+    c = plt.pcolormesh(
+        x, t, np.row_stack((solution, solution[0])), cmap="hot", shading="nearest"
+    )
+    plt.colorbar(c, ax=plt.gca())
+
+    plt.suptitle(
+        f"Periodic advection diffusion - numerical solution with $M={M}, N={N}$"
+    )
+    plt.title(
+        r"$u_t = c u_x + d u_{xx}, u(x, 0) = \sin{\left( 4 \pi x\right)}, u(x, t) = u(x+1, t)$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("Time $t$")
+
+
 def task_6b_refinement():
     M_range = np.unique(np.logspace(np.log10(3), 2, num=10, dtype=np.int32))
     # M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
