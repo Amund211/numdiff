@@ -27,8 +27,8 @@ def u(t, x):
 
 
 def task_4_solution():
-    M = 1000
-    N = 2000
+    M = 100
+    N = 200
 
     T = 2
     theta = 1 / 2

@@ -36,7 +36,7 @@ class HeatTheta(ThetaMethod, HeatEquation):
 
 def task_2_solution():
     M = 100
-    N = M + 1
+    N = 100
 
     T = 0.2
     theta = 1 / 2
