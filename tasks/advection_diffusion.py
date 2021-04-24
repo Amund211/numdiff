@@ -67,8 +67,8 @@ def task_6_solution():
 
 
 def task_6b_refinement():
-    M_range = np.unique(np.logspace(np.log10(3), 2, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
+    M_range = np.unique(np.logspace(np.log10(5), 2, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(5), 3, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -77,7 +77,7 @@ def task_6b_refinement():
     c = 20
     d = 1
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion4thOrder):
         pass
 
     def f(x):
@@ -93,7 +93,7 @@ def task_6b_refinement():
         "d": d,
     }
 
-    # 2nd order
+    # 4th order
     x_ndofs, (distances,) = refine_mesh(
         solver=make_scheme_solver(
             cls=Scheme,
@@ -109,16 +109,18 @@ def task_6b_refinement():
     )
     plt.loglog(x_ndofs, distances, label="$e^r_{l_2}$")
 
-    # O(h^2))
+    # O(h^4))
     plt.plot(
         x_ndofs,
-        1.2e2 * np.divide(1, x_ndofs.astype(np.float64) ** 2),
+        6e4 * np.divide(1, x_ndofs.astype(np.float64) ** 4),
         linestyle="dashed",
-        label=r"$O\left(h^2\right)$",
+        label=r"$O\left(h^4\right)$",
     )
 
-    plt.suptitle("Periodic advection diffusion")
-    plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
+    plt.suptitle(r"Periodic advection diffusion - 4th order space, $\theta = \frac12$")
+    plt.title(
+        fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$, $c={c}, d={d}, t={T}$"
+    )
     plt.xlabel(r"Internal nodes in $x$-direction $M \propto \sqrt[3]{{ N_{{dof}} }}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -139,7 +141,7 @@ def task_6b_asymptotic():
     N = ceil(T * M ** 2 / r)
     k = T / N
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion4thOrder):
         pass
 
     def f(x):
