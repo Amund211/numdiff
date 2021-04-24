@@ -67,8 +67,8 @@ def task_6_solution():
 
 
 def task_6a_refinement():
-    M_range = np.unique(np.logspace(np.log10(5), 2, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 3, num=100, dtype=np.int32))
+    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -127,8 +127,8 @@ def task_6a_refinement():
 
 
 def task_6b_refinement():
-    M_range = np.unique(np.logspace(np.log10(5), 2, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 3, num=100, dtype=np.int32))
+    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -237,7 +237,7 @@ def task_6b_asymptotic():
 
 def task_6d_4th_order_ndof():
     M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 3.5, num=100, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -341,8 +341,8 @@ def task_6d_4th_order_M():
 
 
 def task_6d_2nd_order_aperiodic():
-    M_range = np.unique(np.logspace(np.log10(3), 2, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(3), 3, num=100, dtype=np.int32))
+    M_range = np.unique(np.logspace(np.log10(3), 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(3), 4, num=100, dtype=np.int32))
 
     theta = 1 / 2
     r = 1

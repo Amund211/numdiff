@@ -238,6 +238,7 @@ TASK_2B_PARAMS = {
 
 def task_2bh():
     M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
 
     _task_2b(
         default_params=TASK_2B_PARAMS,
@@ -267,6 +268,7 @@ def task_2bh():
 
 def task_2bk():
     N_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # N_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
 
     _task_2b(
         default_params=TASK_2B_PARAMS,
@@ -344,8 +346,8 @@ def task_2bc():
 
 
 def task_2br():
-    M_range = np.unique(np.logspace(0, 2.5, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 3, num=50, dtype=np.int32))
+    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
     r = 1
 
     ndofs = _task_2b(
