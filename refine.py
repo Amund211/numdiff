@@ -73,7 +73,7 @@ def refine_mesh(solver, param_range, analytical, calculate_distances, timeit=Fal
     for i in range(len(distances_list)):
         distances_list[i] = np.empty(param_range.shape, dtype=np.float64)
 
-    ndofs = np.empty(param_range.shape, dtype=np.int32)
+    ndofs = np.empty(param_range.shape, dtype=np.float64)
     if timeit:
         runtime = np.empty(param_range.shape, dtype=np.float64)
 

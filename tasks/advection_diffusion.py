@@ -111,7 +111,7 @@ def task_6a_refinement():
     # O(Ndof^-2/3))
     plt.plot(
         ndofs,
-        6e0 * np.divide(1, ndofs.astype(np.float64) ** (2 / 3)),
+        6e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
         label=r"$O\left(N_{dof}^{-\frac23}\right)$",
     )
@@ -172,7 +172,7 @@ def task_6b_refinement():
     # O(h^4))
     plt.plot(
         x_ndofs,
-        6e4 * np.divide(1, x_ndofs.astype(np.float64) ** 4),
+        6e4 * np.divide(1, x_ndofs ** 4),
         linestyle="dashed",
         label=r"$O\left(h^4\right)$",
     )
@@ -275,7 +275,7 @@ def task_6d_4th_order():
     # O(ndofs^(-4/3))
     plt.plot(
         ndofs,
-        1.5e2 * np.divide(1, ndofs.astype(np.float64) ** (4 / 3)),
+        1.5e2 * np.divide(1, ndofs ** (4 / 3)),
         linestyle="dashed",
         label=r"$O\left(N_{dof}^{-\frac43}\right)$",
     )
@@ -398,7 +398,7 @@ def task_6d_2nd_order_aperiodic():
     # O(Ndof^-2/3))
     plt.plot(
         ndofs,
-        1e0 * np.divide(1, ndofs.astype(np.float64) ** (2 / 3)),
+        1e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
         label=r"$O\left(N_{dof}^{-\frac23}\right)$",
     )
@@ -455,7 +455,7 @@ def task_6d_1st_order():
     # O(ndofs^(-1/2))
     plt.plot(
         ndofs,
-        4e0 * np.divide(1, ndofs.astype(np.float64) ** (1 / 2)),
+        4e0 * np.divide(1, ndofs ** (1 / 2)),
         linestyle="dashed",
         label=r"$O\left(N_{dof}^{-\frac12}\right)$",
     )

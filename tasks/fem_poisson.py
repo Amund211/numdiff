@@ -33,7 +33,7 @@ def _generate_task_5(f, u, a, b, u_text, deg=10, tol=1e-2):
 
         plt.plot(
             ndofs,
-            np.divide(1, (ndofs.astype(np.float64) + 1) ** 2),
+            np.divide(1, (ndofs + 1) ** 2),
             linestyle="dashed",
             label=r"$O\left(h^2\right)$",
         )

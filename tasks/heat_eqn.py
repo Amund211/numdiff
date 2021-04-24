@@ -316,8 +316,6 @@ def task_2bc():
         get_x_axis=lambda ndofs, M, N: ndofs,
     )
 
-    ndofs = ndofs.astype(np.float64)
-
     # O(ndofs^(-1))
     plt.plot(
         ndofs,
@@ -356,8 +354,6 @@ def task_2br():
         param_range=M_range,
         get_x_axis=lambda ndofs, M, N: ndofs,
     )
-
-    ndofs = ndofs.astype(np.float64)
 
     # O(ndofs^(-2/3))
     plt.plot(
