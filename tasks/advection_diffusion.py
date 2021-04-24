@@ -221,7 +221,7 @@ def task_6b_asymptotic():
     }
 
     scheme = Scheme(**scheme_kwargs)
-    x, solution = scheme.solve(f)
+    x, solution = scheme.solve(f, context=1)
     x = np.append(x, 1)
 
     plt.plot(x, np.append(solution[:, -1], solution[0, -1]), label="Numerical")

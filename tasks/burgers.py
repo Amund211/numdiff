@@ -22,7 +22,9 @@ def task_2c():
 
     t_range = np.linspace(0.0576, 0.0584, 10)
 
-    print(N, k, N * k)
+    min_t = t_range[0]
+    min_t_index = int(min_t / k)
+    context = N - min_t_index + 1
 
     def f(x):
         return np.exp(-400 * (x - 1 / 2) ** 2)
@@ -34,14 +36,14 @@ def task_2c():
         conditions=(Dirichlet(condition=0, m=0), Dirichlet(condition=0, m=-1)),
     )
 
-    x_axis, sol = scheme.solve(f)
+    x_axis, sol = scheme.solve(f, context=context)
 
     for i, t in enumerate(t_range):
         n = int(t / k)
 
         plt.plot(
             x_axis,
-            sol[:, n],
+            sol[:, n].view(np.ndarray),
             label=f"U(t={n*scheme.k:.5f}, n={n})",
             color=f"C{i % 10}",
         )

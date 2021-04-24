@@ -4,6 +4,8 @@ import numpy as np
 import scipy.sparse.linalg
 from scipy.sparse import eye as sparse_eye
 
+from ring_2d import Ring2D
+
 
 class Scheme:
     """
@@ -85,12 +87,17 @@ class Scheme:
     def step(self, context, n):
         return self.get_solver()(self.get_constrained_rhs(context, n))
 
-    def solve(self, f):
+    def solve(self, f, context=-1):
         """
         Solve the time evolution equation
         """
 
-        sol = np.empty((self.length, self.N + 1), dtype=np.float64)
+        array_params = {"shape": (self.length, self.N + 1), "dtype": np.float64}
+        if context < 0:
+            sol = np.empty(**array_params)
+        else:
+            sol = Ring2D(**array_params, context=context)
+
         x_axis = self.x_indicies * self.h
 
         sol[:, 0] = f(x_axis)

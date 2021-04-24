@@ -74,7 +74,15 @@ def make_amr_poisson_solver(f, u, conditions, select_refinement, order):
 
 
 def make_scheme_solver(
-    cls, f, T, refine_space=True, r=None, c=None, ndof="both", scheme_kwargs={}
+    cls,
+    f,
+    T,
+    refine_space=True,
+    r=None,
+    c=None,
+    ndof="both",
+    scheme_kwargs={},
+    context=1,
 ):
     """
     Create a solver function from a time evolution scheme for use in `refine_mesh`
@@ -111,7 +119,7 @@ def make_scheme_solver(
         scheme_kwargs["k"] = T / scheme_kwargs["N"]
 
         scheme = cls(**scheme_kwargs)
-        x_axis, solution = scheme.solve(f)
+        x_axis, solution = scheme.solve(f, context=context)
 
         if ndof == "both":
             # ndof = (#degrees of freedom in x) * (#degrees of freedom in t)

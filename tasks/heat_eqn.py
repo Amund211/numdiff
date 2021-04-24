@@ -105,13 +105,10 @@ def task_2a():
         M=M_star,
         **scheme_kwargs,
     )
-    x, solution = scheme.solve(f)
+    x, solution = scheme.solve(f, context=1)
 
     # Substitute for the analytical solution
     U_star = interp1d(x, solution[:, -1], kind="nearest")
-
-    # Free the memory
-    del solution
 
     # 1st order
     ndofs, (distances,) = refine_mesh(
