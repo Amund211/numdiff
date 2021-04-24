@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from tasks.advection_diffusion import (
     task_6_solution,
+    task_6a_refinement,
     task_6b_asymptotic,
     task_6b_refinement,
     task_6d_2nd_order_aperiodic,
@@ -96,6 +97,7 @@ if __name__ == "__main__":
         "5e_refinement",
         "5e_afem",
         "6_solution",
+        "6a_refinement",
         "6b_refinement",
         "6b_asymptotic",
         "6d_4th_order_ndof",
@@ -187,6 +189,8 @@ if __name__ == "__main__":
             run_task(task_5e_afem, "5e_afem.pdf", save=True, show=False)
         elif task == "6_solution":
             run_task(task_6_solution, "6_solution.pdf", save=True, show=False)
+        elif task == "6a_refinement":
+            run_task(task_6a_refinement, "6a_refinement.pdf", save=True, show=False)
         elif task == "6b_refinement":
             run_task(task_6b_refinement, "6b_refinement.pdf", save=True, show=False)
         elif task == "6b_asymptotic":
