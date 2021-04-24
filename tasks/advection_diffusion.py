@@ -235,7 +235,7 @@ def task_6b_asymptotic():
     plt.grid()
 
 
-def task_6d_4th_order_ndof():
+def task_6d_4th_order():
     M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
     # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
 
@@ -289,6 +289,11 @@ def task_6d_4th_order_ndof():
 
 
 def task_6d_4th_order_M():
+    """
+    Currently unused task
+
+    This plots error vs M, with a constant N
+    """
     N = 10 ** 3
     M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
     # N = 10**5; M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
@@ -376,32 +381,31 @@ def task_6d_2nd_order_aperiodic():
         "d": d,
     }
 
-    x_ndofs, (distances,) = refine_mesh(
+    ndofs, (distances,) = refine_mesh(
         solver=make_scheme_solver(
             cls=Scheme,
             f=f,
             T=T,
             r=r,
             scheme_kwargs=scheme_kwargs,
-            ndof="x",
         ),
         param_range=M_range,
         analytical=partial(u, t=T),
         calculate_distances=(calculate_relative_l2_error,),
     )
-    plt.loglog(x_ndofs, distances, label="$e^r_{l_2}$")
+    plt.loglog(ndofs, distances, label="$e^r_{l_2}$")
 
-    # O(h^2))
+    # O(Ndof^-2/3))
     plt.plot(
-        x_ndofs,
-        2e1 * np.divide(1, x_ndofs.astype(np.float64) ** 2),
+        ndofs,
+        1e0 * np.divide(1, ndofs.astype(np.float64) ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(h^2\right)$",
+        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
     )
 
     plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
     plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
-    plt.xlabel(r"Internal nodes in $x$-direction $M \propto \sqrt[3]{{ N_{{dof}} }}$")
+    plt.xlabel("Degrees of freedom $N_{dof}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
     plt.grid()

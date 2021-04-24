@@ -13,8 +13,7 @@ from tasks.advection_diffusion import (
     task_6b_asymptotic,
     task_6b_refinement,
     task_6d_2nd_order_aperiodic,
-    task_6d_4th_order_M,
-    task_6d_4th_order_ndof,
+    task_6d_4th_order,
 )
 from tasks.burgers import task_2c
 from tasks.fem_poisson import (
@@ -100,8 +99,7 @@ if __name__ == "__main__":
         "6a_refinement",
         "6b_refinement",
         "6b_asymptotic",
-        "6d_4th_order_ndof",
-        "6d_4th_order_M",
+        "6d_4th_order",
         "6d_2nd_order_aperiodic",
     )
 
@@ -195,12 +193,8 @@ if __name__ == "__main__":
             run_task(task_6b_refinement, "6b_refinement.pdf", save=True, show=False)
         elif task == "6b_asymptotic":
             run_task(task_6b_asymptotic, "6b_asymptotic.pdf", save=True, show=False)
-        elif task == "6d_4th_order_ndof":
-            run_task(
-                task_6d_4th_order_ndof, "6d_4th_order_ndof.pdf", save=True, show=False
-            )
-        elif task == "6d_4th_order_M":
-            run_task(task_6d_4th_order_M, "6d_4th_order_M.pdf", save=True, show=False)
+        elif task == "6d_4th_order":
+            run_task(task_6d_4th_order, "6d_4th_order.pdf", save=True, show=False)
         elif task == "6d_2nd_order_aperiodic":
             run_task(
                 task_6d_2nd_order_aperiodic,
