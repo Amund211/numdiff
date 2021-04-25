@@ -7,6 +7,7 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 
 import concurrent.futures
 from functools import partial
+from datetime import datetime
 
 import matplotlib.pyplot as plt
 
@@ -156,12 +157,12 @@ if __name__ == "__main__":
                 )
             ):
                 print(
-                    f"** Ran task {task} (~{100*(i+1)/len(tasks):.2f}%)**",
+                    f"** Completed task {task} at {datetime.now():%H:%M:%S} (~{100*(i+1)/len(tasks):.2f}%)**",
                     file=sys.stderr,
                 )
     else:
         for i, task in enumerate(tasks):
             print(
-                f"** Running task {task} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
+                f"** Started task {task} {datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
             )
             available_tasks[task].run(**TASK_KWARGS)
