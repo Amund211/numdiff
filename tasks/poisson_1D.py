@@ -350,6 +350,7 @@ def task_1d2():
     )
 
     plt.suptitle("Poisson's equation")
+    plt.title("Adaptive vs uniform mesh refinement")
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.grid()
