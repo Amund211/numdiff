@@ -51,7 +51,8 @@ if __name__ == "__main__":
 
     if not os.path.isdir(IMAGES_FOLDER):
         print(
-            f"Images folder missing. Creating directory '{os.path.abspath(IMAGES_FOLDER)}'",
+            "Images folder missing. Creating directory "
+            f"'{os.path.abspath(IMAGES_FOLDER)}'",
             file=sys.stderr,
         )
         os.mkdir(IMAGES_FOLDER)
@@ -158,12 +159,15 @@ if __name__ == "__main__":
                 )
             ):
                 print(
-                    f"** Completed task {task.ljust(max_task_length)} at {datetime.now():%H:%M:%S} (~{100*(i+1)/len(tasks):.2f}%)**",
+                    f"** Completed task {task.ljust(max_task_length)} at "
+                    f"{datetime.now():%H:%M:%S} (~{100*(i+1)/len(tasks):.2f}%)**",
                     file=sys.stderr,
                 )
     else:
         for i, task in enumerate(tasks):
             print(
-                f"** Started task {task.ljust(max_task_length)} {datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
+                f"** Started task {task.ljust(max_task_length)} "
+                f"{datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**",
+                file=sys.stderr,
             )
             available_tasks[task].run(**TASK_KWARGS)
