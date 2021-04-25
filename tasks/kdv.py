@@ -47,7 +47,7 @@ def task_4_solution():
     scheme = KdVTheta(**scheme_kwargs)
     x, solution = scheme.solve(f)
 
-    t, x = np.meshgrid(np.linspace(0, T, N + 1), np.append(x, 1))
+    t, x = np.meshgrid(np.linspace(0, T, N + 1), transform_x(np.append(x, 1)))
 
     c = plt.pcolormesh(
         x, t, np.row_stack((solution, solution[0])), cmap="hot", shading="nearest"
