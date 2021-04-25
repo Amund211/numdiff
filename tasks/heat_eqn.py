@@ -77,7 +77,7 @@ def task_2a():
     # M = 2^max_power - 1 will be used as a reference solution
 
     if FINE_PARAMETERS:
-        N = int(2e4)
+        N = int(1e5)
         max_power = 16
     else:
         N = int(2e3)
