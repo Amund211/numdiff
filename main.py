@@ -116,7 +116,7 @@ if __name__ == "__main__":
     else:
         print("Type 'all' to run all tasks. Type a prefix to run all tasks that match.")
         print("Available tasks:")
-        print("\n".join(available_tasks))
+        print("\t" + "\n\t".join(available_tasks))
         requested_tasks = (
             input("What tasks do you want to run? (space separated): ")
             .lower()
@@ -127,14 +127,19 @@ if __name__ == "__main__":
         tasks = task_names
     else:
         # Include all tasks that start with any of the search-terms
-        tasks = filter(
-            lambda task: any(
-                task.startswith(requested_task.lower())
-                for requested_task in requested_tasks
-            ),
-            task_names,
+        tasks = list(
+            filter(
+                lambda task: any(
+                    task.startswith(requested_task.lower())
+                    for requested_task in requested_tasks
+                ),
+                task_names,
+            )
         )
 
+    print("Running requested tasks:")
+    print("\t" + "\n\t".join(tasks))
+
     for task in tasks:
-        print(f"Running task {task}", file=sys.stderr)
+        print(f"** Running task {task} **", file=sys.stderr)
         available_tasks[task].run(save=True, show=False)
