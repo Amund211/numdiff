@@ -14,6 +14,7 @@ from equations import (
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import ThetaMethod
+from settings import FINE_PARAMETERS
 
 
 def task_6_solution():
@@ -67,8 +68,10 @@ def task_6_solution():
 
 
 def task_6a_refinement():
-    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -127,8 +130,10 @@ def task_6a_refinement():
 
 
 def task_6b_refinement():
-    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -188,8 +193,10 @@ def task_6b_refinement():
 
 
 def task_6b_asymptotic():
-    M = 100
-    # M = 1000
+    if FINE_PARAMETERS:
+        M = 1000
+    else:
+        M = 100
 
     theta = 1 / 2
     r = 1
@@ -236,8 +243,10 @@ def task_6b_asymptotic():
 
 
 def task_6c():
-    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 4, num=20, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(5), 4, num=20, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -310,8 +319,10 @@ def task_6c():
 
 
 def task_6d_4th_order():
-    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -368,9 +379,12 @@ def task_6d_4th_order_M():
 
     This plots error vs M, with a constant N
     """
-    N = 10 ** 3
-    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
-    # N = 10**5; M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        N = 10 ** 5
+        M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))
+    else:
+        N = 10 ** 3
+        M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
 
@@ -420,8 +434,10 @@ def task_6d_4th_order_M():
 
 
 def task_6d_2nd_order_aperiodic():
-    M_range = np.unique(np.logspace(np.log10(3), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(3), 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(3), 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(3), 3, num=10, dtype=np.int32))
 
     theta = 1 / 2
     r = 1
@@ -490,8 +506,10 @@ def task_6d_1st_order():
     This task is currently unused, as we opted to investigate a method which was first
     order in both time and space. That method ended up being unstable.
     """
-    M_range = np.unique(np.logspace(np.log10(3), 4, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(3), 5, num=50, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(3), 5, num=50, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(3), 4, num=10, dtype=np.int32))
 
     theta = 1 / 2
     c_refinement = 1

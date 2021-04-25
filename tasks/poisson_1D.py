@@ -10,6 +10,7 @@ from refinement_utilities import (
     make_calculate_relative_L2_error_poisson,
     make_poisson_solver,
 )
+from settings import FINE_PARAMETERS
 
 
 def poisson_1D_UMR(
@@ -105,8 +106,10 @@ def task_1a():
             + alpha
         )
 
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     poisson_1D_UMR(
         f=f,
@@ -156,8 +159,10 @@ def task_1b():
             + alpha
         )
 
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 5.5, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     poisson_1D_UMR(
         f=f,
@@ -204,8 +209,10 @@ def task_1d1():
         Dirichlet(condition=beta, m=-1),
     )
 
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     poisson_1D_AMR(
         f=f,
@@ -264,8 +271,10 @@ def task_1d2():
         Dirichlet(condition=beta, m=-1),
     )
 
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     poisson_1D_AMR(
         f=f,

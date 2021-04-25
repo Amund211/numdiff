@@ -8,6 +8,7 @@ from helpers import l2
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
 from schemes import ThetaMethod
+from settings import FINE_PARAMETERS
 
 
 class KdVTheta(ThetaMethod, PeriodicKdV):
@@ -64,16 +65,18 @@ def task_4_solution():
 
 
 def task_4b():
-    T = 1
     N = 10 ** 4
+    M_range_euler = np.unique(np.logspace(np.log10(7), 1.5, num=50, dtype=np.int32))
 
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(np.log10(7), 4, num=50, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(np.log10(7), 3, num=10, dtype=np.int32))
+
+    T = 1
     analytical = partial(u, T)
 
     scheme_kwargs = {"N": N}
-
-    M_range = np.unique(np.logspace(np.log10(7), 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(np.log10(7), 4, num=50, dtype=np.int32))
-    M_range_euler = np.unique(np.logspace(np.log10(7), 1.5, num=50, dtype=np.int32))
 
     # Forward Euler
     ndofs, (distances,) = refine_mesh(
@@ -122,9 +125,10 @@ def task_4b():
 
 
 def task_4c():
-    T = 10
     N = 10 ** 3
     M = 10 ** 3
+
+    T = 10
     k = T / N
 
     t_axis = np.arange(N + 1) * k

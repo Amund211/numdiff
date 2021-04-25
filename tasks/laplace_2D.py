@@ -4,6 +4,7 @@ import numpy as np
 from laplace import analytical, laplace
 from refine import refine_mesh
 from refinement_utilities import calculate_relative_l2_error, make_laplace_solver
+from settings import FINE_PARAMETERS
 
 
 def task_3_solution():
@@ -24,10 +25,12 @@ def task_3_solution():
 
 
 def task_3bx():
-    My = 10 ** 3
-
-    Mx_range = np.unique(np.logspace(0, 2, num=10, dtype=np.int32))
-    # Mx_range = np.unique(np.logspace(0, 3, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        My = 10 ** 3
+        Mx_range = np.unique(np.logspace(0, 3, num=100, dtype=np.int32))
+    else:
+        My = 10 ** 3
+        Mx_range = np.unique(np.logspace(0, 2, num=10, dtype=np.int32))
 
     ndofs, (distances,) = refine_mesh(
         solver=make_laplace_solver(
@@ -57,10 +60,12 @@ def task_3bx():
 
 
 def task_3by():
-    Mx = 10 ** 3
-
-    My_range = np.unique(np.logspace(np.log10(2), 2, num=10, dtype=np.int32))
-    # My_range = np.unique(np.logspace(np.log10(2), 3, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        Mx = 10 ** 3
+        My_range = np.unique(np.logspace(np.log10(2), 3, num=100, dtype=np.int32))
+    else:
+        Mx = 10 ** 3
+        My_range = np.unique(np.logspace(np.log10(2), 2, num=10, dtype=np.int32))
 
     ndofs, (distances,) = refine_mesh(
         solver=make_laplace_solver(

@@ -3,6 +3,8 @@ import time
 
 import numpy as np
 
+from settings import INFO_PRINTING
+
 
 def refine_after(x, indicies):
     """Halve the step size between i and i+1 for each i in indicies"""
@@ -77,12 +79,22 @@ def refine_mesh(solver, param_range, analytical, calculate_distances, timeit=Fal
     if timeit:
         runtime = np.empty(param_range.shape, dtype=np.float64)
 
+    if INFO_PRINTING:
+        print(
+            f"Solving with parameters in range [{param_range[0]}, {param_range[-1]}]",
+            file=sys.stderr,
+        )
+
     for i, param in enumerate(param_range):
-        print(f"Solving with param={param}", end="", file=sys.stderr, flush=True)
+        if INFO_PRINTING:
+            print(f"Solving with param={param}", end="", file=sys.stderr, flush=True)
+
         before = time.perf_counter()
         x, numerical, ndof = solver(param)
         after = time.perf_counter()
-        print(f" took {after - before:.2f}", file=sys.stderr)
+
+        if INFO_PRINTING:
+            print(f" took {after - before:.2f}", file=sys.stderr)
 
         for distances, calculate_distance in zip(distances_list, calculate_distances):
             distances[i] = calculate_distance(x, analytical, numerical)

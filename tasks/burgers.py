@@ -4,6 +4,7 @@ import numpy as np
 from conditions import Dirichlet
 from equations import InviscidBurgers, InviscidBurgers2
 from schemes import RK4
+from settings import FINE_PARAMETERS
 
 
 class BurgersRK4(RK4, InviscidBurgers):
@@ -11,12 +12,14 @@ class BurgersRK4(RK4, InviscidBurgers):
 
 
 def task_2c():
-    max_T = 0.059
-    M = 2000
-    N = 200000
+    if FINE_PARAMETERS:
+        M = 80000
+        N = 20000
+    else:
+        M = 2000
+        N = 2000
 
-    M = 80000
-    N = 20000
+    max_T = 0.059
 
     k = max_T / N
 

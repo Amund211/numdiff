@@ -13,6 +13,7 @@ from refinement_utilities import (
     make_scheme_solver,
 )
 from schemes import ThetaMethod
+from settings import FINE_PARAMETERS
 
 
 class HeatTheta(ThetaMethod, HeatEquation):
@@ -73,10 +74,16 @@ def task_2_solution():
 
 
 def task_2a():
-    max_power = 13  # M = 2^max_power - 1 will be used as a reference solution
-    # max_power = 16  # M = 2^max_power - 1 will be used as a reference solution
+    # M = 2^max_power - 1 will be used as a reference solution
+
+    if FINE_PARAMETERS:
+        N = int(2e4)
+        max_power = 16
+    else:
+        N = int(2e3)
+        max_power = 13
+
     T = 0.05
-    N = int(2e4)
     theta = 1 / 2
 
     k = T / N
@@ -229,16 +236,25 @@ def _task_2b(default_params, refinement, param_range, get_x_axis):
 
 
 # Standard parameters for task 2b
-TASK_2B_PARAMS = {
-    "T": 0.05,
-    "N": 10 ** 4,
-    "M": 10 ** 4,
-}
+if FINE_PARAMETERS:
+    TASK_2B_PARAMS = {
+        "T": 0.05,
+        "N": 10 ** 4,
+        "M": 10 ** 4,
+    }
+else:
+    TASK_2B_PARAMS = {
+        "T": 0.05,
+        "N": 10 ** 3,
+        "M": 10 ** 3,
+    }
 
 
 def task_2bh():
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     _task_2b(
         default_params=TASK_2B_PARAMS,
@@ -267,8 +283,10 @@ def task_2bh():
 
 
 def task_2bk():
-    N_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # N_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    if FINE_PARAMETERS:
+        N_range = np.unique(np.logspace(0, 4, num=100, dtype=np.int32))
+    else:
+        N_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
     _task_2b(
         default_params=TASK_2B_PARAMS,
@@ -305,8 +323,11 @@ def task_2bk():
 
 
 def task_2bc():
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+
     c = 1
 
     ndofs = _task_2b(
@@ -344,8 +365,11 @@ def task_2bc():
 
 
 def task_2br():
-    M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
-    # M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    if FINE_PARAMETERS:
+        M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+    else:
+        M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
+
     r = 1
 
     ndofs = _task_2b(
