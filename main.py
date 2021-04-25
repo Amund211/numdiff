@@ -111,6 +111,7 @@ if __name__ == "__main__":
     }
 
     task_names = available_tasks.keys()
+    max_task_length = max(map(len, task_names))
 
     assert all(
         task_name == task_name.lower() for task_name in task_names
@@ -157,12 +158,12 @@ if __name__ == "__main__":
                 )
             ):
                 print(
-                    f"** Completed task {task} at {datetime.now():%H:%M:%S} (~{100*(i+1)/len(tasks):.2f}%)**",
+                    f"** Completed task {task.ljust(max_task_length)} at {datetime.now():%H:%M:%S} (~{100*(i+1)/len(tasks):.2f}%)**",
                     file=sys.stderr,
                 )
     else:
         for i, task in enumerate(tasks):
             print(
-                f"** Started task {task} {datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
+                f"** Started task {task.ljust(max_task_length)} {datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
             )
             available_tasks[task].run(**TASK_KWARGS)
