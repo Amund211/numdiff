@@ -8,7 +8,7 @@ from refine import refine_mesh, simple_select_avg, simple_select_max
 from refinement_utilities import calculate_relative_L2_error_FEM, make_FEM_solver
 
 
-def _task_5_refinement(f, u, a, b, u_text, deg=10):
+def _task_5_refinement(f, u, a, b, u_text, scale, order=2, deg=10):
     d1 = u(a)
     d2 = u(b)
 
@@ -32,9 +32,9 @@ def _task_5_refinement(f, u, a, b, u_text, deg=10):
 
     plt.plot(
         ndofs,
-        np.divide(1, (ndofs + 1) ** 2),
+        scale * np.divide(1, (ndofs + 1) ** order),
         linestyle="dashed",
-        label=r"$O\left(h^2\right)$",
+        label=fr"$O\left(h{'^2' if order == 2 else ''}\right)$",
     )
 
     plt.suptitle("Poisson's equation FEM")
@@ -112,7 +112,7 @@ def u_b(x):
 
 
 def task_5b_refinement():
-    _task_5_refinement(f=f_b, u=u_b, a=0, b=1, u_text="x^2")
+    _task_5_refinement(f=f_b, u=u_b, a=0, b=1, u_text="x^2", scale=1e1)
 
 
 def task_5b_afem():
@@ -128,7 +128,9 @@ def u_c(x):
 
 
 def task_5c_refinement():
-    _task_5_refinement(f=f_c, u=u_c, a=-1, b=1, u_text=r"\exp{\left(-100 x^2\right)}")
+    _task_5_refinement(
+        f=f_c, u=u_c, a=-1, b=1, u_text=r"\exp{\left(-100 x^2\right)}", scale=2e2
+    )
 
 
 def task_5c_afem():
@@ -144,7 +146,9 @@ def u_d(x):
 
 
 def task_5d_refinement():
-    _task_5_refinement(f=f_d, u=u_d, a=-1, b=1, u_text=r"\exp{\left(-1000 x^2\right)}")
+    _task_5_refinement(
+        f=f_d, u=u_d, a=-1, b=1, u_text=r"\exp{\left(-1000 x^2\right)}", scale=2e3
+    )
 
 
 def task_5d_afem():
@@ -160,7 +164,9 @@ def u_e(x):
 
 
 def task_5e_refinement():
-    _task_5_refinement(f=f_e, u=u_e, a=0, b=1, u_text=r"x^{\frac23}")
+    _task_5_refinement(
+        f=f_e, u=u_e, a=0, b=1, u_text=r"x^{\frac23}", scale=1.2e-1, order=1
+    )
 
 
 def task_5e_afem():
