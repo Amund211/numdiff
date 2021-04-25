@@ -5,8 +5,12 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_1.pdf
 https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 """
 
+import concurrent.futures
+from functools import partial
+
 import matplotlib.pyplot as plt
 
+from settings import TASK_KWARGS, USE_MULTIPROCESSING
 from tasks.advection_diffusion import (
     task_6_solution,
     task_6a_refinement,
@@ -140,6 +144,17 @@ if __name__ == "__main__":
     print("Running requested tasks:")
     print("\t" + "\n\t".join(tasks))
 
-    for task in tasks:
-        print(f"** Running task {task} **", file=sys.stderr)
-        available_tasks[task].run(save=True, show=False)
+    if USE_MULTIPROCESSING:
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            for task, _ in zip(
+                tasks,
+                executor.map(
+                    partial(Task.run, **TASK_KWARGS),
+                    (available_tasks[task] for task in tasks),
+                ),
+            ):
+                print(f"** Ran task {task} **", file=sys.stderr)
+    else:
+        for task in tasks:
+            print(f"** Running task {task} **", file=sys.stderr)
+            available_tasks[task].run(**TASK_KWARGS)
