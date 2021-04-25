@@ -1,15 +1,22 @@
 import os.path
+from dataclasses import dataclass
+from typing import Callable
 
 import matplotlib.pyplot as plt
 
 IMAGES_FOLDER = "images"
 
 
-def run_task(task, filename, save, show):
-    """Run the provided task and save and/or show the result"""
-    plt.clf()
-    task()
-    if save:
-        plt.savefig(os.path.join(IMAGES_FOLDER, filename))
-    if show:
-        plt.show()
+@dataclass
+class Task:
+    task: Callable
+    filename: str
+
+    def run(self, save, show):
+        """Run the task and save and/or show the result"""
+        plt.clf()
+        self.task()
+        if save:
+            plt.savefig(os.path.join(IMAGES_FOLDER, self.filename))
+        if show:
+            plt.show()
