@@ -157,9 +157,11 @@ def make_laplace_solver(Mx=None, My=None):
     """
 
     def solver(param):
-        M = (localMx := Mx or param) * (localMy := My or param)
+        localMx = Mx or param
+        localMy = My or param
+
         meshgrid, U = laplace(Mx=localMx, My=localMy)
-        return meshgrid, U, M
+        return meshgrid, U, localMx * localMy
 
     return solver
 

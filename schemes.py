@@ -1,9 +1,8 @@
-from functools import cache
-
 import numpy as np
 import scipy.sparse.linalg
 from scipy.sparse import eye as sparse_eye
 
+from cache import cache
 from ring_2d import Ring2D
 
 
