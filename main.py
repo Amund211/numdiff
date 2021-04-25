@@ -146,15 +146,22 @@ if __name__ == "__main__":
 
     if USE_MULTIPROCESSING:
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            for task, _ in zip(
-                tasks,
-                executor.map(
-                    partial(Task.run, **TASK_KWARGS),
-                    (available_tasks[task] for task in tasks),
-                ),
+            for i, (task, _) in enumerate(
+                zip(
+                    tasks,
+                    executor.map(
+                        partial(Task.run, **TASK_KWARGS),
+                        (available_tasks[task] for task in tasks),
+                    ),
+                )
             ):
-                print(f"** Ran task {task} **", file=sys.stderr)
+                print(
+                    f"** Ran task {task} (~{100*(i+1)/len(tasks):.2f}%)**",
+                    file=sys.stderr,
+                )
     else:
-        for task in tasks:
-            print(f"** Running task {task} **", file=sys.stderr)
+        for i, task in enumerate(tasks):
+            print(
+                f"** Running task {task} (~{100*i/len(tasks):.2f}%)**", file=sys.stderr
+            )
             available_tasks[task].run(**TASK_KWARGS)
