@@ -6,8 +6,8 @@ https://wiki.math.ntnu.no/_media/tma4212/2021v/tma4212_project_2.pdf
 """
 
 import concurrent.futures
-from functools import partial
 from datetime import datetime
+from functools import partial
 
 import matplotlib.pyplot as plt
 
@@ -42,7 +42,14 @@ from tasks.heat_eqn import (
 )
 from tasks.kdv import task_4_solution, task_4b, task_4c
 from tasks.laplace_2D import task_3_solution, task_3bx, task_3by
-from tasks.poisson_1D import task_1_solution, task_1a, task_1b, task_1d1, task_1d2
+from tasks.poisson_1D import (
+    task_1a,
+    task_1a_solution,
+    task_1b,
+    task_1b_solution,
+    task_1d1,
+    task_1d2,
+)
 from tasks.task import Task
 
 if __name__ == "__main__":
@@ -76,8 +83,9 @@ if __name__ == "__main__":
     )
 
     available_tasks = {
-        "1_solution": Task(task_1_solution, "1_solution.pdf"),
+        "1a_solution": Task(task_1a_solution, "1a_solution.pdf"),
         "1a_diririchlet_neumann": Task(task_1a, "1a_dirichlet_neumann.pdf"),
+        "1b_solution": Task(task_1b_solution, "1b_solution.pdf"),
         "1b_dirichlet_dirichlet": Task(task_1b, "1b_dirichlet_dirichlet.pdf"),
         "1d_amr_1st_vs_2nd_order": Task(task_1d1, "1d_amr_1st_vs_2nd_order.pdf"),
         "1d_umr_vs_amr": Task(task_1d2, "1d_umr_vs_amr.pdf"),
