@@ -235,6 +235,80 @@ def task_6b_asymptotic():
     plt.grid()
 
 
+def task_6c():
+    M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
+    # M_range = np.unique(np.logspace(np.log10(5), 4, num=20, dtype=np.int32))
+
+    theta = 1 / 2
+    r = 1
+
+    T = 0.01
+    c = 20
+    d = 1
+
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion4thOrder):
+        pass
+
+    def f(x):
+        return np.sin(4 * np.pi * x)
+
+    def u(x, t):
+        return np.exp(-d * (4 * np.pi) ** 2 * t) * np.sin(4 * np.pi * (x + c * t))
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (),
+        "c": c,
+        "d": d,
+    }
+
+    ndofs, (distances,), runtime = refine_mesh(
+        solver=make_scheme_solver(
+            cls=Scheme,
+            f=f,
+            T=T,
+            r=r,
+            scheme_kwargs=scheme_kwargs,
+        ),
+        param_range=M_range,
+        analytical=partial(u, t=T),
+        calculate_distances=(calculate_relative_l2_error,),
+        timeit=True,
+    )
+
+    plt.suptitle(
+        fr"Periodic advection diffusion - refinement with constant $r=\frac{{k}}{{h^2}}={r}$"
+    )
+
+    plt.subplot(121)
+    plt.loglog(ndofs, distances, label="$e^r_{l_2}$")
+
+    # O(Ndof^-4/3))
+    plt.plot(
+        ndofs,
+        3e2 * np.divide(1, ndofs ** (4 / 3)),
+        linestyle="dashed",
+        label=r"$O\left(N_{dof}^{-\frac43}\right)$",
+    )
+
+    plt.title("Error (log-log)")
+    plt.xlabel("Degrees of freedom $N_{dof}$")
+    plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
+    plt.legend()
+    plt.grid()
+
+    plt.subplot(122)
+
+    plt.title("Runtime (linear-linear)")
+
+    plt.plot(ndofs, runtime, label="Runtime")
+
+    plt.xlabel("Degrees of freedom $N_{dof}$")
+    plt.ylabel("Runtime $t$ $(s)$")
+    plt.legend()
+    plt.grid()
+
+
 def task_6d_4th_order():
     M_range = np.unique(np.logspace(np.log10(5), 3, num=10, dtype=np.int32))
     # M_range = np.unique(np.logspace(np.log10(5), 4, num=100, dtype=np.int32))

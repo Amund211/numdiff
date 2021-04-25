@@ -12,6 +12,7 @@ from tasks.advection_diffusion import (
     task_6a_refinement,
     task_6b_asymptotic,
     task_6b_refinement,
+    task_6c,
     task_6d_2nd_order_aperiodic,
     task_6d_4th_order,
 )
@@ -99,6 +100,7 @@ if __name__ == "__main__":
         "6a_refinement": Task(task_6a_refinement, "6a_refinement.pdf"),
         "6b_refinement": Task(task_6b_refinement, "6b_refinement.pdf"),
         "6b_asymptotic": Task(task_6b_asymptotic, "6b_asymptotic.pdf"),
+        "6c_runtime": Task(task_6c, "6c_runtime.pdf"),
         "6d_4th_order": Task(task_6d_4th_order, "6d_4th_order.pdf"),
         "6d_aperiodic": Task(task_6d_2nd_order_aperiodic, "6d_2nd_order_aperiodic.pdf"),
     }
