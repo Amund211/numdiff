@@ -148,6 +148,11 @@ if __name__ == "__main__":
     print("\t" + "\n\t".join(tasks))
 
     if USE_MULTIPROCESSING:
+        print(
+            f"{'** Started executing tasks '.ljust(max_task_length + 18)} at "
+            f"{datetime.now():%H:%M:%S} (~{0:.2f}%)**",
+            file=sys.stderr,
+        )
         with concurrent.futures.ProcessPoolExecutor() as executor:
             for i, (task, _) in enumerate(
                 zip(
@@ -166,8 +171,13 @@ if __name__ == "__main__":
     else:
         for i, task in enumerate(tasks):
             print(
-                f"** Started task {task.ljust(max_task_length)} "
+                f"** Started task {task.ljust(max_task_length)} at "
                 f"{datetime.now():%H:%M:%S} (~{100*i/len(tasks):.2f}%)**",
                 file=sys.stderr,
             )
             available_tasks[task].run(**TASK_KWARGS)
+        print(
+            f"{'** Finished executing tasks '.ljust(max_task_length + 16)} at "
+            f"{datetime.now():%H:%M:%S} (~{100:.2f}%)**",
+            file=sys.stderr,
+        )
