@@ -4,6 +4,9 @@ Settings for the project
 
 import sys
 
+# Path to the folder where the plots will be saved
+IMAGES_FOLDER = "images"
+
 # Kwargs for Task.run in main.py
 # Set save=True if you want to save the plot to the images folder
 # Set show=True if you want to plt.show

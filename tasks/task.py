@@ -4,7 +4,7 @@ from typing import Callable
 
 import matplotlib.pyplot as plt
 
-IMAGES_FOLDER = "images"
+from settings import IMAGES_FOLDER
 
 
 @dataclass

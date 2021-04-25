@@ -10,7 +10,7 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 
-from settings import TASK_KWARGS, USE_MULTIPROCESSING
+from settings import IMAGES_FOLDER, TASK_KWARGS, USE_MULTIPROCESSING
 from tasks.advection_diffusion import (
     task_6_solution,
     task_6a_refinement,
@@ -42,7 +42,7 @@ from tasks.heat_eqn import (
 from tasks.kdv import task_4_solution, task_4b, task_4c
 from tasks.laplace_2D import task_3_solution, task_3bx, task_3by
 from tasks.poisson_1D import task_1_solution, task_1a, task_1b, task_1d1, task_1d2
-from tasks.task import IMAGES_FOLDER, Task
+from tasks.task import Task
 
 if __name__ == "__main__":
     import os.path
