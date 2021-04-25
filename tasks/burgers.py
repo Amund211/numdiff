@@ -47,7 +47,7 @@ def task_2c():
         plt.plot(
             x_axis,
             sol[:, n].view(np.ndarray),
-            label=f"U(t={n*scheme.k:.5f}, n={n})",
+            label=f"$U(x, t={n*scheme.k:.5f})$",
             color=f"C{i % 10}",
         )
 
