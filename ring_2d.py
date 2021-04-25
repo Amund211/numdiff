@@ -34,8 +34,8 @@ class Ring2D(np.ndarray):
     def _map_index(self, index):
         """Find the corresponding index to the internal array"""
         if isinstance(index, tuple) and len(index) == 2:
-            assert isinstance(
-                index[1], int
+            assert np.issubdtype(
+                type(index[1]), np.integer
             ), "Only simple indexing is permitted on the ring index"
 
             return (
