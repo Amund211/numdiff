@@ -235,7 +235,7 @@ def task_6b_asymptotic():
     plt.plot(x, u(x, T), label="Analytical")
 
     plt.suptitle("Periodic advection diffusion")
-    plt.title(f"Asymptotic behaviour ($T={T}$) with $M={M}, N={N}$")
+    plt.title(f"Asymptotic behaviour ($t={T}$) with $M={M}, N={N}$")
     plt.xlabel("$x$")
     plt.ylabel("$y$")
     plt.legend()
@@ -300,7 +300,7 @@ def task_6c():
         label=r"$O\left(N_{dof}^{-\frac43}\right)$",
     )
 
-    plt.title("Error (log-log)")
+    plt.title(f"Error at $t={T}$ (log-log)")
     plt.xlabel("Degrees of freedom $N_{dof}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -366,7 +366,9 @@ def task_6d_4th_order():
     )
 
     plt.suptitle("Periodic advection diffusion - 4th order spacial discretization")
-    plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
+    plt.title(
+        fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$, $c={c}, d={d}, t={T}$"
+    )
     plt.xlabel("Degrees of freedom $N_{dof} = MN$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
@@ -494,7 +496,9 @@ def task_6d_2nd_order_aperiodic():
     )
 
     plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
-    plt.title(fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$")
+    plt.title(
+        fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$, $c={c}, d={d}, t={T}$"
+    )
     plt.xlabel("Degrees of freedom $N_{dof}$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.legend()
