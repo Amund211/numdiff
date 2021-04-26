@@ -157,7 +157,7 @@ def task_1b_solution():
         return (
             (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
             + x ** 3 / 6
-            + (beta - 1 / 6) * x
+            + (beta - 7 / 6) * x
             + alpha
         )
 
@@ -194,7 +194,7 @@ def task_1b():
         return (
             (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
             + x ** 3 / 6
-            + (beta - 1 / 6) * x
+            + (beta - 7 / 6) * x
             + alpha
         )
 
