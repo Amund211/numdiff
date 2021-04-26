@@ -65,12 +65,13 @@ def task_4_solution():
 
 
 def task_4b():
-    N = 10 ** 4
     M_range_euler = np.unique(np.logspace(np.log10(7), 1.5, num=50, dtype=np.int32))
 
     if FINE_PARAMETERS:
+        N = 10 ** 4
         M_range = np.unique(np.logspace(np.log10(7), 4, num=50, dtype=np.int32))
     else:
+        N = 10 ** 3
         M_range = np.unique(np.logspace(np.log10(7), 3, num=10, dtype=np.int32))
 
     T = 1
@@ -125,8 +126,12 @@ def task_4b():
 
 
 def task_4c():
-    N = 10 ** 3
-    M = 10 ** 3
+    if FINE_PARAMETERS:
+        N = 10 ** 5
+        M = 10 ** 3
+    else:
+        N = 10 ** 3
+        M = 10 ** 3
 
     T = 10
     k = T / N
@@ -143,12 +148,13 @@ def task_4c():
 
     plt.grid()
 
-    plt.suptitle("Linearized Korteweg-deVries - Conservation of the $l_2$ norm")
-    plt.title(f"$M={M}, N={N}$")
+    plt.suptitle(
+        f"Linearized Korteweg-deVries - Conservation of the $l_2$ norm $M={M}, N={N}$"
+    )
     plt.xlabel("Time $t$")
     plt.ylabel(r"$l_2$ norm $\|u\|_{l_2}$")
 
-    half_height = 1e-10
+    half_height = 1e-11
     center = np.sqrt(2) / 2
     plt.ylim(ymin=center - half_height, ymax=center + half_height)
 
