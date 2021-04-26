@@ -141,8 +141,8 @@ def task_1a():
 def task_1b_solution():
     M = 1000
 
-    alpha = 0
-    beta = 0
+    alpha = 1
+    beta = 1
     conditions = (
         Dirichlet(condition=alpha, m=0),
         Dirichlet(condition=beta, m=-1),
@@ -178,8 +178,8 @@ def task_1b_solution():
 
 
 def task_1b():
-    alpha = 0
-    beta = 0
+    alpha = 1
+    beta = 1
     conditions = (
         Dirichlet(condition=alpha, m=0),
         Dirichlet(condition=beta, m=-1),
