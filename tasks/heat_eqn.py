@@ -324,7 +324,7 @@ def task_2bk():
 
 def task_2bc():
     if FINE_PARAMETERS:
-        M_range = np.unique(np.logspace(0, 4, num=50, dtype=np.int32))
+        M_range = np.unique(np.logspace(0, 5, num=100, dtype=np.int32))
     else:
         M_range = np.unique(np.logspace(0, 3, num=10, dtype=np.int32))
 
@@ -348,7 +348,7 @@ def task_2bc():
     # O(ndofs^(-1/2))
     plt.plot(
         ndofs,
-        3e-1 * np.divide(1, ndofs ** (1 / 2)),
+        1e0 * np.divide(1, ndofs ** (1 / 2)),
         linestyle="dashed",
         label=r"$O\left(N_{dof}^{-\frac12}\right)$",
     )
