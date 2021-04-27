@@ -67,6 +67,9 @@ def AFEM(N, f, u, a, b, d1, d2, tol, deg, select_refinement):
     to_refine = np.array((), dtype=np.int32)
     global_error = float("inf")
 
+    ndof_list = []
+    error_list = []
+
     while global_error >= tol:
         x = refine_after(x, to_refine)
         x, U = FEM(x, f, d1, d2, deg=deg)
@@ -82,4 +85,7 @@ def AFEM(N, f, u, a, b, d1, d2, tol, deg, select_refinement):
         # e^r_{L_2}
         global_error = np.sqrt(np.sum(err) / composite(lambda x: u(x) ** 2, x))
 
-    return x, U
+        ndof_list.append(x.shape[0] - 2)
+        error_list.append(global_error)
+
+    return x, U, np.asarray(ndof_list), np.asarray(error_list)

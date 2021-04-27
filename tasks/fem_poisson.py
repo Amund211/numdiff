@@ -66,12 +66,12 @@ def _task_5_afem(f, u, a, b, u_text, deg=10, tol=1e-2):
         "deg": deg,
     }
 
-    x_avg, U_avg = AFEM(
+    x_avg, U_avg, ndof_list, error_list = AFEM(
         **solver_params,
         select_refinement=partial(simple_select_avg, alpha=alpha_avg),
     )
 
-    x_max, U_max = AFEM(
+    x_max, U_max, ndof_list, error_list = AFEM(
         **solver_params,
         select_refinement=partial(simple_select_max, alpha=alpha_avg),
     )
