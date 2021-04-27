@@ -45,7 +45,17 @@ def _task_5_refinement(f, u, a, b, u_text, scale, order=2, deg=10):
     plt.legend()
 
 
-def _task_5_afem(f, u, a, b, u_text, deg=10, tol=1e-2):
+def _task_5_afem(
+    f,
+    u,
+    a,
+    b,
+    u_text,
+    tol,
+    scale,
+    order=2,
+    deg=10,
+):
     d1 = u(a)
     d2 = u(b)
 
@@ -66,41 +76,36 @@ def _task_5_afem(f, u, a, b, u_text, deg=10, tol=1e-2):
         "deg": deg,
     }
 
-    x_avg, U_avg, ndof_list, error_list = AFEM(
+    x_avg, U_avg, ndofs_max, distances_max = AFEM(
+        **solver_params,
+        select_refinement=partial(simple_select_max, alpha=alpha_max),
+    )
+
+    x_avg, U_avg, ndofs_avg, distances_avg = AFEM(
         **solver_params,
         select_refinement=partial(simple_select_avg, alpha=alpha_avg),
     )
 
-    x_max, U_max, ndof_list, error_list = AFEM(
-        **solver_params,
-        select_refinement=partial(simple_select_max, alpha=alpha_avg),
+    plt.loglog(ndofs_max, distances_max, label=fr"Max, $\alpha = {alpha_max}$")
+    plt.loglog(ndofs_avg, distances_avg, label=fr"Avg, $\alpha = {alpha_avg}$")
+
+    log_min_ndof = np.log10(min(ndofs_max.min(), ndofs_avg.min()))
+    log_max_ndof = np.log10(max(ndofs_max.max(), ndofs_avg.max()))
+    x_axis = np.logspace(log_min_ndof, log_max_ndof, num=1000)
+
+    plt.plot(
+        x_axis,
+        scale * np.divide(1, (x_axis + 1) ** order),
+        linestyle="dashed",
+        label=fr"$O\left(h{'' if order == 1 else f'^{{{order}}}'}\right)$",
     )
 
-    fine_x = np.linspace(a, b, max(x_avg.shape[0], x_avg.shape[0], 1000))
-    analytical = u(fine_x)
-
-    plt.subplot(121)
-    plt.plot(fine_x, analytical, linestyle="dashed", label="Analytical solution")
-    plt.plot(x_avg, U_avg, label="AFEM solution")
-    plt.title(fr"Select avg with $\alpha = {alpha_avg}$, ${x_avg.shape[0]}$ points")
-    plt.xlabel("$x$")
-    plt.ylabel("$y$")
+    plt.suptitle("Poisson's equation AFEM - select max vs avg")
+    plt.title(fr"$u\left( x \right) = {u_text}, x \in \left[ {a}, {b} \right] $")
+    plt.xlabel("Degrees of freedom $N-1$")
+    plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.grid()
     plt.legend()
-
-    plt.subplot(122)
-    plt.plot(fine_x, analytical, linestyle="dashed", label="Analytical solution")
-    plt.plot(x_max, U_max, label="AFEM solution")
-    plt.title(fr"Select max with $\alpha = {alpha_max}$, ${x_max.shape[0]}$ points")
-    plt.xlabel("$x$")
-    plt.ylabel("$y$")
-    plt.grid()
-    plt.legend()
-
-    plt.suptitle(
-        "Poisson's equation AFEM "
-        fr"$u\left( x \right) = {u_text}, x \in \left[ {a}, {b} \right]$",
-    )
 
 
 b_params = {"f": lambda x: -2, "u": lambda x: x ** 2, "a": 0, "b": 1, "u_text": "x^2"}
@@ -111,7 +116,7 @@ def task_5b_refinement():
 
 
 def task_5b_afem():
-    _task_5_afem(**b_params)
+    _task_5_afem(**b_params, tol=1e-8, scale=1e1)
 
 
 c_params = {
@@ -128,7 +133,7 @@ def task_5c_refinement():
 
 
 def task_5c_afem():
-    _task_5_afem(**c_params)
+    _task_5_afem(**c_params, tol=1e-8, scale=1e1)
 
 
 d_params = {
@@ -145,7 +150,7 @@ def task_5d_refinement():
 
 
 def task_5d_afem():
-    _task_5_afem(**d_params)
+    _task_5_afem(**d_params, tol=1e-8, scale=1e1)
 
 
 e_params = {
@@ -162,4 +167,4 @@ def task_5e_refinement():
 
 
 def task_5e_afem():
-    _task_5_afem(**e_params)
+    _task_5_afem(**e_params, tol=4e-8, scale=5e-1, order=1.5)
