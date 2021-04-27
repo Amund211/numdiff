@@ -103,71 +103,63 @@ def _task_5_afem(f, u, a, b, u_text, deg=10, tol=1e-2):
     )
 
 
-def f_b(x):
-    return -2
-
-
-def u_b(x):
-    return x ** 2
+b_params = {"f": lambda x: -2, "u": lambda x: x ** 2, "a": 0, "b": 1, "u_text": "x^2"}
 
 
 def task_5b_refinement():
-    _task_5_refinement(f=f_b, u=u_b, a=0, b=1, u_text="x^2", scale=1e1)
+    _task_5_refinement(**b_params, scale=1e1)
 
 
 def task_5b_afem():
-    _task_5_afem(f=f_b, u=u_b, a=0, b=1, u_text="x^2")
+    _task_5_afem(**b_params)
 
 
-def f_c(x):
-    return -(40000 * x ** 2 - 200) * np.exp(-100 * x ** 2)
-
-
-def u_c(x):
-    return np.exp(-100 * x ** 2)
+c_params = {
+    "f": lambda x: -(40000 * x ** 2 - 200) * np.exp(-100 * x ** 2),
+    "u": lambda x: np.exp(-100 * x ** 2),
+    "a": -1,
+    "b": 1,
+    "u_text": r"\exp{\left(-100 x^2\right)}",
+}
 
 
 def task_5c_refinement():
-    _task_5_refinement(
-        f=f_c, u=u_c, a=-1, b=1, u_text=r"\exp{\left(-100 x^2\right)}", scale=2e2
-    )
+    _task_5_refinement(**c_params, scale=2e2)
 
 
 def task_5c_afem():
-    _task_5_afem(f=f_c, u=u_c, a=-1, b=1, u_text=r"\exp{\left(-100 x^2\right)}")
+    _task_5_afem(**c_params)
 
 
-def f_d(x):
-    return -(4000000 * x ** 2 - 2000) * np.exp(-1000 * x ** 2)
-
-
-def u_d(x):
-    return np.exp(-1000 * x ** 2)
+d_params = {
+    "f": lambda x: -(4000000 * x ** 2 - 2000) * np.exp(-1000 * x ** 2),
+    "u": lambda x: np.exp(-1000 * x ** 2),
+    "a": -1,
+    "b": 1,
+    "u_text": r"\exp{\left(-1000 x^2\right)}",
+}
 
 
 def task_5d_refinement():
-    _task_5_refinement(
-        f=f_d, u=u_d, a=-1, b=1, u_text=r"\exp{\left(-1000 x^2\right)}", scale=2e3
-    )
+    _task_5_refinement(**d_params, scale=2e3)
 
 
 def task_5d_afem():
-    _task_5_afem(f=f_d, u=u_d, a=-1, b=1, u_text=r"\exp{\left(-1000 x^2\right)}")
+    _task_5_afem(**d_params)
 
 
-def f_e(x):
-    return 2 / 9 * x ** (-4 / 3)
-
-
-def u_e(x):
-    return x ** (2 / 3)
+e_params = {
+    "f": lambda x: 2 / 9 * x ** (-4 / 3),
+    "u": lambda x: x ** (2 / 3),
+    "a": 0,
+    "b": 1,
+    "u_text": r"x^{\frac23}",
+}
 
 
 def task_5e_refinement():
-    _task_5_refinement(
-        f=f_e, u=u_e, a=0, b=1, u_text=r"x^{\frac23}", scale=1.2e-1, order=1
-    )
+    _task_5_refinement(**e_params, scale=1.2e-1, order=1)
 
 
 def task_5e_afem():
-    _task_5_afem(f=f_e, u=u_e, a=0, b=1, u_text=r"x^{\frac23}")
+    _task_5_afem(**e_params)
