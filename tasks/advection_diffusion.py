@@ -145,7 +145,7 @@ def task_6b_asymptotic():
     N = ceil(T * M ** 2 / r)
     k = T / N
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion4thOrder):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
         pass
 
     def f(x):
@@ -192,7 +192,7 @@ def task_6c():
     c = 20
     d = 1
 
-    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion4thOrder):
+    class Scheme(ThetaMethod, PeriodicAdvectionDiffusion2ndOrder):
         pass
 
     def f(x):
@@ -229,12 +229,12 @@ def task_6c():
     plt.subplot(121)
     plt.loglog(ndofs, distances, label="$e^r_{l_2}$")
 
-    # O(Ndof^-4/3))
+    # O(Ndof^-2/3))
     plt.plot(
         ndofs,
-        3e2 * np.divide(1, ndofs ** (4 / 3)),
+        6e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac43}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
     )
 
     plt.title(f"Error at $t={T}$ (log-log)")
