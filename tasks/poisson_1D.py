@@ -266,7 +266,7 @@ def task_1c_solution():
         label=fr"Analytical ($u(0) \approx {fake_alpha:.4f}$)",
     )
 
-    plt.suptitle(f"Poisson's equation - inconsistent system with $M={M}$")
+    plt.suptitle(f"Poisson's equation - ill posed problem with $M={M}$")
     plt.title(
         fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u_x(0) = {sigma1}, u_x(1) = {sigma2}$"
     )
