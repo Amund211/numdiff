@@ -47,6 +47,7 @@ from tasks.poisson_1D import (
     task_1a_solution,
     task_1b,
     task_1b_solution,
+    task_1c_solution,
     task_1d1,
     task_1d2,
 )
@@ -87,6 +88,7 @@ if __name__ == "__main__":
         "1a_diririchlet_neumann": Task(task_1a, "1a_dirichlet_neumann.pdf"),
         "1b_solution": Task(task_1b_solution, "1b_solution.pdf"),
         "1b_dirichlet_dirichlet": Task(task_1b, "1b_dirichlet_dirichlet.pdf"),
+        "1c_solution": Task(task_1c_solution, "1c_solution.pdf"),
         "1d_amr_1st_vs_2nd_order": Task(task_1d1, "1d_amr_1st_vs_2nd_order.pdf"),
         "1d_umr_vs_amr": Task(task_1d2, "1d_umr_vs_amr.pdf"),
         "2_solution": Task(task_2_solution, "2_solution.pdf"),

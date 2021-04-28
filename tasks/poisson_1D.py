@@ -230,6 +230,52 @@ def task_1b():
     plt.legend()
 
 
+def task_1c_solution():
+    M = 1000
+
+    sigma1 = 0
+    sigma2 = 1 / 2
+    conditions = (
+        Neumann(condition=sigma1, m=0),
+        Neumann(condition=sigma2, m=-1),
+    )
+
+    def f(x):
+        return np.cos(2 * np.pi * x) + x
+
+    def u(x):
+        # 1/(2pi)^2 * (1-cos(2pix)) + 1/6 * x^3 + Ax + B
+        # Here: solved for left dirichlet and right neumann
+        return (
+            (1 / (2 * np.pi) ** 2) * (1 - np.cos(2 * np.pi * x))
+            + x ** 3 / 6
+            + (sigma2 - 1 / 2) * x
+            + fake_alpha
+        )
+
+    x, U = poisson(f, M, conditions)
+
+    fake_alpha = U[0]  # Used to align the reference analytical solution
+
+    plt.plot(x, U, label="Least squares solution")
+
+    plt.plot(
+        x,
+        u(x),
+        linestyle="dashed",
+        label=fr"Analytical ($u(0) \approx {fake_alpha:.4f}$)",
+    )
+
+    plt.suptitle(f"Poisson's equation - inconsistent system with $M={M}$")
+    plt.title(
+        fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u_x(0) = {sigma1}, u_x(1) = {sigma2}$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("$y$")
+    plt.grid()
+    plt.legend()
+
+
 def task_1d1():
     # Manufactured solution
     eps = 1 / 1000
