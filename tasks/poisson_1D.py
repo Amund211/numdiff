@@ -283,7 +283,7 @@ def task_1d1():
     plt.suptitle("Poisson's equation - Adaptive mesh refinement")
     plt.title(
         r"$u\left(x\right) = "
-        r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)},"
+        r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)^2},"
         fr"\epsilon = {eps:.2e}$"
     )
     plt.xlabel("Internal nodes $M$")
@@ -349,8 +349,12 @@ def task_1d2():
         label=r"$O\left(h^2\right)$",
     )
 
-    plt.suptitle("Poisson's equation")
-    plt.title("Adaptive vs uniform mesh refinement")
+    plt.suptitle("Poisson's equation - Adaptive vs uniform mesh refinement")
+    plt.title(
+        r"$u\left(x\right) = "
+        r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)^2},"
+        fr"\epsilon = {eps:.2e}$"
+    )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
     plt.grid()
