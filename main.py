@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 from settings import IMAGES_FOLDER, TASK_KWARGS, USE_MULTIPROCESSING
 from tasks.advection_diffusion import (
     task_6_solution,
-    task_6a_refinement,
     task_6b_asymptotic,
     task_6b_refinement,
     task_6c,
@@ -114,7 +113,6 @@ if __name__ == "__main__":
         "5e_refinement": Task(task_5e_refinement, "5e_refinement.pdf"),
         "5e_afem": Task(task_5e_afem, "5e_afem.pdf"),
         "6_solution": Task(task_6_solution, "6_solution.pdf"),
-        "6a_refinement": Task(task_6a_refinement, "6a_refinement.pdf"),
         "6b_refinement": Task(task_6b_refinement, "6b_refinement.pdf"),
         "6b_asymptotic": Task(task_6b_asymptotic, "6b_asymptotic.pdf"),
         "6c_runtime": Task(task_6c, "6c_runtime.pdf"),
