@@ -47,10 +47,41 @@ class Equation:
             np.isin(self.x_indicies, self.restricted_indicies, invert=True)
         ]
 
+    @cached_property
+    def single_operator(self):
+        """
+        The first row of the operator matrix
+
+        Used to create the full matrix when the equation is periodic
+        """
+        raise NotImplementedError
+
     @cache
     def operator(self):
         """A matrix representing the discretized operator L_h"""
-        raise NotImplementedError
+        if not self.periodic:
+            raise NotImplementedError
+
+        values = []
+        diags = []
+        for i, value in enumerate(self.single_operator):
+            if value == 0:
+                continue
+
+            values.append(value)
+            diags.append(i)
+
+            if i != 0:
+                values.append(value)
+                diags.append(i - self.length)
+
+        return scipy.sparse.diags(
+            values,
+            diags,
+            shape=(self.length, self.length),
+            dtype=np.float64,
+            format="dok",
+        )
 
     @cache
     def get_operator(self):
@@ -124,8 +155,8 @@ class PeriodicKdV(Equation):
     def restricted_indicies(self):
         return np.array((), dtype=np.int64)
 
-    @cache
-    def operator(self):
+    @cached_property
+    def single_operator(self):
         # Since the equation is on [-1, 1] we introduce a shift in x: 2 * (x-1/2) to
         # solve it on [0, 1] instead. By solving this alternate diff. eqn we introduce a
         # factor 2 for each power of the derivative, so we divide the operator by 2**p.
@@ -136,13 +167,7 @@ class PeriodicKdV(Equation):
         d1[0:7] = np.array((0, 0, -1, 0, 1, 0, 0)) / (2 * self.h) / 2
 
         single_operator = -d3 - (1 + np.pi ** 2) * d1
-        zero_indexed = np.roll(single_operator, -3)
-
-        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
-        for i in range(self.length):
-            operator[i, :] = np.roll(zero_indexed, i)
-
-        return operator
+        return np.roll(single_operator, -3)
 
 
 class _AdvectionDiffusionBase(Equation):
@@ -169,8 +194,8 @@ class PeriodicAdvectionDiffusion1stOrder(_AdvectionDiffusionBase):
     def restricted_indicies(self):
         return np.array((), dtype=np.int64)
 
-    @cache
-    def operator(self):
+    @cached_property
+    def single_operator(self):
         # The first forward difference
         d1 = np.zeros((self.length,))
         d1[:2] = np.array((-1, 1)) / self.h
@@ -179,13 +204,7 @@ class PeriodicAdvectionDiffusion1stOrder(_AdvectionDiffusionBase):
         d2 = np.zeros((self.length,))
         d2[:3] = np.array((1, -2, 1)) / self.h ** 2
 
-        zero_indexed = self.c * d1 + self.d * d2
-
-        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
-        for i in range(self.length):
-            operator[i, :] = np.roll(zero_indexed, i)
-
-        return operator
+        return self.c * d1 + self.d * d2
 
 
 class PeriodicAdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
@@ -201,8 +220,8 @@ class PeriodicAdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
     def restricted_indicies(self):
         return np.array((), dtype=np.int64)
 
-    @cache
-    def operator(self):
+    @cached_property
+    def single_operator(self):
         # The first derivative finite difference
         d1 = np.zeros((self.length,))
         d1[:3] = np.array((-1, 0, 1)) / (2 * self.h)
@@ -212,13 +231,7 @@ class PeriodicAdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
         d2[:3] = np.array((1, -2, 1)) / self.h ** 2
 
         single_operator = self.c * d1 + self.d * d2
-        zero_indexed = np.roll(single_operator, -1)
-
-        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
-        for i in range(self.length):
-            operator[i, :] = np.roll(zero_indexed, i)
-
-        return operator
+        return np.roll(single_operator, -1)
 
 
 class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
@@ -234,8 +247,8 @@ class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
     def restricted_indicies(self):
         return np.array((), dtype=np.int64)
 
-    @cache
-    def operator(self):
+    @cached_property
+    def single_operator(self):
         # The first derivative finite difference
         d1 = np.zeros((self.length,))
         d1[:5] = np.array((1, -8, 0, 8, -1)) / (12 * self.h)
@@ -245,13 +258,7 @@ class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
         d2[:5] = np.array((-1, 16, -30, 16, -1)) / (12 * self.h ** 2)
 
         single_operator = self.c * d1 + self.d * d2
-        zero_indexed = np.roll(single_operator, -2)
-
-        operator = scipy.sparse.lil_matrix((self.length, self.length), dtype=np.float64)
-        for i in range(self.length):
-            operator[i, :] = np.roll(zero_indexed, i)
-
-        return operator
+        return np.roll(single_operator, -2)
 
 
 class AdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
