@@ -23,12 +23,16 @@ from tasks.advection_diffusion import (
 from tasks.burgers import task_2c
 from tasks.fem_poisson import (
     task_5b_afem,
+    task_5b_afem_solution,
     task_5b_refinement,
     task_5c_afem,
+    task_5c_afem_solution,
     task_5c_refinement,
     task_5d_afem,
+    task_5d_afem_solution,
     task_5d_refinement,
     task_5e_afem,
+    task_5e_afem_solution,
     task_5e_refinement,
 )
 from tasks.heat_eqn import (
@@ -104,12 +108,16 @@ if __name__ == "__main__":
         "4_solution": Task(task_4_solution, "4_solution.pdf"),
         "4b_euler_vs_cn": Task(task_4b, "4b_methods.pdf"),
         "4c_norm": Task(task_4c, "4c_norm.pdf"),
+        "5b_afem_solution": Task(task_5b_afem_solution, "5b_afem_solution.pdf"),
         "5b_refinement": Task(task_5b_refinement, "5b_refinement.pdf"),
         "5b_afem": Task(task_5b_afem, "5b_afem.pdf"),
+        "5c_afem_solution": Task(task_5c_afem_solution, "5c_afem_solution.pdf"),
         "5c_refinement": Task(task_5c_refinement, "5c_refinement.pdf"),
         "5c_afem": Task(task_5c_afem, "5c_afem.pdf"),
+        "5d_afem_solution": Task(task_5d_afem_solution, "5d_afem_solution.pdf"),
         "5d_refinement": Task(task_5d_refinement, "5d_refinement.pdf"),
         "5d_afem": Task(task_5d_afem, "5d_afem.pdf"),
+        "5e_afem_solution": Task(task_5e_afem_solution, "5e_afem_solution.pdf"),
         "5e_refinement": Task(task_5e_refinement, "5e_refinement.pdf"),
         "5e_afem": Task(task_5e_afem, "5e_afem.pdf"),
         "6_solution": Task(task_6_solution, "6_solution.pdf"),

@@ -8,6 +8,65 @@ from refine import refine_mesh, simple_select_avg, simple_select_max
 from refinement_utilities import calculate_relative_L2_error_FEM, make_FEM_solver
 
 
+def _task_5_afem_solution(f, u, a, b, u_text, deg=10, tol=1e-3):
+    d1 = u(a)
+    d2 = u(b)
+
+    N = 20
+
+    alpha_avg = 1.0
+    alpha_max = 0.7
+
+    solver_params = {
+        "N": N,
+        "f": f,
+        "u": u,
+        "a": a,
+        "b": b,
+        "d1": d1,
+        "d2": d2,
+        "tol": tol,
+        "deg": deg,
+    }
+
+    x_avg, U_avg, ndof_list, error_list = AFEM(
+        **solver_params,
+        select_refinement=partial(simple_select_avg, alpha=alpha_avg),
+    )
+
+    x_max, U_max, ndof_list, error_list = AFEM(
+        **solver_params,
+        select_refinement=partial(simple_select_max, alpha=alpha_avg),
+    )
+
+    fine_x = np.linspace(a, b, max(x_avg.shape[0], x_avg.shape[0], 1000))
+    analytical = u(fine_x)
+
+    plt.plot(
+        x_avg,
+        U_avg,
+        label=fr"AFEM avg, $\alpha = {alpha_avg}$, ${x_avg.shape[0]}$ points",
+    )
+    plt.plot(
+        x_max,
+        U_max,
+        label=fr"AFEM max, $\alpha = {alpha_max}$, ${x_max.shape[0]}$ points",
+    )
+
+    plt.plot(fine_x, analytical, linestyle="dashed", label="Analytical solution")
+
+    plt.xlabel("$x$")
+    plt.ylabel("$y$")
+    plt.grid()
+    plt.legend()
+
+    plt.title(
+        fr"$u\left( x \right) = {u_text}, x \in \left[ {a}, {b} \right]$, "
+        fr"$\textrm{{tol}} = \num{{{tol:.2e}}}$ "
+    )
+    plt.suptitle("Poisson's equation AFEM - averaging vs maximizing")
+
+
 def _task_5_refinement(f, u, a, b, u_text, scale, order=2, deg=10):
     d1 = u(a)
     d2 = u(b)
@@ -119,6 +178,10 @@ def task_5b_afem():
     _task_5_afem(**b_params, tol=1e-8, scale=1e1)
 
 
+def task_5b_afem_solution():
+    _task_5_afem_solution(**b_params)
+
+
 c_params = {
     "f": lambda x: -(40000 * x ** 2 - 200) * np.exp(-100 * x ** 2),
     "u": lambda x: np.exp(-100 * x ** 2),
@@ -134,6 +197,10 @@ def task_5c_refinement():
 
 def task_5c_afem():
     _task_5_afem(**c_params, tol=1e-8, scale=1e1)
+
+
+def task_5c_afem_solution():
+    _task_5_afem_solution(**c_params)
 
 
 d_params = {
@@ -153,6 +220,10 @@ def task_5d_afem():
     _task_5_afem(**d_params, tol=1e-8, scale=1e1)
 
 
+def task_5d_afem_solution():
+    _task_5_afem_solution(**d_params)
+
+
 e_params = {
     "f": lambda x: 2 / 9 * x ** (-4 / 3),
     "u": lambda x: x ** (2 / 3),
@@ -168,3 +239,7 @@ def task_5e_refinement():
 
 def task_5e_afem():
     _task_5_afem(**e_params, tol=4e-8, scale=5e-1, order=1.5)
+
+
+def task_5e_afem_solution():
+    _task_5_afem_solution(**e_params)
