@@ -330,7 +330,7 @@ def task_1d1():
     plt.title(
         r"$u\left(x\right) = "
         r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)^2},"
-        fr"\epsilon = {eps:.2e}$"
+        fr"\epsilon = \num{{{eps:.2e}}}$"
     )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")
@@ -399,7 +399,7 @@ def task_1d2():
     plt.title(
         r"$u\left(x\right) = "
         r"\exp{-\frac{1}{\epsilon} \left(x - \frac12\right)^2},"
-        fr"\epsilon = {eps:.2e}$"
+        fr"\epsilon = \num{{{eps:.2e}}}$"
     )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $L_2$ error $\frac{\|U-u\|}{\|u\|}$")

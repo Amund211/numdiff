@@ -70,6 +70,7 @@ if __name__ == "__main__":
     plt.rcParams.update(
         {
             "text.usetex": True,
+            "text.latex.preamble": "\\usepackage{siunitx}\n",
             "axes.titlesize": fontsize,
             "axes.labelsize": fontsize,
             "ytick.labelsize": fontsize,
