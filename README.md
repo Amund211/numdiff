@@ -12,6 +12,7 @@ pip3 install -r requirements.txt
 
 You may need to install `swig` to be able to build `scikit-umfpack`.
 Alternatively you may remove it as a dependency, as it isn't used explicitly, but may be used by the solvers in `scipy.sparse.linalg` if present.
+Do note that during testing I had some issues with memory usage using the default solvers from scipy, while the umfpack solvers didn't seem to have that issue.
 
 ## Configuring the project
 [`settings.py`](./settings.py) contains some variables that are read by the rest of the project that may be changed to alter the behaviour of the code.
@@ -28,3 +29,10 @@ Note: Part 2 - task 3 is in this project renamed to task 6 to fit the scheme.
 
 To run the code comparison task (part 2 - task 3c) run task `6c_runtime` e.g. `python main.py 6c`.
 This will generate a plot in the [`images`](./images) folder with two figures: l2 error vs degrees of freedom and runtime vs degrees of freedom.
+
+## Editing the tasks
+The tasks are loaded into [`main.py`](./main.py) from the [tasks](./tasks) directory.
+Each major task (1, 2, ...) has its own file in the [tasks](./tasks), while the functions for the different subtasks lie inside those files.
+The taskname used in [`main.py`](./main.py) should, for the most part, coincide with the names of the functions.
+
+To edit the behaviour or the parameters of any task, simply edit the corresponding function.
