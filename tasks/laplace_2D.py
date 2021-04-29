@@ -21,7 +21,8 @@ def task_3_solution():
     c = plt.pcolormesh(x, y, U, cmap="hot", shading="nearest")
     plt.colorbar(c, ax=plt.gca())
     plt.title(
-        r"$u_{xx} + u_{yy} = 0, \> u(x, 1) = \sin{\left( 2 \pi x\right)}, u(0, y) = u(x, 0) = u(1, y) = 0$"
+        r"$u_{xx} + u_{yy} = 0, \> u(x, 1) = \sin{\left( 2 \pi x\right)}, "
+        "u(0, y) = u(x, 0) = u(1, y) = 0$"
     )
     plt.xlabel("$x$")
     plt.ylabel("$y$")

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from .conditions import Dirichlet, Neumann
-from .equations import HeatEquation, InviscidBurgers, InviscidBurgers2, PeriodicKdV
+from .equations import HeatEquation, InviscidBurgers, PeriodicKdV
 from .plotting import solve_and_plot
 from .poisson import amr, poisson
 from .refine import refine_mesh

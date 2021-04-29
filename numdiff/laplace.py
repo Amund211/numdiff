@@ -1,6 +1,9 @@
 """
-This module considers the following 2D Laplace equation on the unit square (x,y) ∈ [0,1]^2 = Ω
-u_xx + u_yy = 0
+This module considers an instance of the 2D Laplace equation
+
+Specifically it solves
+u_xx + u_yy = 0, on the unit square (x,y) ∈ [0,1]^2 = Ω
+with boundary conditions:
 u(0,y) = 0, 0≤y≤1
 u(x,0) = 0, 0≤x≤1
 u(1,y) = 0, 0≤y≤1

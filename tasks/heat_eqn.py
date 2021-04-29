@@ -67,7 +67,8 @@ def task_2_solution():
 
     plt.suptitle(f"The heat equation - numerical solution with $M={M}, N={N}$")
     plt.title(
-        r"$u_t = u_{xx}, u(x, 0) = 2 \pi x + \sin{\left( 2 \pi x\right)}, u_x(0, t) = u_x(1, t) = 0$"
+        r"$u_t = u_{xx}, u(x, 0) = 2 \pi x + \sin{\left( 2 \pi x\right)}, "
+        "u_x(0, t) = u_x(1, t) = 0$"
     )
     plt.xlabel("$x$")
     plt.ylabel("Time $t$")
@@ -157,7 +158,8 @@ def task_2a():
 
     plt.suptitle("The heat equation - discretization of the boundary conditions")
     plt.title(
-        f"Comparison with reference solution with $M^* = {M_star}$ at $t = {T}$. $N = {N}$"
+        "Comparison with reference solution with "
+        f"$M^* = {M_star}$ at $t = {T}$. $N = {N}$"
     )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative $l_2$ error $\frac{\|U-u\|}{\|u\|}$")
@@ -275,7 +277,8 @@ def task_2bh():
 
     plt.suptitle("The heat equation - $h$-refinement")
     plt.title(
-        f"Backwards Euler vs Crank Nicholson with $N={TASK_2B_PARAMS['N']}$ at $t = {TASK_2B_PARAMS['T']}$"
+        "Backwards Euler vs Crank Nicholson with "
+        f"$N={TASK_2B_PARAMS['N']}$ at $t = {TASK_2B_PARAMS['T']}$"
     )
     plt.xlabel("Internal nodes $M$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")
@@ -315,7 +318,8 @@ def task_2bk():
 
     plt.suptitle("The heat equation - $k$-refinement")
     plt.title(
-        f"Backwards Euler vs Crank Nicholson with $M={TASK_2B_PARAMS['M']}$ at $t = {TASK_2B_PARAMS['T']}$"
+        "Backwards Euler vs Crank Nicholson with "
+        f"$M={TASK_2B_PARAMS['M']}$ at $t = {TASK_2B_PARAMS['T']}$"
     )
     plt.xlabel("Time steps $N$")
     plt.ylabel(r"Relative error $\frac{\|U-u\|}{\|u\|}$")

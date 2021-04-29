@@ -61,7 +61,8 @@ def task_6_solution():
         f"Periodic advection diffusion - numerical solution with $M={M}, N={N}$"
     )
     plt.title(
-        r"$u_t = c u_x + d u_{xx}, u(x, 0) = \sin{\left( 4 \pi x\right)}, u(x, t) = u(x+1, t)$"
+        r"$u_t = c u_x + d u_{xx}, u(x, 0) = \sin{\left( 4 \pi x\right)}, "
+        "u(x, t) = u(x+1, t)$"
     )
     plt.xlabel("$x$")
     plt.ylabel("Time $t$")
@@ -223,7 +224,8 @@ def task_6c():
     )
 
     plt.suptitle(
-        fr"Periodic advection diffusion - refinement with constant $r=\frac{{k}}{{h^2}}={r}$"
+        "Periodic advection diffusion - refinement "
+        fr"with constant $r=\frac{{k}}{{h^2}}={r}$"
     )
 
     plt.subplot(121)

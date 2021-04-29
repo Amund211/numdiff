@@ -77,7 +77,8 @@ def task_1a_solution():
 
     plt.suptitle(f"Poisson's equation - Analytical vs numerical with $M={M}$")
     plt.title(
-        fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u(0, t) = {alpha}, u_x(1, t) = {sigma}$"
+        r"$u_{xx} = f(x) = \cos{\left( 2 \pi x \right)} + x, "
+        f"u(0, t) = {alpha}, u_x(1, t) = {sigma}$"
     )
     plt.xlabel("$x$")
     plt.ylabel("$y$")
@@ -169,7 +170,8 @@ def task_1b_solution():
 
     plt.suptitle(f"Poisson's equation - Analytical vs numerical with $M={M}$")
     plt.title(
-        fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u(0, t) = {alpha}, u(1, t) = {beta}$"
+        r"$u_{xx} = f(x) = \cos{\left( 2 \pi x \right)} + x, "
+        f"u(0, t) = {alpha}, u(1, t) = {beta}$"
     )
     plt.xlabel("$x$")
     plt.ylabel("$y$")
@@ -268,7 +270,8 @@ def task_1c_solution():
 
     plt.suptitle(f"Poisson's equation - ill posed problem with $M={M}$")
     plt.title(
-        fr"$u_{{xx}} = f(x) = \cos{{\left( 2 \pi x \right)}} + x, u_x(0) = {sigma1}, u_x(1) = {sigma2}$"
+        r"$u_{xx} = f(x) = \cos{\left( 2 \pi x \right)} + x, "
+        f"u_x(0) = {sigma1}, u_x(1) = {sigma2}$"
     )
     plt.xlabel("$x$")
     plt.ylabel("$y$")

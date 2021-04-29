@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from numdiff.conditions import Dirichlet
-from numdiff.equations import InviscidBurgers, InviscidBurgers2
+from numdiff.equations import InviscidBurgers
 from numdiff.schemes import RK4
 from numdiff.settings import FINE_PARAMETERS
 

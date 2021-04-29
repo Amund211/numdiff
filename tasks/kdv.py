@@ -58,7 +58,8 @@ def task_4_solution():
         f"Linearized Korteweg-deVries - numerical solution with $M={M}, N={N}$"
     )
     plt.title(
-        r"$u_t + \left(1 + \pi^2\right) u_x + u_{xxx} = 0, u(x, 0) = \sin{\left( \pi x\right)}, u(x, t) = u(x+2, t)$"
+        r"$u_t + \left(1 + \pi^2\right) u_x + u_{xxx} = 0, "
+        r"u(x, 0) = \sin{\left( \pi x\right)}, u(x, t) = u(x+2, t)$"
     )
     plt.xlabel("$x$")
     plt.ylabel("Time $t$")
