@@ -3,11 +3,11 @@ from math import ceil
 import numpy as np
 from scipy.interpolate import interp1d
 
-from fem import FEM_uniform
-from helpers import relative_l2_error, relative_L2_error
-from interpolate import calculate_poisson_derivatives, interpolate
-from laplace import laplace
-from poisson import amr, poisson
+from .fem import FEM_uniform
+from .helpers import relative_l2_error, relative_L2_error
+from .interpolate import calculate_poisson_derivatives, interpolate
+from .laplace import laplace
+from .poisson import amr, poisson
 
 
 def calculate_relative_l2_error(x, analytical, numerical):

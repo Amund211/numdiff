@@ -1,10 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from laplace import analytical, laplace
-from refine import refine_mesh
-from refinement_utilities import calculate_relative_l2_error, make_laplace_solver
-from settings import FINE_PARAMETERS
+from numdiff.laplace import analytical, laplace
+from numdiff.refine import refine_mesh
+from numdiff.refinement_utilities import (
+    calculate_relative_l2_error,
+    make_laplace_solver,
+)
+from numdiff.settings import FINE_PARAMETERS
 
 
 def task_3_solution():

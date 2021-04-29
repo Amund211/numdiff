@@ -1,6 +1,6 @@
 from scipy.interpolate import BPoly, CubicSpline
 
-from nonuniform import has_uniform_steps, liu_coefficients
+from .nonuniform import has_uniform_steps, liu_coefficients
 
 
 def interpolate(x, y, calculate_derivatives=None, bc_type="not-a-knot"):

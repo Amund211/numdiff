@@ -1,6 +1,6 @@
 from numpy.polynomial.legendre import leggauss
 
-from cache import cache
+from .cache import cache
 
 
 @cache

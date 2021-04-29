@@ -15,7 +15,7 @@ Alternatively you may remove it as a dependency, as it isn't used explicitly, bu
 Do note that during testing I had some issues with memory usage using the default solvers from scipy, while the umfpack solvers didn't seem to have that issue.
 
 ## Configuring the project
-[`settings.py`](./settings.py) contains some variables that are read by the rest of the project that may be changed to alter the behaviour of the code.
+[`numdiff/settings.py`](./numdiff/settings.py) contains some variables that are read by the rest of the project that may be changed to alter the behaviour of the code.
 These are documented in the file itself.
 The most important of these may be `FINE_PARAMETERS` which toggles whether the tasks will use parameters that are easy to run (< 1 min), or that give the most detailed plots (>> 5 min).
 

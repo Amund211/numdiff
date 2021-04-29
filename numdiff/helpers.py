@@ -1,7 +1,7 @@
 import numpy as np
 import scipy.sparse
 
-from integrate import composite
+from .integrate import composite
 
 
 def central_difference(N, power=2, format="lil"):

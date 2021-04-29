@@ -1,16 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from conditions import Dirichlet, Neumann
-from poisson import poisson
-from refine import refine_mesh, select_avg, select_max
-from refinement_utilities import (
+from numdiff.conditions import Dirichlet, Neumann
+from numdiff.poisson import poisson
+from numdiff.refine import refine_mesh, select_avg, select_max
+from numdiff.refinement_utilities import (
     calculate_relative_l2_error,
     make_amr_poisson_solver,
     make_calculate_relative_L2_error_poisson,
     make_poisson_solver,
 )
-from settings import FINE_PARAMETERS
+from numdiff.settings import FINE_PARAMETERS
 
 
 def poisson_1D_UMR(

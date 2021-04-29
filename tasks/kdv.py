@@ -3,12 +3,12 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 
-from equations import PeriodicKdV
-from helpers import l2
-from refine import refine_mesh
-from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
-from schemes import ThetaMethod
-from settings import FINE_PARAMETERS
+from numdiff.equations import PeriodicKdV
+from numdiff.helpers import l2
+from numdiff.refine import refine_mesh
+from numdiff.refinement_utilities import calculate_relative_l2_error, make_scheme_solver
+from numdiff.schemes import ThetaMethod
+from numdiff.settings import FINE_PARAMETERS
 
 
 class KdVTheta(ThetaMethod, PeriodicKdV):

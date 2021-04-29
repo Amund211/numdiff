@@ -1,8 +1,8 @@
 import numpy as np
 import scipy.sparse.linalg
 
-from cache import cache, cached_property
-from helpers import central_difference
+from .cache import cache, cached_property
+from .helpers import central_difference
 
 
 class Equation:

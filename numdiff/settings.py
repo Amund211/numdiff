@@ -14,12 +14,14 @@ TASK_KWARGS = {"save": True, "show": False}
 
 # Print info when running tasks
 INFO_PRINTING = True
+INFO_PRINTING = False
 
 # Use fine parameters that take longer to run
 FINE_PARAMETERS = False
 
 # Use multiprocessing for running multiple tasks at once
 USE_MULTIPROCESSING = False
+USE_MULTIPROCESSING = True
 
 if INFO_PRINTING and USE_MULTIPROCESSING:
     print(

@@ -3,7 +3,7 @@ import time
 
 import numpy as np
 
-from settings import INFO_PRINTING
+from .settings import INFO_PRINTING
 
 
 def refine_after(x, indicies):

@@ -4,7 +4,7 @@ from typing import Callable
 
 import matplotlib.pyplot as plt
 
-from settings import IMAGES_FOLDER
+from numdiff.settings import IMAGES_FOLDER
 
 
 @dataclass

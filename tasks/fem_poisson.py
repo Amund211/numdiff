@@ -3,9 +3,12 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 
-from fem import AFEM
-from refine import refine_mesh, simple_select_avg, simple_select_max
-from refinement_utilities import calculate_relative_L2_error_FEM, make_FEM_solver
+from numdiff.fem import AFEM
+from numdiff.refine import refine_mesh, simple_select_avg, simple_select_max
+from numdiff.refinement_utilities import (
+    calculate_relative_L2_error_FEM,
+    make_FEM_solver,
+)
 
 
 def _task_5_afem_solution(f, u, a, b, u_text, deg=10, tol=1e-3):

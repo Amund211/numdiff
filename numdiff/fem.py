@@ -2,8 +2,8 @@ import numpy as np
 import scipy.sparse.linalg
 from scipy.interpolate import interp1d
 
-from integrate import composite, integrate
-from refine import refine_after
+from .integrate import composite, integrate
+from .refine import refine_after
 
 
 def phi_up(i, x, x_axis):

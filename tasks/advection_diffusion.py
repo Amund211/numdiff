@@ -4,17 +4,17 @@ from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 
-from conditions import Neumann
-from equations import (
+from numdiff.conditions import Neumann
+from numdiff.equations import (
     AdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion1stOrder,
     PeriodicAdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion4thOrder,
 )
-from refine import refine_mesh
-from refinement_utilities import calculate_relative_l2_error, make_scheme_solver
-from schemes import ThetaMethod
-from settings import FINE_PARAMETERS
+from numdiff.refine import refine_mesh
+from numdiff.refinement_utilities import calculate_relative_l2_error, make_scheme_solver
+from numdiff.schemes import ThetaMethod
+from numdiff.settings import FINE_PARAMETERS
 
 
 def task_6_solution():

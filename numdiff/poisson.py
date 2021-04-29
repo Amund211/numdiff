@@ -3,12 +3,12 @@ import sys
 import numpy as np
 import scipy.sparse.linalg
 
-from conditions import Neumann
-from helpers import central_difference
-from integrate import integrate
-from interpolate import calculate_poisson_derivatives, interpolate
-from nonuniform import has_uniform_steps, liu_coefficients
-from refine import refine_after, select_max
+from .conditions import Neumann
+from .helpers import central_difference
+from .integrate import integrate
+from .interpolate import calculate_poisson_derivatives, interpolate
+from .nonuniform import has_uniform_steps, liu_coefficients
+from .refine import refine_after, select_max
 
 # https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.lsmr.html
 explain_istop = {

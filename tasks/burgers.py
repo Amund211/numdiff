@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from conditions import Dirichlet
-from equations import InviscidBurgers, InviscidBurgers2
-from schemes import RK4
-from settings import FINE_PARAMETERS
+from numdiff.conditions import Dirichlet
+from numdiff.equations import InviscidBurgers, InviscidBurgers2
+from numdiff.schemes import RK4
+from numdiff.settings import FINE_PARAMETERS
 
 
 class BurgersRK4(RK4, InviscidBurgers):

@@ -11,7 +11,7 @@ from functools import partial
 
 import matplotlib.pyplot as plt
 
-from settings import IMAGES_FOLDER, TASK_KWARGS, USE_MULTIPROCESSING
+from numdiff.settings import IMAGES_FOLDER, TASK_KWARGS, USE_MULTIPROCESSING
 from tasks.advection_diffusion import (
     task_6_solution,
     task_6b_asymptotic,
