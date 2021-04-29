@@ -5,13 +5,15 @@ To set up the project create a virtual environment, activate the environment, an
 
 ```shell
 python3 --version  # Ensure you have at least python 3.7 (May work with earlier versions, but not tested)
-python3 -m virtualenv venv --python=python3
+python3 -m venv venv --python=python3
 source venv/bin/activate  # Or the equivalent for your shell
 pip3 install -r requirements.txt
 ```
 
+For how to activate the environment on different shells see [https://docs.python.org/3/library/venv.html](the venv docs).
+
 You may need to install `swig` to be able to build `scikit-umfpack`.
-Alternatively you may remove it as a dependency, as it isn't used explicitly, but may be used by the solvers in `scipy.sparse.linalg` if present.
+Alternatively you may remove it from [requirements.txt](./requirements.txt), as it isn't used explicitly, but may be used by the solvers in `scipy.sparse.linalg` if present.
 Do note that during testing I had some issues with memory usage using the default solvers from scipy, while the umfpack solvers didn't seem to have that issue.
 
 ## Configuring the project
