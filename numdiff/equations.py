@@ -261,10 +261,12 @@ class PeriodicAdvectionDiffusion4thOrder(_AdvectionDiffusionBase):
         return np.roll(single_operator, -2)
 
 
-class AdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
+class AdvectionDiffusion2ndOrderFictitious(_AdvectionDiffusionBase):
     """
     The advection-diffusion equation
 
+    This scheme uses fictitious nodes, so some methods from `Scheme` have been
+    overridden. Intended for use with the theta method
     Both the first and second derivative have order 2
     """
 
@@ -274,9 +276,44 @@ class AdvectionDiffusion2ndOrder(_AdvectionDiffusionBase):
 
     @cache
     def operator(self):
-        return (
+        operator = (
             self.c * central_difference(self.length, power=1, format="dok") / self.h
             + self.d
             * central_difference(self.length, power=2, format="dok")
             / self.h ** 2
         )
+
+        for condition, index in zip(self.conditions, self.restricted_indicies):
+            eqn = condition.get_vector(length=self.length, h=self.h)
+            operator[index, :] = eqn
+
+        return operator.tocsc()
+
+    def rhs(self, context, n):
+        # Slightly altered from the `ThetaMethod` scheme
+        rhs = context[:, n - 1] + (1 - self.theta) * self.k * self.apply_operator(
+            n, context[:, n - 1]
+        )
+        rhs[self.restricted_indicies] += (
+            np.array(
+                [
+                    (self.c - 2 * self.d / self.h)
+                    * self.conditions[0].get_scalar(n * self.k),
+                    (self.c + 2 * self.d / self.h)
+                    * self.conditions[1].get_scalar(n * self.k),
+                ]
+            )
+            * self.k
+        )
+
+        return rhs
+
+    def get_constrained_rhs(self, context, n):
+        return self.rhs(context, n)
+
+    @cache
+    def get_constrained_matrix(self):
+        return self.matrix().tocsc()
+
+    def apply_operator(self, n, v):
+        return self.get_operator()(v)

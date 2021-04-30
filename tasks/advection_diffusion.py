@@ -4,9 +4,9 @@ from math import ceil
 import matplotlib.pyplot as plt
 import numpy as np
 
-from numdiff.conditions import Neumann
+from numdiff.conditions import FictitiousNeumann
 from numdiff.equations import (
-    AdvectionDiffusion2ndOrder,
+    AdvectionDiffusion2ndOrderFictitious,
     PeriodicAdvectionDiffusion1stOrder,
     PeriodicAdvectionDiffusion2ndOrder,
     PeriodicAdvectionDiffusion4thOrder,
@@ -390,7 +390,7 @@ def task_6d_2nd_order_aperiodic():
     a = (-c + np.sqrt(c ** 2 - 4 * d)) / (2 * d)
     b = (-c - np.sqrt(c ** 2 - 4 * d)) / (2 * d)
 
-    class Scheme(ThetaMethod, AdvectionDiffusion2ndOrder):
+    class Scheme(AdvectionDiffusion2ndOrderFictitious, ThetaMethod):
         pass
 
     def u(x, t):
@@ -405,8 +405,8 @@ def task_6d_2nd_order_aperiodic():
     scheme_kwargs = {
         "theta": theta,
         "conditions": (
-            Neumann(condition=lambda t: ux(0, t), m=0),
-            Neumann(condition=lambda t: ux(1, t), m=-1),
+            FictitiousNeumann(condition=lambda t: ux(0, t), m=0),
+            FictitiousNeumann(condition=lambda t: ux(1, t), m=-1),
         ),
         "c": c,
         "d": d,

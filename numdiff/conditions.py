@@ -76,3 +76,22 @@ class Neumann(Condition):
             eqn[self.m + 1] = 1 / h
             eqn[self.m - 1] = -1 / h
         return eqn
+
+
+@dataclass(frozen=True)
+class FictitiousNeumann(Condition):
+    """Neumann using fictitious nodes for the advection-diffusion equation"""
+
+    condition: Any  # Union[float, Callable[[float], float]]
+
+    def get_vector(self, length, h, **kwargs):
+        eqn = np.zeros(length)
+        if self.m == 0:
+            eqn[0:2] = np.array((-2, 2)) / h ** 2
+        elif self.m == -1 or self.m == length - 1:  # Last index
+            eqn[-2:] = np.array((2, -2)) / h ** 2
+        else:
+            # Order 2
+            eqn[self.m + 1] = 1 / h
+            eqn[self.m - 1] = -1 / h
+        return eqn
