@@ -65,7 +65,7 @@ def _task_5_afem_solution(f, u, a, b, u_text, deg=10, tol=1e-3):
 
     plt.title(
         fr"$u\left( x \right) = {u_text}, x \in \left[ {a}, {b} \right]$, "
-        fr"$\textrm{{tol}} = {tol:.2e}$ "
+        fr"$tol = {tol:.2e}$ "
     )
     plt.suptitle("Poisson's equation AFEM - averaging vs maximizing")
 
