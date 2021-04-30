@@ -232,7 +232,7 @@ e_params = {
     "u": lambda x: x ** (2 / 3),
     "a": 0,
     "b": 1,
-    "u_text": r"x^{\frac23}",
+    "u_text": r"x^{\frac{2}{3}}",
 }
 
 
