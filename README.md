@@ -5,7 +5,7 @@ To set up the project create a virtual environment, activate the environment, an
 
 ```shell
 python3 --version  # Ensure you have at least python 3.7 (May work with earlier versions, but not tested)
-python3 -m venv venv --python=python3
+python3 -m venv venv
 source venv/bin/activate  # Or the equivalent for your shell
 pip3 install -r requirements.txt
 ```
