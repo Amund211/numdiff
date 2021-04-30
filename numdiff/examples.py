@@ -96,7 +96,7 @@ def test_poisson():
     x = np.arange(0, M + 2).astype(np.float64) * 1 / (M + 1)
     plt.plot(x, u(x), label="u")
 
-    from interpolate import calculate_poisson_derivatives, interpolate
+    from .interpolate import calculate_poisson_derivatives, interpolate
 
     calculate_derivatives = calculate_poisson_derivatives(f)
 
