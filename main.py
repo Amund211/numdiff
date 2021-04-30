@@ -19,6 +19,7 @@ from tasks.advection_diffusion import (
     task_6c,
     task_6d_2nd_order_aperiodic,
     task_6d_4th_order,
+    task_6d_aperiodic_solution,
 )
 from tasks.burgers import task_2c
 from tasks.fem_poisson import (
@@ -125,6 +126,7 @@ if __name__ == "__main__":
         "6b_asymptotic": Task(task_6b_asymptotic, "6b_asymptotic.pdf"),
         "6c_runtime": Task(task_6c, "6c_runtime.pdf"),
         "6d_4th_order": Task(task_6d_4th_order, "6d_4th_order.pdf"),
+        "6d_aperiodic_sol": Task(task_6d_aperiodic_solution, "6d_aperiodic_sol.pdf"),
         "6d_aperiodic": Task(task_6d_2nd_order_aperiodic, "6d_2nd_order_aperiodic.pdf"),
     }
 

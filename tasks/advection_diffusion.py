@@ -374,6 +374,67 @@ def task_6d_4th_order_M():
     plt.grid()
 
 
+def task_6d_aperiodic_solution():
+    M = 100
+    N = 200
+    T = 1
+    theta = 1 / 2
+
+    k = T / N
+
+    r = 1
+
+    c = 20
+    d = 1
+
+    a = (-c + np.sqrt(c ** 2 - 4 * d)) / (2 * d)
+    b = (-c - np.sqrt(c ** 2 - 4 * d)) / (2 * d)
+
+    class Scheme(AdvectionDiffusion2ndOrderFictitious, ThetaMethod):
+        pass
+
+    def u(x, t):
+        return np.exp(-t) * (np.exp(a * x) + np.exp(b * x))
+
+    def f(x):
+        return u(x, 0)
+
+    def ux(x, t):
+        return np.exp(-t) * (a * np.exp(a * x) + b * np.exp(b * x))
+
+    scheme_kwargs = {
+        "theta": theta,
+        "conditions": (
+            FictitiousNeumann(condition=lambda t: ux(0, t), m=0),
+            FictitiousNeumann(condition=lambda t: ux(1, t), m=-1),
+        ),
+        "c": c,
+        "d": d,
+        "N": N,
+        "k": k,
+        "M": M,
+    }
+
+    scheme = Scheme(**scheme_kwargs)
+    x, solution = scheme.solve(f)
+
+    t, x = np.meshgrid(np.linspace(0, T, N + 1), x)
+
+    c = plt.pcolormesh(x, t, solution, cmap="hot", shading="nearest")
+    plt.colorbar(c, ax=plt.gca())
+
+    plt.suptitle(
+        f"Aperiodic advection diffusion - numerical solution with $M={M}, N={N}$"
+    )
+    plt.title(
+        "$u_t = c u_x + d u_{xx}, "
+        r"u(x, 0) = \exp{\left(ax\right)} + \exp{\left(bx\right)}, "
+        "u_x(0, t) = q_1, u_x(1, t) = q_2$"
+    )
+    plt.xlabel("$x$")
+    plt.ylabel("Time $t$")
+
+
 def task_6d_2nd_order_aperiodic():
     if FINE_PARAMETERS:
         M_range = np.unique(np.logspace(np.log10(3), 4, num=100, dtype=np.int32))
