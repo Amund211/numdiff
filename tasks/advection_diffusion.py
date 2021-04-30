@@ -382,8 +382,6 @@ def task_6d_aperiodic_solution():
 
     k = T / N
 
-    r = 1
-
     c = 20
     d = 1
 
