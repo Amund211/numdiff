@@ -117,10 +117,12 @@ def task_6b_refinement():
         ndofs,
         6e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{2}{3}}\right)$",
     )
 
-    plt.suptitle(r"Periodic advection diffusion - 2nd order space, $\theta = \frac12$")
+    plt.suptitle(
+        r"Periodic advection diffusion - 2nd order space, $\theta = \frac{1}{2}$"
+    )
     plt.title(
         fr"Refinement with constant $r=\frac{{k}}{{h^2}}={r}$, $c={c}, d={d}, t={T}$"
     )
@@ -236,7 +238,7 @@ def task_6c():
         ndofs,
         6e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{2}{3}}\right)$",
     )
 
     plt.title(f"Error at $t={T}$ (log-log)")
@@ -301,7 +303,7 @@ def task_6d_4th_order():
         ndofs,
         1.5e2 * np.divide(1, ndofs ** (4 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac43}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{4}{3}}\right)$",
     )
 
     plt.suptitle("Periodic advection diffusion - 4th order spacial discretization")
@@ -490,7 +492,7 @@ def task_6d_2nd_order_aperiodic():
         ndofs,
         1e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{2}{3}}\right)$",
     )
 
     plt.suptitle("Aperiodic advection diffusion - Neumann - Neumann")
@@ -551,7 +553,7 @@ def task_6d_1st_order():
         ndofs,
         4e0 * np.divide(1, ndofs ** (1 / 2)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac12}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{1}{2}}\right)$",
     )
 
     plt.suptitle("Periodic advection diffusion - 1st order spacial discretization")

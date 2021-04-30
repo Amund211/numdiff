@@ -354,7 +354,7 @@ def task_2bc():
         ndofs,
         1e0 * np.divide(1, ndofs ** (1 / 2)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac12}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{1}{2}}\right)$",
     )
 
     plt.grid()
@@ -388,7 +388,7 @@ def task_2br():
         ndofs,
         1e0 * np.divide(1, ndofs ** (2 / 3)),
         linestyle="dashed",
-        label=r"$O\left(N_{dof}^{-\frac23}\right)$",
+        label=r"$O\left(N_{dof}^{-\frac{2}{3}}\right)$",
     )
 
     plt.grid()
