@@ -10,7 +10,7 @@ source venv/bin/activate  # Or the equivalent for your shell
 pip3 install -r requirements.txt
 ```
 
-For how to activate the environment on different shells see [https://docs.python.org/3/library/venv.html](the venv docs).
+For how to activate the environment on different shells see [the venv docs](https://docs.python.org/3/library/venv.html).
 
 You may need to install `swig` to be able to build `scikit-umfpack`.
 Alternatively you may remove it from [requirements.txt](./requirements.txt), as it isn't used explicitly, but may be used by the solvers in `scipy.sparse.linalg` if present.
@@ -30,11 +30,11 @@ To run the code non-interactively you may specify these parameters as commandlin
 Note: Part 2 - task 3 is in this project renamed to task 6 to fit the scheme.
 
 To run the code comparison task (part 2 - task 3c) run task `6c_runtime` e.g. `python main.py 6c`.
-This will generate a plot in the [`images`](./images) folder with two figures: l2 error vs degrees of freedom and runtime vs degrees of freedom.
+This will generate a plot in the `images` folder with two figures: l2 error vs degrees of freedom and runtime vs degrees of freedom.
 
 ## Editing the tasks
 The tasks are loaded into [`main.py`](./main.py) from the [tasks](./tasks) directory.
-Each major task (1, 2, ...) has its own file in the [tasks](./tasks), while the functions for the different subtasks lie inside those files.
+Each major task (1, 2, ...) has its own file in the [tasks](./tasks) directory, while the functions for the different subtasks lie inside those files.
 The taskname used in [`main.py`](./main.py) should, for the most part, coincide with the names of the functions.
 
 To edit the behaviour or the parameters of any task, simply edit the corresponding function.
